@@ -518,30 +518,6 @@ with tab_path:
                 elif not chk and is_done:
                     st.session_state[prog_key].discard(lid)
 
-    # Nếu vừa nhấn "Tra bài" → inject JS click tab đầu tiên (Tra Kanji)
-    if st.session_state.pop("jump_to_search", False):
-        _components.html("""
-<script>
-(function() {
-  function clickTab() {
-    var doc = window.parent.document;
-    // Thử nhiều selector để tìm tab đầu tiên
-    var tab = doc.querySelector('[role="tab"]')
-           || doc.querySelector('[data-baseweb="tab"]')
-           || doc.querySelector('button[class*="tab"]');
-    if (tab) {
-      tab.click();
-      // Scroll lên đầu trang
-      window.parent.scrollTo({top: 0, behavior: 'smooth'});
-    } else {
-      setTimeout(clickTab, 150);
-    }
-  }
-  setTimeout(clickTab, 200);
-})();
-</script>
-""", height=1)
-
 # === TAB 3 ===
 with tab_vocab:
     st.markdown('<div class="sec-title">📖 Từ Vựng theo Bài</div>', unsafe_allow_html=True)
@@ -573,3 +549,25 @@ with tab_vocab:
   {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
+
+# === JS switch tab — nằm ngoài tất cả tab để luôn được render ===
+if st.session_state.pop("jump_to_search", False):
+    _components.html("""
+<script>
+(function() {
+  function switchTab() {
+    var doc = window.parent.document;
+    var tabs = doc.querySelectorAll('[role="tab"]');
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].textContent.indexOf('Tra Kanji') >= 0) {
+        tabs[i].click();
+        window.parent.scrollTo({top: 0, behavior: 'smooth'});
+        return;
+      }
+    }
+    if (tabs.length > 0) { tabs[0].click(); }
+  }
+  setTimeout(switchTab, 400);
+})();
+</script>
+""", height=1)
