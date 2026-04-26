@@ -244,8 +244,8 @@ footer, [data-testid="stBottom"], [data-testid="stStatusWidget"] { display: none
 }
 .hero-title {
   font-size: 2.4rem; font-weight: 900; color: #1a1209;
-  letter-spacing: 3px; line-height: 1.2; margin: 0 0 8px;
-  font-family: Georgia, 'Noto Serif JP', serif;
+  letter-spacing: 0; line-height: 1.3; margin: 0 0 8px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 .hero-sub {
   font-size: 1rem; color: #6a5040; margin: 6px 0 20px; letter-spacing: .5px;
