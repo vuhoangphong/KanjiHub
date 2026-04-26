@@ -501,18 +501,28 @@ function speak(){{
             f'</div>',
             unsafe_allow_html=True)
         if viet or meaning:
-            res_key = f"ai_res_{uid}"
-            st.markdown('<div style="padding:0 16px 10px">', unsafe_allow_html=True)
+            res_key     = f"ai_res_{uid}"
+            loading_key = f"ai_loading_{uid}"
+
+            # Nút bấm — click lần 1: set loading flag + rerun
             if st.button("🤖 Phân tích AI", key=f"analyze_{uid}", use_container_width=False):
-                with st.spinner("Đang hỏi AI…"):
-                    st.session_state[res_key] = analyze_kanji_ai(kanji)
+                st.session_state[loading_key] = True
+                st.rerun()
+
+            # Lần rerun sau khi click: hiển thị spinner + gọi API
+            if st.session_state.get(loading_key):
+                with st.spinner("🔄 Đang phân tích AI, vui lòng chờ…"):
+                    result = analyze_kanji_ai(kanji)
+                st.session_state[res_key] = result
+                del st.session_state[loading_key]
+                st.rerun()
+
             if res_key in st.session_state:
                 st.markdown(
                     f'<div style="background:#fdf8f0;border:1px solid #e0d4be;'
                     f'border-radius:4px;padding:10px 12px;font-size:.85rem;color:#3a2a1a;margin-top:4px">'
                     f'{st.session_state[res_key]}</div>',
                     unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 

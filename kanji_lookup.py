@@ -18,7 +18,8 @@ import threading
 
 GEMINI_MODEL = "gemini-2.0-flash"  # free tier trên Google AI Studio
 
-OPENROUTER_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"  # free, không tốn credit
+OPENROUTER_MODEL        = "nvidia/nemotron-3-super-120b-a12b:free"  # free, không tốn credit
+OPENROUTER_ANALYZE_MODEL = "nvidia/nemotron-3-nano-30b-a3b:free"   # nhỏ hơn, nhanh hơn cho phân tích
 
 import unicodedata
 
@@ -569,13 +570,13 @@ def analyze_kanji_ai(kanji: str) -> str:
 
             payload = {
 
-                "model": OPENROUTER_MODEL,
+                "model": OPENROUTER_ANALYZE_MODEL,
 
                 "messages": [{"role": "user", "content": prompt}]
 
             }
 
-            resp = requests.post(url, headers=headers, json=payload, timeout=20)
+            resp = requests.post(url, headers=headers, json=payload, timeout=30)
             resp.encoding = 'utf-8'
             data = resp.json()
             if "choices" in data and data["choices"]:
