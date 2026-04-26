@@ -80,8 +80,11 @@ def find_cjk_font() -> str | None:
         candidates = [
             os.path.join(home, ".local", "share", "fonts", "NotoSansJP-VF.ttf"),
             "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+            "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
+            "/usr/share/fonts/opentype/noto/NotoSansCJK-VF.ttc",
             "/usr/share/fonts/truetype/noto/NotoSansJP-Regular.ttf",
             "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         ]
     for p in candidates:
         if os.path.exists(p):
