@@ -283,10 +283,26 @@ hr { border-color: #d8c8a8 !important; }
 [data-testid="stProgressBar"] > div { background: #c0392b !important; }
 [data-testid="stProgressBar"] { background: #e8dcc8 !important; }
 
+/* ── Spinner — nổi bật trên nền sáng ── */
+[data-testid="stSpinner"] {
+  background: rgba(247,242,232,.92) !important;
+  border: 1.5px solid #c0392b33 !important;
+  border-radius: 8px !important;
+  padding: 12px 20px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,.12) !important;
+}
+[data-testid="stSpinner"] p {
+  color: #c0392b !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+}
+[data-testid="stSpinner"] svg {
+  color: #c0392b !important;
+  stroke: #c0392b !important;
+}
+
 /* ── Prog label ── */
 .prog-label { font-size: .8rem; color: #9a8a6a; text-align: right; margin-top: -6px; }
-
-/* ── Kanji char / read ── */
 .kanji-char { font-size: 3.4rem; font-weight: 900; color: #1a1209;
   text-align: center; line-height: 1.05; font-family: 'Noto Serif JP', serif; }
 .kanji-read { font-size: .75rem; color: #b8902a; text-align: center; letter-spacing: 1px; }
@@ -835,6 +851,10 @@ elif active_tab == TAB_NAMES[1]:
                 if st.button(f"🔍 Tra bài {i+1}", key=f"tra_{level}_{i}",
                              type="primary", use_container_width=True):
                     st.session_state[prog_key].add(lid)
+                    # Xóa kết quả AI cũ từ lần tra trước
+                    for k in list(st.session_state.keys()):
+                        if k.startswith("ai_res_") or k.startswith("ai_loading_"):
+                            del st.session_state[k]
                     with st.spinner("Đang tra…"):
                         res = do_lookup("".join(chunk), "DB + AI")
                     st.session_state[res_key] = res
