@@ -146,7 +146,12 @@ def gif_url(kanji: str) -> str:
 
 
 # ─── Kanji card ──────────────────────────────────────────────────────────────
-def render_card(info: dict):
+_card_counter = {"n": 0}
+
+
+def render_card(info: dict, key_prefix: str = ""):
+    _card_counter["n"] += 1
+    _uid = f"{key_prefix}_{_card_counter['n']}_{info.get('kanji', '')}"
     kanji   = info.get("kanji", "")
     viet    = info.get("viet", "")
     reading = info.get("reading", "")
@@ -197,7 +202,7 @@ def render_card(info: dict):
         # AI analysis expander
         if viet or meaning:
             with st.expander("🔍 Phân tích AI chuyên sâu"):
-                if st.button("Phân tích ngay", key=f"analyze_{kanji}"):
+                if st.button("Phân tích ngay", key=f"analyze_{_uid}"):
                     with st.spinner("Đang hỏi AI…"):
                         result = analyze_kanji_ai(kanji)
                     st.markdown(result)
@@ -405,7 +410,7 @@ with tab_search:
 
         # ── Cards ───────────────────────────────────────────────────────────
         for info in results:
-            render_card(info)
+            render_card(info, key_prefix="search")
 
     elif submitted and query and not results:
         st.warning("Không tìm thấy kết quả. Thử gõ có dấu hoặc chuyển sang chế độ AI.")
@@ -487,7 +492,7 @@ with tab_path:
             except Exception:
                 pass
         for info in path_results:
-            render_card(info)
+            render_card(info, key_prefix="path")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
