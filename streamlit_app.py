@@ -8,6 +8,7 @@ import os
 import sys
 import re
 import tempfile
+import base64
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import streamlit as st
@@ -58,9 +59,19 @@ def has_cjk(text):
     return False
 
 
+# --- Logo ---
+_logo_path = os.path.join(_HERE, "static", "logo.png")
+_logo_uri = None
+if os.path.exists(_logo_path):
+    with open(_logo_path, "rb") as _f:
+        _logo_uri = "data:image/png;base64," + base64.b64encode(_f.read()).decode()
+
 # --- Page config ---
 st.set_page_config(page_title="Kanji Hub", page_icon="✍️",
                    layout="wide", initial_sidebar_state="collapsed")
+
+if _logo_uri:
+    st.logo(_logo_uri, icon_image=_logo_uri)
 
 st.markdown("""
 <style>
@@ -913,7 +924,12 @@ if active_tab == TAB_NAMES[0]:
 
 # === TAB 2 ===
 elif active_tab == TAB_NAMES[1]:
-    st.markdown('<div class="sec-title">🗺️ Lộ trình học Kanji</div>', unsafe_allow_html=True)
+    _c_logo, _c_title = st.columns([1, 9])
+    with _c_logo:
+        if _logo_uri:
+            st.markdown(f'<img src="{_logo_uri}" style="width:58px;height:58px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);margin-top:4px">', unsafe_allow_html=True)
+    with _c_title:
+        st.markdown('<div class="sec-title" style="margin-top:8px">🗺️ Lộ trình học Kanji</div>', unsafe_allow_html=True)
     level_data = {
         "N5": list(MNN_N5.keys()), "N4": list(N4_VI.keys()),
         "N3": list(N3_VI.keys()),  "N2": list(N2_VI.keys()),
@@ -998,7 +1014,12 @@ elif active_tab == TAB_NAMES[1]:
 
 # === TAB 3 ===
 elif active_tab == TAB_NAMES[2]:
-    st.markdown('<div class="sec-title">📖 Từ Vựng theo Bài</div>', unsafe_allow_html=True)
+    _c_logo, _c_title = st.columns([1, 9])
+    with _c_logo:
+        if _logo_uri:
+            st.markdown(f'<img src="{_logo_uri}" style="width:58px;height:58px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);margin-top:4px">', unsafe_allow_html=True)
+    with _c_title:
+        st.markdown('<div class="sec-title" style="margin-top:8px">📖 Từ Vựng theo Bài</div>', unsafe_allow_html=True)
     if not VOCAB_LESSONS:
         st.info("Chưa có bài từ vựng nào.")
     else:
