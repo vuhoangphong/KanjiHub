@@ -494,12 +494,9 @@ with tab_path:
     st.progress(pct)
     for i, chunk in enumerate(chunks):
         lid     = f"{level}_{i+1}"
-        res_key = f"path_res_{lid}"
         is_done = lid in st.session_state[prog_key]
-        has_res = bool(st.session_state.get(res_key))
         icon    = "✅" if is_done else "📖"
-        with st.expander(f"{icon} Bài {i+1} ({len(chunk)} chữ) — {' '.join(chunk)}",
-                         expanded=has_res):
+        with st.expander(f"{icon} Bài {i+1} ({len(chunk)} chữ) — {' '.join(chunk)}"):
             st.markdown(f'<div style="font-size:1.6rem;letter-spacing:3px;color:#cdd6f4;margin-bottom:10px">{' '.join(chunk)}</div>',
                         unsafe_allow_html=True)
             b1, b2 = st.columns([1, 1])
@@ -509,8 +506,7 @@ with tab_path:
                     st.session_state[prog_key].add(lid)
                     with st.spinner("Đang tra…"):
                         results = do_lookup("".join(chunk), "DB + AI")
-                    st.session_state[res_key] = results
-                    # Chuyển kết quả sang tab Tra Kanji và nhảy sang tab đó
+                    # Chuyển kết quả sang tab Tra Kanji
                     st.session_state.results = results
                     st.session_state["jump_to_search"] = True
             with b2:
@@ -521,23 +517,6 @@ with tab_path:
                     st.session_state[prog_key].add(lid)
                 elif not chk and is_done:
                     st.session_state[prog_key].discard(lid)
-
-            bai_results = st.session_state.get(res_key, [])
-            if bai_results:
-                st.divider()
-                valid_p = [r for r in bai_results if r.get("viet") or r.get("meaning_vi")]
-                if valid_p:
-                    try:
-                        safe_p = "".join(r["kanji"] for r in valid_p[:10])
-                        st.download_button("📄 Tải PDF bài này",
-                                           data=make_pdf_bytes(valid_p),
-                                           file_name=f"Kanji_{safe_p}.pdf",
-                                           mime="application/pdf",
-                                           key=f"dl_path_{lid}")
-                    except Exception:
-                        pass
-                for idx, info in enumerate(bai_results):
-                    render_card(info, idx=idx, prefix=f"p_{lid}")
 
     # Nếu vừa nhấn "Tra bài" → inject JS click tab đầu tiên (Tra Kanji)
     if st.session_state.pop("jump_to_search", False):
