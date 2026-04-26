@@ -508,7 +508,11 @@ with tab_path:
                              type="primary", use_container_width=True):
                     st.session_state[prog_key].add(lid)
                     with st.spinner("Đang tra…"):
-                        st.session_state[res_key] = do_lookup("".join(chunk), "DB + AI")
+                        results = do_lookup("".join(chunk), "DB + AI")
+                    st.session_state[res_key] = results
+                    # Chuyển kết quả sang tab Tra Kanji và nhảy sang tab đó
+                    st.session_state.results = results
+                    st.session_state["jump_to_search"] = True
             with b2:
                 st.markdown('<div style="margin-top:6px">', unsafe_allow_html=True)
                 chk = st.checkbox("Đã học xong", value=is_done, key=f"chk_{level}_{i}")
@@ -534,6 +538,25 @@ with tab_path:
                         pass
                 for idx, info in enumerate(bai_results):
                     render_card(info, idx=idx, prefix=f"p_{lid}")
+
+    # Nếu vừa nhấn "Tra bài" → inject JS click tab đầu tiên (Tra Kanji)
+    if st.session_state.pop("jump_to_search", False):
+        _components.html("""
+<script>
+(function() {
+  // Chờ DOM sẵn sàng rồi click tab đầu tiên
+  function clickFirstTab() {
+    var tabs = window.parent.document.querySelectorAll('[data-baseweb="tab"]');
+    if (tabs && tabs.length > 0) {
+      tabs[0].click();
+    } else {
+      setTimeout(clickFirstTab, 100);
+    }
+  }
+  setTimeout(clickFirstTab, 150);
+})();
+</script>
+""", height=0)
 
 # === TAB 3 ===
 with tab_vocab:
