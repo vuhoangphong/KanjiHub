@@ -531,22 +531,18 @@ if active_tab == TAB_NAMES[0]:
         col_c.metric("Không có", len(errs))
 
         if valid:
-            r1, r2 = st.columns([3, 2])
-            with r1:
-                rows_map = {"1 hàng (6 ô)": 0, "2 hàng (18 ô)": 1,
-                            "3 hàng (30 ô)": 2, "4 hàng (42 ô)": 3}
-                sel = st.selectbox("Số hàng luyện viết", list(rows_map.keys()), key="sr_rows")
-            with r2:
-                st.write("")
-                try:
-                    pdf_b = make_pdf_bytes(valid, rows_map[sel])
-                    safe  = "".join(extract_kanji("".join(i["kanji"] for i in valid))[:10]) or "Kanji"
-                    st.download_button("📄 Tải PDF luyện viết", data=pdf_b,
-                                       file_name=f"Kanji_{safe}.pdf",
-                                       mime="application/pdf", key="dl_search",
-                                       use_container_width=True)
-                except Exception as e:
-                    st.error(f"Lỗi PDF: {e}")
+            rows_map = {"1 hàng (6 ô)": 0, "2 hàng (18 ô)": 1,
+                        "3 hàng (30 ô)": 2, "4 hàng (42 ô)": 3}
+            sel = st.selectbox("Số hàng luyện viết", list(rows_map.keys()), key="sr_rows")
+            try:
+                pdf_b = make_pdf_bytes(valid, rows_map[sel])
+                safe  = "".join(extract_kanji("".join(i["kanji"] for i in valid))[:10]) or "Kanji"
+                st.download_button("📄 Tải PDF luyện viết", data=pdf_b,
+                                   file_name=f"Kanji_{safe}.pdf",
+                                   mime="application/pdf", key="dl_search",
+                                   use_container_width=True)
+            except Exception as e:
+                st.error(f"Lỗi PDF: {e}")
 
         st.divider()
         for idx, info in enumerate(results):
