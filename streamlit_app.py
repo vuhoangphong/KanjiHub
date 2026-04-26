@@ -396,68 +396,86 @@ def render_card(info, idx, prefix):
 
     gif_src = gif_url(kanji) if kanji else ""
     gif_html = (
-        f'<img src="{gif_src}" width="88" height="88" title="Thứ tự nét viết"'
-        f' style="border-radius:4px;background:#fff;padding:2px;display:block;margin:4px auto 0"'
+        f'<img src="{gif_src}" width="100" height="100" title="Thứ tự nét viết"'
+        f' style="border-radius:6px;background:#fff;padding:3px;display:block;margin:8px auto 0;box-shadow:0 2px 8px rgba(0,0,0,.3)"'
         f' onerror="this.style.display=\'none\'">'
         if gif_src else ""
     )
 
-    # vocab / meanings
-    vocab_section = ""
-    if vocab:
+    # ── Ý nghĩa section ──
+    y_nghia = _html.escape(viet) if viet else ""
+    meaning_sub = _html.escape(meaning) if meaning else ""
+
+    # ── Mẹo nhớ section ──
+    meo_box = ""
+    if meo:
+        meo_box = (
+            f'<div style="background:#2a1f0a;border:1px solid #c8a45a55;border-radius:6px;'
+            f'padding:8px 12px;margin-top:8px">'
+            f'<div style="font-size:.68rem;font-weight:700;color:#c8a45a;letter-spacing:1.5px;margin-bottom:4px">✦ GỢI Ý CÁCH NHỚ</div>'
+            f'<div style="color:#e8d5a0;font-size:.88rem;line-height:1.6">{_html.escape(meo)}</div>'
+            f'</div>'
+        )
+
+    # ── Từ vựng section ──
+    vocab_box = ""
+    items_src = vocab[:5] if vocab else []
+    if items_src:
         rows = ""
-        for v in vocab[:3]:
+        for v in items_src:
             w = _html.escape(str(v[0]))
             r = _html.escape(str(v[1]))
             m = _html.escape(str(v[2]))
-            rows += (f'<div style="font-size:.84rem;margin-bottom:2px">'
-                     f'<span style="color:#f0e0c0;font-weight:700">{w}</span>'
-                     f'<span style="color:#c8a45a">（{r}）</span>'
-                     f'<span style="color:#d4a0b0"> — {m}</span></div>')
-        vocab_section = (f'<div style="border-top:1px solid #c8a45a22;'
-                         f'padding-top:6px;margin-top:4px">{rows}</div>')
+            rows += (
+                f'<div style="padding:6px 0;border-bottom:1px solid #c8a45a18;display:flex;align-items:baseline;gap:6px">'
+                f'<span style="color:#f0e0c0;font-weight:700;font-size:.95rem">{w}</span>'
+                f'<span style="color:#c8a45a;font-size:.82rem">（{r}）</span>'
+                f'<span style="color:#a09080;font-size:.82rem">— {m}</span>'
+                f'</div>'
+            )
+        vocab_box = (
+            f'<div style="margin-top:10px">'
+            f'<div style="font-size:.68rem;font-weight:700;color:#c0392b;letter-spacing:1.5px;margin-bottom:4px">'
+            f'📚 TỪ VỰNG ({len(items_src)} từ)</div>'
+            f'{rows}'
+            f'</div>'
+        )
     elif meanings_en:
-        m = _html.escape(" · ".join(meanings_en[:3]))
-        vocab_section = (f'<div style="border-top:1px solid #c8a45a22;padding-top:6px;'
-                         f'margin-top:4px;font-size:.84rem;color:#d4a0b0">{m}</div>')
+        m_en = _html.escape(" · ".join(meanings_en[:4]))
+        vocab_box = (
+            f'<div style="margin-top:8px;font-size:.82rem;color:#a09080">{m_en}</div>'
+        )
 
-    mean_html = (f'<div style="color:#c8b898;font-size:.88rem;line-height:1.5">'
-                 f'📖 {_html.escape(meaning)}</div>' if meaning else "")
-    meo_html  = (f'<div style="color:#8ab488;font-size:.82rem;font-style:italic;'
-                 f'border-left:2px solid #4a5c3a;padding-left:8px;line-height:1.4">'
-                 f'💡 {_html.escape(meo)}</div>' if meo else "")
-
-    # ── Dùng Streamlit columns để TTS (iframe) nằm trong cột trái ──
+    # ── Dùng Streamlit columns để TTS nằm trong cột trái ──
     st.markdown(
-        '<div style="background:#1e1408;border:1px solid #c8a45a33;'
-        'border-radius:4px;overflow:hidden;margin-bottom:4px">',
+        '<div style="background:#1c1208;border:1px solid #c8a45a44;'
+        'border-radius:8px;overflow:hidden;margin-bottom:10px;'
+        'box-shadow:0 2px 12px rgba(0,0,0,.4)">',
         unsafe_allow_html=True)
 
     col_l, col_r = st.columns([1, 3])
 
     with col_l:
         st.markdown(
-            f'<div style="background:linear-gradient(160deg,#150e04,#1a1008);'
-            f'min-height:100%;padding:14px 8px 6px;text-align:center;'
-            f'border-right:1px solid #c8a45a22">'
-            f'<div style="font-size:3rem;font-weight:900;color:#f0e0c0;line-height:1;'
-            f'font-family:serif;text-shadow:0 2px 10px rgba(200,164,90,.3)">{_html.escape(kanji)}</div>'
-            f'<div style="font-size:.7rem;color:#c8a45a;letter-spacing:1.5px;'
-            f'background:#120d06;border:1px solid #c8a45a33;border-radius:2px;'
-            f'padding:2px 6px;display:inline-block;margin-top:4px">{_html.escape(reading) or "—"}</div>'
+            f'<div style="background:#150e04;min-height:100%;padding:16px 10px 8px;'
+            f'text-align:center;border-right:1px solid #c8a45a22">'
+            f'<div style="font-size:3.4rem;font-weight:900;color:#f5ede0;line-height:1;'
+            f'font-family:serif">{_html.escape(kanji)}</div>'
+            f'<div style="font-size:.75rem;color:#c8a45a;letter-spacing:2px;margin-top:6px;'
+            f'background:#1e1408;border:1px solid #c8a45a44;border-radius:20px;'
+            f'padding:3px 10px;display:inline-block">{_html.escape(reading) or "—"}</div>'
             f'{gif_html}'
             f'</div>',
             unsafe_allow_html=True)
-        # TTS button qua iframe — nằm trong cột trái
         speak_text = kanji if kanji else reading
         if speak_text:
             safe = speak_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
             _components.html(f"""
 <style>*{{margin:0;padding:0;box-sizing:border-box}}</style>
 <button onclick="speak()" style="
-  background:#1e1408;border:1px solid #c8a45a55;border-radius:2px;
-  color:#c8a45a;font-size:.9rem;cursor:pointer;padding:7px 0;
-  width:100%;font-family:sans-serif;display:block;
+  background:#1e1408;border:1px solid #c8a45a55;border-radius:0;
+  color:#c8a45a;font-size:.88rem;cursor:pointer;padding:8px 0;
+  width:100%;font-family:sans-serif;display:block;letter-spacing:.5px;
 " onmouseover="this.style.background='#2a1a08'"
   onmouseout="this.style.background='#1e1408'">🔊 Nghe</button>
 <script>
@@ -472,27 +490,37 @@ function speak(){{
 """, height=36, scrolling=False)
 
     with col_r:
+        badge_html = f'<span class="rc-badge {status_cls}" style="margin-left:8px">{_html.escape(status_txt)}</span>'
+        y_nghia_block = ""
+        if y_nghia or meaning_sub:
+            y_nghia_block = (
+                f'<div style="margin-bottom:4px">'
+                f'<div style="font-size:.65rem;font-weight:700;color:#7a6a50;letter-spacing:2px;margin-bottom:3px">Ý NGHĨA</div>'
+                f'<div style="font-size:1.4rem;font-weight:900;color:#f5ede0;font-family:serif">'
+                f'{y_nghia}{badge_html}</div>'
+                + (f'<div style="font-size:.88rem;color:#b0a090;margin-top:2px">{meaning_sub}</div>' if meaning_sub and meaning_sub != y_nghia else "")
+                + f'</div>'
+            )
         st.markdown(
-            f'<div style="padding:12px 14px 10px;display:flex;flex-direction:column;gap:6px">'
-            f'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
-            f'<span style="font-size:1.2rem;font-weight:900;color:#e8a0a0;font-family:serif;letter-spacing:1px">'
-            f'{_html.escape(viet) if viet else _html.escape(kanji)}</span>'
-            f'<span class="rc-badge {status_cls}">{_html.escape(status_txt)}</span>'
-            f'</div>'
-            f'{mean_html}{meo_html}{vocab_section}'
+            f'<div style="padding:14px 16px 10px">'
+            f'{y_nghia_block}'
+            f'{meo_box}'
+            f'{vocab_box}'
             f'</div>',
             unsafe_allow_html=True)
         if viet or meaning:
             res_key = f"ai_res_{uid}"
+            st.markdown('<div style="padding:0 16px 10px">', unsafe_allow_html=True)
             if st.button("🤖 Phân tích AI", key=f"analyze_{uid}", use_container_width=False):
                 with st.spinner("Đang hỏi AI…"):
                     st.session_state[res_key] = analyze_kanji_ai(kanji)
             if res_key in st.session_state:
                 st.markdown(
                     f'<div style="background:#120d06;border:1px solid #c8a45a33;'
-                    f'border-radius:2px;padding:10px 12px;font-size:.85rem;color:#c8b898">'
+                    f'border-radius:4px;padding:10px 12px;font-size:.85rem;color:#c8b898;margin-top:4px">'
                     f'{st.session_state[res_key]}</div>',
                     unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
