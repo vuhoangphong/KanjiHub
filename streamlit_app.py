@@ -1192,9 +1192,10 @@ elif active_tab == TAB_NAMES[2]:
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
 
-# ── Site Footer (ngoài tất cả tabs — luôn hiện) ──────────────────────────────
-_logo_footer = f'<img src="{_logo_uri}">' if _logo_uri else ''
-st.markdown(f"""
+# ── Site Footer (chỉ hiện ở tab Lộ trình và Từ Vựng) ──────────────────────────
+if active_tab != TAB_NAMES[0]:
+    _logo_footer = f'<img src="{_logo_uri}">' if _logo_uri else ''
+    st.markdown(f"""
 <div class="site-footer">
   <div class="site-footer-logo">
     {_logo_footer}
