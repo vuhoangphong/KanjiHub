@@ -25,7 +25,6 @@ try:
         lookup_kanji_gemini, lookup_kanji_openrouter,
         get_ai_provider, set_ai_provider,
         get_openrouter_key, set_openrouter_key,
-        extract_kanji, has_cjk,
         analyze_kanji_ai,
     )
     from pdf_generator import generate_pdf, generate_vocab_table_pdf
@@ -35,6 +34,27 @@ except Exception as _import_err:
     st.error(f"**Import Error:** {_import_err}")
     st.code(traceback.format_exc())
     st.stop()
+
+
+# ─── CJK helpers (định nghĩa ở gui.py, không export từ kanji_lookup) ─────────
+def extract_kanji(text: str) -> list:
+    seen = set()
+    result = []
+    for ch in text:
+        cp = ord(ch)
+        is_cjk = (0x3000 <= cp <= 0x9FFF or 0xF900 <= cp <= 0xFAFF or 0x20000 <= cp <= 0x2A6DF)
+        if is_cjk and ch not in seen:
+            seen.add(ch)
+            result.append(ch)
+    return result
+
+
+def has_cjk(text: str) -> bool:
+    for ch in text:
+        cp = ord(ch)
+        if 0x3000 <= cp <= 0x9FFF or 0xF900 <= cp <= 0xFAFF or 0x20000 <= cp <= 0x2A6DF:
+            return True
+    return False
 
 # ─── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
