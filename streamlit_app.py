@@ -65,7 +65,7 @@ _FC_TEMPLATE = """<!DOCTYPE html>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:transparent;padding:8px 4px 4px;overflow-x:hidden}
 /* ── Wrapper centered ── */
-.fc-wrap{max-width:520px;margin:0 auto}
+.fc-wrap{max-width:680px;margin:0 auto}
 /* ── Layout: arrow | scene | arrow ── */
 .fc-outer{display:flex;align-items:center;gap:6px;margin-bottom:10px}
 .fc-arrow{background:rgba(0,0,0,.07);border:none;border-radius:50%;width:30px;height:30px;font-size:1.1rem;
