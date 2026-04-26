@@ -411,7 +411,8 @@ st.markdown("""
 [data-testid="stMain"] { padding-bottom: 0 !important; }
 [data-testid="stAppViewContainer"] > section { padding-bottom: 0 !important; }
 [data-testid="stHeader"] { display: none !important; }
-footer, [data-testid="stBottom"], [data-testid="stStatusWidget"] { display: none !important; }
+footer, [data-testid="stBottom"], [data-testid="stStatusWidget"],
+[data-testid="stDecoration"], #stDecoration { display: none !important; }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
