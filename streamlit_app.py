@@ -453,10 +453,11 @@ def render_card(info, idx, prefix):
         if speak_text:
             safe = speak_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
             _components.html(f"""
+<style>*{{margin:0;padding:0;box-sizing:border-box}}</style>
 <button onclick="speak()" style="
   background:#1e1408;border:1px solid #c8a45a55;border-radius:2px;
-  color:#c8a45a;font-size:.9rem;cursor:pointer;padding:6px 0;
-  width:100%;margin-top:6px;font-family:sans-serif;
+  color:#c8a45a;font-size:.9rem;cursor:pointer;padding:7px 0;
+  width:100%;font-family:sans-serif;display:block;
 " onmouseover="this.style.background='#2a1a08'"
   onmouseout="this.style.background='#1e1408'">🔊 Nghe</button>
 <script>
@@ -468,7 +469,7 @@ function speak(){{
   }}catch(e){{}}
 }}
 </script>
-""", height=42)
+""", height=36, scrolling=False)
 
     with col_r:
         st.markdown(
