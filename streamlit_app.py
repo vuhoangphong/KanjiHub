@@ -268,6 +268,12 @@ footer, [data-testid="stBottom"], [data-testid="stStatusWidget"] { display: none
 .hero-kanji-info { text-align: left; }
 .hero-kanji-label { font-size: .65rem; color: #c0392b; font-weight: 700; letter-spacing: 2px; display: block; }
 .hero-kanji-mean  { font-size: .88rem; color: #3a2a1a; font-weight: 600; }
+.hero-kanji-quote {
+  margin-top: 14px; font-size: .82rem; color: #6b5240;
+  font-style: italic; max-width: 480px; line-height: 1.55;
+  padding: 8px 16px; border-left: 3px solid #c0392b;
+  background: rgba(192,57,43,.05); border-radius: 0 8px 8px 0;
+}
 
 /* ── Feature Cards ── */
 .feature-grid {
@@ -1086,9 +1092,22 @@ if active_tab == TAB_NAMES[0]:
         ("月", "Nguyệt", "Mặt trăng, tháng"),
         ("風", "Phong", "Gió, phong cách"),
     ]
+    _kanji_quotes = {
+        "夢": ("Người không có ước mơ thì chẳng khác nào đang ngủ.", "Aristotle"),
+        "心": ("Nơi nào có tâm, nơi đó có đường.", "Tục ngữ Nhật"),
+        "道": ("Đường đi không khó vì ngăn sông cách núi, mà khó vì lòng người ngại núi e sông.", "Nguyễn Bá Học"),
+        "力": ("Sức mạnh không đến từ thể xác — nó đến từ ý chí bất khuất.", "Mahatma Gandhi"),
+        "愛": ("Yêu thương là cho đi mà không cần nhận lại.", "Tục ngữ"),
+        "学": ("Học, học nữa, học mãi.", "Lenin"),
+        "山": ("Núi càng cao, tầm nhìn càng rộng. Gian khổ càng lớn, ý chí càng bền.", "Tục ngữ"),
+        "花": ("Hoa đẹp không chỉ ở sắc, mà còn ở chỗ biết nở đúng lúc.", "Tục ngữ Nhật"),
+        "月": ("Dù đêm tối đến đâu, mặt trăng vẫn luôn tỏa sáng trên cao.", "Tục ngữ"),
+        "風": ("Gió không để lại vết, nhưng ta biết gió đã qua vì cây rung.", "Thiền ngữ"),
+    }
     if "_hero_kanji" not in st.session_state:
         st.session_state["_hero_kanji"] = _random.choice(_kanji_pool)
     _k, _hv, _mean = st.session_state["_hero_kanji"]
+    _quote, _qauthor = _kanji_quotes.get(_k, ("Mỗi chữ kanji là một cánh cửa dẫn đến văn hóa Nhật Bản.", "KanjiHub"))
 
     st.markdown(f'''
 <div class="hero">
@@ -1102,6 +1121,7 @@ if active_tab == TAB_NAMES[0]:
       <span class="hero-kanji-mean">{_hv} — {_mean}</span>
     </div>
   </div>
+  <div class="hero-kanji-quote">"{_quote}" <br><em>— {_qauthor}</em></div>
 </div>
 ''', unsafe_allow_html=True)
 
