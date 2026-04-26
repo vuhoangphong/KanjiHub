@@ -399,11 +399,42 @@ with st.sidebar:
     st.caption("Kanji Hub v2 • Streamlit Cloud")
 
 
-# --- Tabs ---
-tab_search, tab_path, tab_vocab = st.tabs(["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng"])
+# ── CSS cho custom tab radio ──────────────────────────────────────────────────
+st.markdown("""
+<style>
+div[data-testid="stHorizontalBlock"] > div:has(> div[data-testid="stRadio"]) {
+  background: #181825; border-radius: 12px; padding: 4px 6px; margin-bottom: 8px;
+}
+div[data-testid="stRadio"] > label { display: none; }
+div[data-testid="stRadio"] [data-testid="stMarkdownContainer"] { display: none; }
+div[data-testid="stRadio"] > div { flex-direction: row; gap: 4px; }
+div[data-testid="stRadio"] > div label {
+  background: transparent; border-radius: 8px; padding: 6px 18px;
+  color: #6c7086 !important; font-weight: 600; cursor: pointer; border: none;
+  transition: all .15s;
+}
+div[data-testid="stRadio"] > div label:has(input:checked) {
+  background: #313244 !important; color: #cdd6f4 !important;
+}
+div[data-testid="stRadio"] > div label:hover { color: #cdd6f4 !important; }
+div[data-testid="stRadio"] > div [data-testid="stMarkdownContainer"] p { display: inline; }
+div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
+</style>
+""", unsafe_allow_html=True)
+
+# ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
+TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng"]
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = TAB_NAMES[0]
+
+active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
+                      index=TAB_NAMES.index(st.session_state.active_tab),
+                      key="tab_radio", label_visibility="collapsed")
+st.session_state.active_tab = active_tab
+st.divider()
 
 # === TAB 1 ===
-with tab_search:
+if active_tab == TAB_NAMES[0]:
     st.markdown('<div class="app-header"><h1>✍️ Kanji Hub</h1>'
                 '<p>Tra cứu Kanji Nhật · Nghĩa tiếng Việt · Luyện viết</p></div>',
                 unsafe_allow_html=True)
@@ -460,7 +491,7 @@ with tab_search:
         st.warning("Không tìm thấy. Thử gõ có dấu hoặc chuyển sang chế độ AI.")
 
 # === TAB 2 ===
-with tab_path:
+elif active_tab == TAB_NAMES[1]:
     st.markdown('<div class="sec-title">🗺️ Lộ trình học Kanji</div>', unsafe_allow_html=True)
     level_data = {
         "N5": list(MNN_N5.keys()), "N4": list(N4_VI.keys()),
@@ -511,6 +542,7 @@ with tab_path:
                         res = do_lookup("".join(chunk), "DB + AI")
                     st.session_state[res_key] = res
                     st.session_state.results   = res
+                    st.session_state.active_tab = TAB_NAMES[0]  # nhảy về Tra Kanji
                     st.rerun()
             with b2:
                 st.markdown('<div style="margin-top:6px">', unsafe_allow_html=True)
@@ -540,7 +572,7 @@ with tab_path:
                     render_card(info, idx=idx, prefix=f"p_{lid}")
 
 # === TAB 3 ===
-with tab_vocab:
+elif active_tab == TAB_NAMES[2]:
     st.markdown('<div class="sec-title">📖 Từ Vựng theo Bài</div>', unsafe_allow_html=True)
     if not VOCAB_LESSONS:
         st.info("Chưa có bài từ vựng nào.")
