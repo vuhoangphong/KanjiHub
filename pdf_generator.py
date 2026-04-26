@@ -9,6 +9,7 @@ from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 
 # ─── Cấu hình ────────────────────────────────────────────────────────────────
 PAGE_W, PAGE_H = A4                      # 595 x 842 pt
@@ -141,6 +142,18 @@ def register_fonts():
             try:
                 pdfmetrics.registerFont(TTFont("CJKFont", cjk_font))
                 registered["cjk"] = "CJKFont"
+            except Exception:
+                pass
+
+    # Fallback: dùng CID font có sẵn trong ReportLab (không cần file ngoài)
+    if "cjk" not in registered:
+        try:
+            pdfmetrics.registerFont(UnicodeCIDFont("HeiseiMin-W3"))
+            registered["cjk"] = "HeiseiMin-W3"
+        except Exception:
+            try:
+                pdfmetrics.registerFont(UnicodeCIDFont("HeiseiKakuGo-W5"))
+                registered["cjk"] = "HeiseiKakuGo-W5"
             except Exception:
                 pass
 
