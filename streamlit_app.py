@@ -134,7 +134,7 @@ st.markdown("""
     repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(184,144,42,.07) 39px, rgba(184,144,42,.07) 40px),
     repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(184,144,42,.07) 39px, rgba(184,144,42,.07) 40px);
 }
-.main .block-container { max-width: 900px; padding: 1rem 1.5rem 0.5rem; }
+.main .block-container { max-width: 900px; padding: 0 1.5rem 0.5rem; }
 [data-testid="stMainBlockContainer"] { padding-bottom: 0 !important; }
 [data-testid="stMain"] { padding-bottom: 0 !important; }
 [data-testid="stAppViewContainer"] > section { padding-bottom: 0 !important; }
@@ -151,7 +151,7 @@ footer, [data-testid="stBottom"], [data-testid="stStatusWidget"] { display: none
 /* ── Site Header (sticky top bar) ── */
 .site-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 24px; margin-bottom: 16px;
+  padding: 10px 24px; margin-bottom: 8px;
   background: linear-gradient(135deg, #fff8f0 0%, #fdf4e8 100%);
   border-bottom: 2px solid #c0392b22;
   border-radius: 0 0 12px 12px;
