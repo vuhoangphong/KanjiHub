@@ -155,20 +155,48 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] 
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
 
 /* ── Kanji card — kiểu shoji ── */
-.card-box {
-  background: #1e1408;
-  border: 1px solid #c8a45a33;
-  border-left: 3px solid #c0392b;
-  border-radius: 2px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  transition: border-color .2s, box-shadow .2s;
-  position: relative;
+.card-box { display:none; } /* kept for compat */
+
+/* ── Result card (rc-*) ── */
+.rc-card {
+  display:flex; gap:0; margin-bottom:12px;
+  background:#1e1408; border:1px solid #c8a45a33;
+  border-radius:4px; overflow:hidden; transition:box-shadow .2s;
 }
-.card-box:hover {
-  border-color: #c8a45a88;
-  border-left-color: #e05050;
-  box-shadow: 0 4px 24px rgba(192,57,43,.12);
+.rc-card:hover { box-shadow:0 4px 20px rgba(192,57,43,.15); border-color:#c8a45a66; }
+.rc-left {
+  min-width:110px; max-width:110px;
+  background:linear-gradient(160deg,#150e04,#1a1008);
+  border-right:1px solid #c8a45a22;
+  display:flex; flex-direction:column; align-items:center;
+  padding:14px 8px 10px; gap:6px;
+}
+.rc-kanji {
+  font-size:3.2rem; font-weight:900; color:#f0e0c0; line-height:1;
+  font-family:'Noto Serif JP',Georgia,serif;
+  text-shadow:0 2px 12px rgba(200,164,90,.3);
+}
+.rc-reading {
+  font-size:.72rem; color:#c8a45a; letter-spacing:1.5px;
+  background:#120d06; border:1px solid #c8a45a33;
+  border-radius:2px; padding:2px 6px;
+}
+.rc-right { flex:1; padding:14px 16px 12px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+.rc-top { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.rc-viet { font-size:1.25rem; font-weight:900; color:#e8a0a0; font-family:'Noto Serif JP',serif; letter-spacing:1px; }
+.rc-badge { font-size:.65rem; font-weight:700; letter-spacing:.5px; border-radius:2px; padding:2px 8px; white-space:nowrap; }
+.rc-meaning { color:#c8b898; font-size:.88rem; line-height:1.5; }
+.rc-meo { color:#8ab488; font-size:.82rem; font-style:italic; border-left:2px solid #4a5c3a; padding-left:8px; line-height:1.4; }
+.rc-vocab { border-top:1px solid #c8a45a22; padding-top:6px; display:flex; flex-direction:column; gap:4px; }
+.rc-vitem { font-size:.84rem; }
+.rc-vw { color:#f0e0c0; font-weight:700; }
+.rc-vr { color:#c8a45a; }
+.rc-vm { color:#d4a0b0; }
+@media(max-width:600px) {
+  .rc-left { min-width:80px; max-width:80px; padding:10px 6px 8px; }
+  .rc-kanji { font-size:2.4rem; }
+  .rc-right { padding:10px 10px 8px; }
+  .rc-viet  { font-size:1.05rem; }
 }
 
 /* ── Kanji glyph ── */
@@ -355,6 +383,7 @@ def make_pdf_bytes(infos, extra_rows=0):
 
 # idx + prefix -> key stable va unique giua cac lan rerun
 def render_card(info, idx, prefix):
+    import html as _html
     uid     = f"{prefix}_{idx}"
     kanji   = info.get("kanji", "")
     viet    = info.get("viet", "")
@@ -366,99 +395,58 @@ def render_card(info, idx, prefix):
     status_txt, status_cls = status_of(info)
 
     gif_src = gif_url(kanji) if kanji else ""
-    gif_html = (f'<img src="{gif_src}" width="90" height="90" title="Thứ tự nét viết"'
-                f' style="border-radius:4px;background:#fff;padding:2px;display:block;margin:0 auto"'
-                f' onerror="this.style.display=\'none\'">'
-                if gif_src else "")
+    gif_html = (
+        f'<img src="{gif_src}" width="90" height="90" title="Thứ tự nét viết"'
+        f' style="border-radius:4px;background:#fff;padding:2px;display:block;margin:0 auto"'
+        f' onerror="this.style.display=\'none\'">'
+        if gif_src else ""
+    )
 
-    vocab_html = ""
+    # Xây vocab section — dùng inline style để tránh Streamlit sanitize class
+    vocab_section = ""
     if vocab:
-        items = "".join(
-            f'<div class="rc-vocab-item"><span class="rc-vocab-w">{v[0]}</span>'
-            f'<span class="rc-vocab-r">（{v[1]}）</span>'
-            f'<span class="rc-vocab-m">— {v[2]}</span></div>'
-            for v in vocab[:3]
-        )
-        vocab_html = f'<div class="rc-vocab-block">{items}</div>'
+        rows = ""
+        for v in vocab[:3]:
+            w = _html.escape(str(v[0]))
+            r = _html.escape(str(v[1]))
+            m = _html.escape(str(v[2]))
+            rows += (f'<div style="font-size:.84rem;margin-bottom:2px">'
+                     f'<span style="color:#f0e0c0;font-weight:700">{w}</span>'
+                     f'<span style="color:#c8a45a">（{r}）</span>'
+                     f'<span style="color:#d4a0b0"> — {m}</span>'
+                     f'</div>')
+        vocab_section = (f'<div style="border-top:1px solid #c8a45a22;'
+                         f'padding-top:6px;display:flex;flex-direction:column;gap:2px">'
+                         f'{rows}</div>')
     elif meanings_en:
-        vocab_html = (f'<div class="rc-vocab-block">'
-                      f'<span class="rc-vocab-m">{" · ".join(meanings_en[:3])}</span>'
-                      f'</div>')
+        m = _html.escape(" · ".join(meanings_en[:3]))
+        vocab_section = (f'<div style="border-top:1px solid #c8a45a22;padding-top:6px;'
+                         f'font-size:.84rem;color:#d4a0b0">{m}</div>')
 
-    meo_html = (f'<div class="rc-meo">💡 {meo}</div>' if meo else "")
-    mean_html = (f'<div class="rc-meaning">📖 {meaning}</div>' if meaning else "")
+    mean_html = (f'<div style="color:#c8b898;font-size:.88rem;line-height:1.5">'
+                 f'📖 {_html.escape(meaning)}</div>' if meaning else "")
+    meo_html  = (f'<div style="color:#8ab488;font-size:.82rem;font-style:italic;'
+                 f'border-left:2px solid #4a5c3a;padding-left:8px;line-height:1.4">'
+                 f'💡 {_html.escape(meo)}</div>' if meo else "")
 
-    st.markdown(f"""
-<style>
-.rc-card {{
-  display:flex; gap:0; margin-bottom:12px;
-  background:#1e1408; border:1px solid #c8a45a33;
-  border-radius:4px; overflow:hidden;
-  transition: box-shadow .2s;
-}}
-.rc-card:hover {{ box-shadow: 0 4px 20px rgba(192,57,43,.15); border-color:#c8a45a66; }}
-.rc-left {{
-  min-width:110px; max-width:110px;
-  background: linear-gradient(160deg,#150e04,#1a1008);
-  border-right:1px solid #c8a45a22;
-  display:flex; flex-direction:column; align-items:center;
-  padding:14px 8px 10px; gap:6px;
-}}
-.rc-kanji {{
-  font-size:3.2rem; font-weight:900; color:#f0e0c0; line-height:1;
-  font-family:'Noto Serif JP',Georgia,serif;
-  text-shadow:0 2px 12px rgba(200,164,90,.3);
-}}
-.rc-reading {{
-  font-size:.72rem; color:#c8a45a; letter-spacing:1.5px;
-  background:#120d06; border:1px solid #c8a45a33;
-  border-radius:2px; padding:2px 6px;
-}}
-.rc-right {{ flex:1; padding:14px 16px 12px; display:flex; flex-direction:column; gap:6px; }}
-.rc-top {{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }}
-.rc-viet {{ font-size:1.25rem; font-weight:900; color:#e8a0a0; font-family:'Noto Serif JP',serif; letter-spacing:1px; }}
-.rc-badge {{
-  font-size:.65rem; font-weight:700; letter-spacing:.5px;
-  border-radius:2px; padding:2px 8px; white-space:nowrap;
-}}
-.rc-meaning {{ color:#c8b898; font-size:.88rem; line-height:1.5; }}
-.rc-meo {{
-  color:#8ab488; font-size:.82rem; font-style:italic;
-  border-left:2px solid #4a5c3a; padding-left:8px; line-height:1.4;
-}}
-.rc-vocab-block {{
-  border-top:1px solid #c8a45a22; padding-top:6px; display:flex; flex-direction:column; gap:3px;
-}}
-.rc-vocab-item {{ font-size:.84rem; }}
-.rc-vocab-w {{ color:#f0e0c0; font-weight:700; }}
-.rc-vocab-r {{ color:#c8a45a; }}
-.rc-vocab-m {{ color:#d4a0b0; }}
-@media(max-width:600px) {{
-  .rc-left {{ min-width:80px; max-width:80px; padding:10px 6px 8px; }}
-  .rc-kanji {{ font-size:2.4rem; }}
-  .rc-right {{ padding:10px 10px 8px; }}
-  .rc-viet  {{ font-size:1.05rem; }}
-}}
-</style>
-<div class="rc-card">
-  <div class="rc-left">
-    <div class="rc-kanji">{kanji}</div>
-    <div class="rc-reading">{reading or '—'}</div>
-    {gif_html}
-  </div>
-  <div class="rc-right">
-    <div class="rc-top">
-      <span class="rc-viet">{viet or kanji}</span>
-      <span class="rc-badge {status_cls}">{status_txt}</span>
-    </div>
-    {mean_html}
-    {meo_html}
-    {vocab_html}
-  </div>
-</div>
-""", unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="rc-card">'
+        f'<div class="rc-left">'
+        f'<div class="rc-kanji">{_html.escape(kanji)}</div>'
+        f'<div class="rc-reading">{_html.escape(reading) or "—"}</div>'
+        f'{gif_html}'
+        f'</div>'
+        f'<div class="rc-right">'
+        f'<div class="rc-top">'
+        f'<span class="rc-viet">{_html.escape(viet) if viet else _html.escape(kanji)}</span>'
+        f'<span class="rc-badge {status_cls}">{_html.escape(status_txt)}</span>'
+        f'</div>'
+        f'{mean_html}{meo_html}{vocab_section}'
+        f'</div>'
+        f'</div>',
+        unsafe_allow_html=True)
 
-    # TTS + AI button nằm ngoài HTML để dùng được JS và st.button
+    # TTS + AI button
     btn_l, btn_r, _ = st.columns([1, 2, 3])
     with btn_l:
         speak_text = kanji if kanji else reading
@@ -467,7 +455,7 @@ def render_card(info, idx, prefix):
             _components.html(f"""
 <button onclick="speak()" title="Phát âm" style="
   background:#1e1408;border:1px solid #c8a45a55;border-radius:2px;
-  color:#c8a45a;font-size:1rem;cursor:pointer;padding:6px 0;
+  color:#c8a45a;font-size:.95rem;cursor:pointer;padding:6px 0;
   width:100%;font-family:sans-serif;transition:background .15s;
 " onmouseover="this.style.background='#2a1a08'"
   onmouseout="this.style.background='#1e1408'">🔊 Nghe</button>
@@ -488,10 +476,11 @@ function speak(){{
                 with st.spinner("Đang hỏi AI…"):
                     st.session_state[res_key] = analyze_kanji_ai(kanji)
             if res_key in st.session_state:
-                st.markdown(f'<div style="background:#120d06;border:1px solid #c8a45a33;'
-                            f'border-radius:2px;padding:10px 12px;font-size:.85rem;color:#c8b898;'
-                            f'margin-top:4px">{st.session_state[res_key]}</div>',
-                            unsafe_allow_html=True)
+                st.markdown(
+                    f'<div style="background:#120d06;border:1px solid #c8a45a33;'
+                    f'border-radius:2px;padding:10px 12px;font-size:.85rem;color:#c8b898;'
+                    f'margin-top:4px">{st.session_state[res_key]}</div>',
+                    unsafe_allow_html=True)
 
 
 
