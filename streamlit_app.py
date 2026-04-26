@@ -126,32 +126,34 @@ st.markdown("""
   display: block; margin-top: 4px; font-family: 'Noto Serif JP', serif; }
 .logo-sub { color: #9a8a70; font-size: .78rem; margin: 8px 0 0; letter-spacing: 2px; }
 
-/* ── Tab radio — kiểu noren ── */
+/* ── Tab radio — pill style ── */
 div[data-testid="stRadio"] > label,
 div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] {
-  display: flex; flex-direction: row; gap: 0;
-  background: #fff; border-radius: 4px;
-  border: 1px solid #c0392b55;
-  padding: 0; overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  display: flex; flex-direction: row; gap: 6px;
+  background: transparent;
+  border: none; padding: 4px 0; overflow: visible;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
   display: flex; align-items: center; justify-content: center;
-  flex: 1; background: transparent;
-  border-right: 1px solid #e0d0be;
-  padding: 10px 8px;
+  flex: 1;
+  background: #fff;
+  border: 1.5px solid #ddd0be;
+  border-radius: 8px;
+  padding: 10px 12px;
   color: #5a4030 !important; font-weight: 700; cursor: pointer;
-  transition: all .2s; white-space: nowrap; font-size: .9rem;
-  letter-spacing: .5px;
+  transition: all .18s; white-space: nowrap; font-size: .9rem;
+  letter-spacing: .3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.07);
 }
-div[data-testid="stRadio"] > div[role="radiogroup"] > label:last-child { border-right: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
   background: #c0392b !important; color: #fff !important;
-  box-shadow: inset 0 -3px 0 rgba(0,0,0,.15);
+  border-color: #c0392b !important;
+  box-shadow: 0 3px 10px rgba(192,57,43,.3);
 }
-div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover {
-  background: #ffeaea !important; color: #8b0000 !important;
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover:not(:has(input:checked)) {
+  border-color: #c0392b99 !important; color: #8b0000 !important;
+  background: #fff9f9 !important;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
@@ -188,28 +190,65 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { 
 .vocab-example { font-size: .8rem; color: #8a7a6a; font-style: italic; margin-top: 2px; }
 
 /* ── Buttons ── */
+/* Primary — urushi đỏ đẹp */
 button[data-testid="baseButton-primary"] {
-  background: linear-gradient(135deg, #c0392b, #8b0000) !important;
-  border: 1px solid #c0392b !important; color: #fff !important;
-  border-radius: 3px !important; font-weight: 700 !important; letter-spacing: .5px;
+  background: #c0392b !important;
+  border: none !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: .92rem !important;
+  letter-spacing: .4px !important;
+  padding: 0.5rem 1.2rem !important;
+  box-shadow: 0 3px 10px rgba(192,57,43,.28) !important;
+  transition: all .18s !important;
 }
 button[data-testid="baseButton-primary"]:hover {
-  background: linear-gradient(135deg, #e04040, #a01010) !important;
-  box-shadow: 0 4px 14px rgba(192,57,43,.3) !important;
+  background: #a82820 !important;
+  box-shadow: 0 5px 16px rgba(192,57,43,.38) !important;
+  transform: translateY(-1px);
 }
-button[data-testid="baseButton-secondary"] {
-  background: #f5f0e8 !important; border: 1.5px solid #b8902a !important;
-  color: #5a3a0a !important; border-radius: 3px !important; font-weight: 600 !important;
-}
-button[data-testid="baseButton-secondary"]:hover {
-  background: #fff3e0 !important; border-color: #c0392b !important;
-  color: #8b0000 !important;
+button[data-testid="baseButton-primary"]:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(192,57,43,.2) !important;
 }
 
-/* ── Download button ── */
-a[data-testid="stDownloadButton-downloadButton"] {
-  background: #fff8f0 !important; border: 1px solid #c8a45a88 !important;
-  color: #8a6010 !important; border-radius: 3px !important;
+/* Secondary — outlined sạch */
+button[data-testid="baseButton-secondary"] {
+  background: #fff !important;
+  border: 1.5px solid #c8a45a !important;
+  color: #7a4a10 !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: .9rem !important;
+  padding: 0.45rem 1rem !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07) !important;
+  transition: all .18s !important;
+}
+button[data-testid="baseButton-secondary"]:hover {
+  background: #fff8ee !important;
+  border-color: #c0392b !important;
+  color: #8b0000 !important;
+  box-shadow: 0 3px 10px rgba(192,57,43,.15) !important;
+}
+
+/* Download button */
+a[data-testid="stDownloadButton-downloadButton"],
+button[data-testid="stDownloadButton-downloadButton"] {
+  background: #fff !important;
+  border: 1.5px solid #b8902a !important;
+  color: #7a5010 !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 0.45rem 1rem !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07) !important;
+  transition: all .18s !important;
+}
+a[data-testid="stDownloadButton-downloadButton"]:hover,
+button[data-testid="stDownloadButton-downloadButton"]:hover {
+  background: #fffbf0 !important;
+  border-color: #c0392b !important;
+  color: #8b0000 !important;
 }
 
 /* ── Input, selectbox ── */
@@ -275,7 +314,7 @@ footer    { visibility: hidden; }
   div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none; }
   div[data-testid="stRadio"] > div[role="radiogroup"] > label { padding: 10px 12px !important; font-size: .82rem; }
   button[data-testid="baseButton-primary"],
-  button[data-testid="baseButton-secondary"] { min-height: 44px !important; font-size: .9rem !important; }
+  button[data-testid="baseButton-secondary"] { min-height: 44px !important; font-size: .92rem !important; border-radius: 8px !important; }
   [data-testid="stMetricValue"] { font-size: 1.1rem !important; }
   [data-testid="stMetricLabel"] { font-size: .7rem !important; }
   .sec-title  { font-size: 1rem; }
