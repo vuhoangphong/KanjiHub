@@ -19,7 +19,10 @@ import threading
 GEMINI_MODEL = "gemini-2.0-flash"  # free tier trên Google AI Studio
 
 OPENROUTER_MODEL        = "nvidia/nemotron-3-super-120b-a12b:free"  # free, không tốn credit
-OPENROUTER_ANALYZE_MODEL = "nvidia/nemotron-3-nano-30b-a3b:free"   # nhỏ hơn, nhanh hơn cho phân tích
+OPENROUTER_ANALYZE_MODELS = [
+    "openai/gpt-oss-120b:free",            # OpenAI 120B open-weight — chính xác nhất
+    "nvidia/nemotron-3-super-120b-a12b:free",  # fallback: NVIDIA 120B
+]
 
 import unicodedata
 
@@ -562,32 +565,34 @@ def analyze_kanji_ai(kanji: str) -> str:
 
     else:
 
-        try:
+        url = "https://openrouter.ai/api/v1/chat/completions"
 
-            url = "https://openrouter.ai/api/v1/chat/completions"
+        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
-            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        for model in OPENROUTER_ANALYZE_MODELS:
 
-            payload = {
+            try:
 
-                "model": OPENROUTER_ANALYZE_MODEL,
+                payload = {
 
-                "messages": [{"role": "user", "content": prompt}]
+                    "model": model,
 
-            }
+                    "messages": [{"role": "user", "content": prompt}]
 
-            resp = requests.post(url, headers=headers, json=payload, timeout=30)
-            resp.encoding = 'utf-8'
-            data = resp.json()
-            if "choices" in data and data["choices"]:
-                return data["choices"][0]["message"]["content"].strip()
-            err = data.get("error", {})
-            err_msg = err.get("message", "") if isinstance(err, dict) else str(err)
-            return f"✗ OpenRouter: {err_msg or data}"
+                }
 
-        except Exception as e:
+                resp = requests.post(url, headers=headers, json=payload, timeout=45)
+                resp.encoding = 'utf-8'
+                data = resp.json()
+                if "choices" in data and data["choices"]:
+                    return data["choices"][0]["message"]["content"].strip()
+                # model này lỗi → thử model tiếp theo
 
-            return f"✗ Lỗi OpenRouter: {e}"
+            except Exception:
+
+                continue
+
+        return "✗ Tất cả model AI đều không phản hồi, thử lại sau."
 
 
 
