@@ -18,6 +18,7 @@ from kanji_lookup import (
     lookup_vocab,
 )
 from pdf_generator import generate_pdf, generate_vocab_table_pdf
+from vocab_lessons import VOCAB_LESSONS
 
 import sys
 import requests
@@ -1306,6 +1307,7 @@ class App(ctk.CTk):
         tabview.add("N3")
         tabview.add("N2")
         tabview.add("N1")
+        tabview.add("Từ Vựng")
 
         def chunker(seq, size):
             return [seq[pos:pos + size] for pos in range(0, len(seq), size)]
@@ -1369,12 +1371,145 @@ class App(ctk.CTk):
                               command=on_learn).pack(side="right", padx=10)
 
         def on_tab_change():
-            make_tab(tabview.get())
+            tab = tabview.get()
+            if tab == "Từ Vựng":
+                make_vocab_tab()
+            else:
+                make_tab(tab)
+
+        def make_vocab_tab():
+            if "Từ Vựng" in rendered:
+                return
+            rendered.add("Từ Vựng")
+            parent_tab = tabview.tab("Từ Vựng")
+            scroll = ctk.CTkScrollableFrame(parent_tab, fg_color="transparent")
+            scroll.pack(fill="both", expand=True, padx=10, pady=10)
+
+            lesson_nums = sorted(VOCAB_LESSONS.keys())
+            if not lesson_nums:
+                ctk.CTkLabel(scroll, text="Chưa có bài từ vựng nào.",
+                             font=("Arial", 13), text_color="#6C7086").pack(pady=20)
+                return
+
+            for lesson_num in lesson_nums:
+                words = VOCAB_LESSONS[lesson_num]
+                lesson_id = f"vocab_lesson_{lesson_num}"
+                is_done = lesson_id in self._progress.get("Từ Vựng", [])
+
+                row = ctk.CTkFrame(scroll, fg_color="#1E1E2E", corner_radius=8)
+                row.pack(fill="x", pady=4)
+
+                left = ctk.CTkFrame(row, fg_color="transparent")
+                left.pack(side="left", fill="both", expand=True, padx=10, pady=8)
+
+                check_mark = "✅ " if is_done else "📖 "
+                title_color = "#A6E3A1" if is_done else "#CDD6F4"
+                preview = "  ".join(w["word"] for w in words[:5]) + "…"
+
+                ctk.CTkLabel(left, text=f"{check_mark}Bài {lesson_num}  ({len(words)} từ)",
+                             font=("Arial", 14, "bold"), text_color=title_color,
+                             anchor="w").pack(fill="x")
+                ctk.CTkLabel(left, text=preview,
+                             font=("Noto Sans JP", 13), text_color="#89B4FA",
+                             anchor="w").pack(fill="x")
+
+                def on_study(ln=lesson_num, lid=lesson_id):
+                    if "Từ Vựng" not in self._progress:
+                        self._progress["Từ Vựng"] = []
+                    if lid not in self._progress["Từ Vựng"]:
+                        self._progress["Từ Vựng"].append(lid)
+                        self._save_progress()
+                    self._open_vocab_lesson(ln)
+
+                btn_text = "Ôn lại" if is_done else "Học ngay"
+                btn_color = "#313244" if is_done else "#0F52BA"
+                btn_hover = "#45475A" if is_done else "#1E65D0"
+                ctk.CTkButton(row, text=btn_text, width=80, height=32,
+                              fg_color=btn_color, hover_color=btn_hover,
+                              command=on_study).pack(side="right", padx=10)
 
         tabview.configure(command=on_tab_change)
 
         # Render tab đầu tiên ngay lập tức
         make_tab("N5")
+
+    def _open_vocab_lesson(self, lesson_num: int):
+        """Mở dialog học từ vựng cho một bài cụ thể."""
+        words = VOCAB_LESSONS.get(lesson_num, [])
+        if not words:
+            return
+
+        dlg = ctk.CTkToplevel(self)
+        dlg.title(f"📚 Từ Vựng Bài {lesson_num}")
+        dlg.geometry("700x600")
+        dlg.resizable(True, True)
+        dlg.grab_set()
+        dlg.after(100, dlg.lift)
+        dlg.after(100, dlg.focus_force)
+
+        # Center popup
+        self.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - 350
+        y = self.winfo_y() + (self.winfo_height() // 2) - 300
+        dlg.geometry(f"+{max(0, x)}+{max(0, y)}")
+
+        # Header
+        hdr = ctk.CTkFrame(dlg, fg_color="#0D1B2A", corner_radius=0)
+        hdr.pack(fill="x")
+        ctk.CTkLabel(hdr, text=f"📚  Từ Vựng Bài {lesson_num}",
+                     font=("Arial", 18, "bold"), text_color="#CBA6F7").pack(side="left", padx=20, pady=12)
+        ctk.CTkLabel(hdr, text=f"{len(words)} từ",
+                     font=("Arial", 12), text_color="#6C7086").pack(side="right", padx=20)
+
+        # Scrollable word list
+        scroll = ctk.CTkScrollableFrame(dlg, fg_color="transparent")
+        scroll.pack(fill="both", expand=True, padx=12, pady=10)
+
+        for idx, item in enumerate(words):
+            card = ctk.CTkFrame(scroll, fg_color="#1E1E2E", corner_radius=8, border_width=1,
+                                border_color="#313244")
+            card.pack(fill="x", pady=4, padx=2)
+
+            # Số thứ tự + từ + reading
+            top = ctk.CTkFrame(card, fg_color="transparent")
+            top.pack(fill="x", padx=12, pady=(8, 2))
+
+            ctk.CTkLabel(top, text=f"{idx + 1}.", font=("Arial", 12),
+                         text_color="#6C7086", width=24, anchor="w").pack(side="left")
+
+            ctk.CTkLabel(top, text=item["word"], font=("Noto Sans JP", 20, "bold"),
+                         text_color="#CDD6F4", anchor="w").pack(side="left", padx=(4, 0))
+
+            ctk.CTkLabel(top, text=f"（{item['reading']}）", font=("Noto Sans JP", 14),
+                         text_color="#89B4FA", anchor="w").pack(side="left", padx=(6, 0))
+
+            if item.get("hanviet"):
+                ctk.CTkLabel(top, text=item["hanviet"], font=("Arial", 11, "bold"),
+                             text_color="#CBA6F7", anchor="e").pack(side="right")
+
+            # Nghĩa tiếng Việt
+            ctk.CTkLabel(card, text=f"  ▸  {item['meaning']}",
+                         font=("Arial", 13), text_color="#A6E3A1",
+                         anchor="w").pack(fill="x", padx=12, pady=(0, 4))
+
+            # Ví dụ
+            if item.get("example"):
+                ex_frame = ctk.CTkFrame(card, fg_color="#181825", corner_radius=6)
+                ex_frame.pack(fill="x", padx=12, pady=(0, 8))
+                ctk.CTkLabel(ex_frame, text=f"  {item['example']}",
+                             font=("Noto Sans JP", 12), text_color="#F5C2E7",
+                             anchor="w").pack(fill="x", padx=6, pady=(4, 0))
+                if item.get("exampleVi"):
+                    ctk.CTkLabel(ex_frame, text=f"  → {item['exampleVi']}",
+                                 font=("Arial", 11), text_color="#CDD6F4",
+                                 anchor="w").pack(fill="x", padx=6, pady=(2, 4))
+
+            # Nút phát âm
+            def _speak(t=item["word"]):
+                speak(t)
+            ctk.CTkButton(card, text="🔊", width=40, height=24,
+                          font=("Arial", 12), fg_color="#1E3A5F", hover_color="#2A5080",
+                          command=_speak).place(relx=1.0, rely=0.0, x=-50, y=8)
 
     def _open_vocab_lookup(self):
         """Mở cửa sổ tra cứu từ vựng tiếng Nhật."""
