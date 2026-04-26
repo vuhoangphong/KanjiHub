@@ -412,7 +412,11 @@ st.markdown("""
 [data-testid="stAppViewContainer"] > section { padding-bottom: 0 !important; }
 [data-testid="stHeader"] { display: none !important; }
 footer, [data-testid="stBottom"], [data-testid="stStatusWidget"],
-[data-testid="stDecoration"], #stDecoration { display: none !important; }
+[data-testid="stDecoration"], #stDecoration,
+[data-testid="stToolbar"], [data-testid="stDeployButton"],
+[data-testid="stAppDeployedOn"], [data-testid="stHostedBadge"],
+.viewerBadge_container__r5tak, .viewerBadge_link__qRIco,
+a[href="https://streamlit.io/cloud"], a[href*="share.streamlit.io"] { display: none !important; }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
@@ -917,6 +921,7 @@ hr { border-color: #d8c8a8 !important; }
 /* ── Hide Streamlit chrome ── */
 #MainMenu { visibility: hidden; }
 footer    { visibility: hidden; }
+[data-testid="stToolbar"] { display: none !important; }
 
 /* ── Mobile Responsive (≤ 768px) ── */
 @media (max-width: 768px) {
