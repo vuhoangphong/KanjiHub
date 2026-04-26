@@ -222,6 +222,78 @@ footer, [data-testid="stBottom"], [data-testid="stStatusWidget"] { display: none
   display: block; margin-top: 4px; font-family: 'Noto Serif JP', serif; }
 .logo-sub { color: #9a8a70; font-size: .78rem; margin: 8px 0 0; letter-spacing: 2px; }
 
+/* ── Hero Section ── */
+.hero {
+  text-align: center;
+  padding: 2.8rem 1rem 2rem;
+  background: linear-gradient(160deg, #fff8f0 0%, #fdf4e8 60%, #fff8f0 100%);
+  border-radius: 12px; margin-bottom: 1.6rem;
+  border-top: 4px solid #c0392b;
+  box-shadow: 0 2px 16px rgba(192,57,43,.07);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: "山 川 花 月 雪 風 龍 鳥 竹 梅 松 波";
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  font-size: .55rem; color: rgba(184,144,42,.13); letter-spacing: 12px;
+  white-space: nowrap; pointer-events: none; font-family: 'Noto Serif JP', serif;
+}
+.hero-jp {
+  font-size: .95rem; color: #c0392b; letter-spacing: 8px;
+  font-family: 'Noto Serif JP', serif; display: block; margin-bottom: 10px;
+}
+.hero-title {
+  font-size: 2.4rem; font-weight: 900; color: #1a1209;
+  letter-spacing: 3px; line-height: 1.2; margin: 0 0 8px;
+  font-family: Georgia, 'Noto Serif JP', serif;
+}
+.hero-sub {
+  font-size: 1rem; color: #6a5040; margin: 6px 0 20px; letter-spacing: .5px;
+}
+.hero-cta {
+  display: inline-block;
+  background: linear-gradient(135deg, #e84040 0%, #b8200e 100%);
+  color: #fff !important; font-weight: 700; font-size: .95rem;
+  padding: 12px 32px; border-radius: 50px; letter-spacing: 1px;
+  box-shadow: 0 4px 16px rgba(192,57,43,.3); text-decoration: none !important;
+  border: none; cursor: pointer; margin-bottom: 6px;
+}
+.hero-kanji-day {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: #fff; border: 1.5px solid #e0d4be; border-radius: 12px;
+  padding: 10px 20px; margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.hero-kanji-char { font-size: 2rem; font-family: 'Noto Serif JP', serif; color: #1a1209; }
+.hero-kanji-info { text-align: left; }
+.hero-kanji-label { font-size: .65rem; color: #c0392b; font-weight: 700; letter-spacing: 2px; display: block; }
+.hero-kanji-mean  { font-size: .88rem; color: #3a2a1a; font-weight: 600; }
+
+/* ── Feature Cards ── */
+.feature-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  margin: 0 0 1.4rem;
+}
+.feature-card {
+  background: #fff; border: 1.5px solid #e0d4be;
+  border-radius: 12px; padding: 18px 14px 14px;
+  text-align: center; transition: all .18s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(192,57,43,.12);
+  border-color: #c0392b44;
+}
+.feature-icon { font-size: 1.8rem; display: block; margin-bottom: 8px; }
+.feature-title { font-size: .88rem; font-weight: 700; color: #1a1209; letter-spacing: .5px; }
+.feature-desc  { font-size: .72rem; color: #9a8a70; margin-top: 4px; letter-spacing: .3px; }
+.feature-badge {
+  display: inline-block; font-size: .6rem; font-weight: 700;
+  background: #c0392b; color: #fff; border-radius: 10px;
+  padding: 1px 8px; margin-top: 5px; letter-spacing: .5px;
+}
+
 /* ── Tab radio — pill style ── */
 div[data-testid="stRadio"] > label,
 div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
@@ -1000,12 +1072,71 @@ st.divider()
 
 # === TAB 1 ===
 if active_tab == TAB_NAMES[0]:
-    st.markdown('''
-<div class="app-header">
-  <div class="logo-seal">漢</div>
-  <div class="logo-title">KANJI HUB</div>
-  <span class="logo-jp">漢字 · 学習</span>
-  <p class="logo-sub">Tra cứu Kanji Nhật &middot; Nghĩa tiếng Việt &middot; Luyện viết</p>
+    # Kanji ngẫu nhiên của ngày
+    import random as _random
+    _kanji_pool = [
+        ("夢", "Mộng", "Giấc mơ, ước mơ"),
+        ("心", "Tâm", "Tâm hồn, con tim"),
+        ("道", "Đạo", "Con đường, đạo lý"),
+        ("力", "Lực", "Sức mạnh, năng lực"),
+        ("愛", "Ái", "Tình yêu, yêu thương"),
+        ("学", "Học", "Học hỏi, học tập"),
+        ("山", "Sơn", "Núi, ngọn núi"),
+        ("花", "Hoa", "Hoa, bông hoa"),
+        ("月", "Nguyệt", "Mặt trăng, tháng"),
+        ("風", "Phong", "Gió, phong cách"),
+    ]
+    _rng = _random.Random(__import__('datetime').date.today().toordinal())
+    _k, _hv, _mean = _rng.choice(_kanji_pool)
+
+    st.markdown(f'''
+<div class="hero">
+  <span class="hero-jp">日本語を勉強しましょう</span>
+  <div class="hero-title">Tra Kanji · Học Tiếng Nhật</div>
+  <p class="hero-sub">Nghĩa tiếng Việt · Âm Hán Việt · Lộ trình JLPT · Luyện viết PDF · AI phân tích</p>
+  <div class="hero-kanji-day">
+    <span class="hero-kanji-char">{_k}</span>
+    <div class="hero-kanji-info">
+      <span class="hero-kanji-label">✦ KANJI HÔM NAY</span>
+      <span class="hero-kanji-mean">{_hv} — {_mean}</span>
+    </div>
+  </div>
+</div>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <span class="feature-icon">🔍</span>
+    <div class="feature-title">TRA CỨU KANJI</div>
+    <div class="feature-desc">Tìm theo chữ hoặc nghĩa tiếng Việt</div>
+    <span class="feature-badge">DB + AI</span>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">🗺️</span>
+    <div class="feature-title">LỘ TRÌNH JLPT</div>
+    <div class="feature-desc">Kanji từng bài N5 → N1</div>
+    <span class="feature-badge">MIỄN PHÍ</span>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">📖</span>
+    <div class="feature-title">TỪ VỰNG</div>
+    <div class="feature-desc">Học từ vựng theo chủ đề bài</div>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">📄</span>
+    <div class="feature-title">LUYỆN VIẾT PDF</div>
+    <div class="feature-desc">Tạo bảng ô luyện viết tay</div>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">🤖</span>
+    <div class="feature-title">PHÂN TÍCH AI</div>
+    <div class="feature-desc">Giải thích sâu bằng GPT / Gemini</div>
+    <span class="feature-badge">HOT</span>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">🔊</span>
+    <div class="feature-title">PHÁT ÂM TTS</div>
+    <div class="feature-desc">Nghe cách đọc từng chữ</div>
+  </div>
 </div>
 ''', unsafe_allow_html=True)
 
