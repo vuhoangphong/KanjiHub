@@ -129,10 +129,16 @@ st.markdown("""
 /* ── Tab radio — pill style ── */
 div[data-testid="stRadio"] > label,
 div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
+div[data-testid="stRadio"],
+div[data-testid="stRadio"] > div,
+div[data-testid="stRadio"] > div[role="radiogroup"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 div[data-testid="stRadio"] > div[role="radiogroup"] {
   display: flex; flex-direction: row; gap: 8px;
-  background: transparent;
-  border: none; padding: 6px 0; overflow: visible;
+  padding: 6px 0; overflow: visible;
 }
 /* Base label */
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
