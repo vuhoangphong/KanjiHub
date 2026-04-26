@@ -73,7 +73,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:transparent;padding:
   flex-shrink:0;transition:background .14s}.fc-arrow:hover{background:rgba(0,0,0,.13)}
 /* ── 3D Scene ── */
 .fc-scene{flex:1;perspective:900px;min-width:0}
-.fc-card{position:relative;width:100%;height:220px;transform-style:preserve-3d;
+.fc-card{position:relative;width:100%;height:260px;transform-style:preserve-3d;
   transition:transform .55s cubic-bezier(.645,.045,.355,1);cursor:pointer;border-radius:12px}
 .fc-card.flipped{transform:rotateY(180deg)}
 .fc-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;
@@ -1702,7 +1702,7 @@ elif active_tab == TAB_NAMES[3]:
                     })
             st.session_state["fc_html"] = _build_fc_html(_json.dumps(_deck, ensure_ascii=False))
 
-        _components.html(st.session_state["fc_html"], height=430, scrolling=False)
+        _components.html(st.session_state["fc_html"], height=470, scrolling=False)
 
 # ── Site Footer (chỉ hiện ở tab Lộ trình và Từ Vựng) ──────────────────────────
 if active_tab != TAB_NAMES[0]:
