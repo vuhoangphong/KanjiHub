@@ -448,29 +448,37 @@ with tab_path:
         st.session_state[prog_key] = set()
     done_n = len(st.session_state[prog_key])
 
-    # Progress bar
+    # Thống kê + progress
     pct = done_n / len(chunks) if chunks else 0
-    st.progress(pct, text=f"**{level}** — {len(level_data[level])} chữ · {len(chunks)} bài · Hoàn thành {done_n}/{len(chunks)}")
-
-    st.write("")
+    st.markdown(f"""
+<div style="display:flex;align-items:center;gap:16px;margin:8px 0 4px">
+  <span style="color:#cdd6f4;font-size:.95rem">
+    <b>{level}</b> · {len(level_data[level])} chữ · {len(chunks)} bài
+  </span>
+  <span style="color:#a6e3a1;font-size:.85rem">✅ {done_n}/{len(chunks)} hoàn thành</span>
+</div>""", unsafe_allow_html=True)
+    st.progress(pct)
     for i, chunk in enumerate(chunks):
         lid     = f"{level}_{i+1}"
         res_key = f"path_res_{lid}"
         is_done = lid in st.session_state[prog_key]
         has_res = bool(st.session_state.get(res_key))
         icon    = "✅" if is_done else "📖"
-        with st.expander(f"{icon} Bài {i+1} ({len(chunk)} chữ) — {'  '.join(chunk)}",
+        with st.expander(f"{icon} Bài {i+1} ({len(chunk)} chữ) — {' '.join(chunk)}",
                          expanded=has_res):
-            st.markdown(f'<span style="font-size:1.8rem;letter-spacing:6px;color:#cdd6f4">{"  ".join(chunk)}</span>',
+            st.markdown(f'<div style="font-size:1.6rem;letter-spacing:3px;color:#cdd6f4;margin-bottom:10px">{' '.join(chunk)}</div>',
                         unsafe_allow_html=True)
-            b1, b2 = st.columns([2, 3])
+            b1, b2 = st.columns([1, 1])
             with b1:
-                if st.button(f"🔍 Tra bài {i+1}", key=f"tra_{level}_{i}", type="primary"):
+                if st.button(f"🔍 Tra bài {i+1}", key=f"tra_{level}_{i}",
+                             type="primary", use_container_width=True):
                     st.session_state[prog_key].add(lid)
                     with st.spinner("Đang tra…"):
                         st.session_state[res_key] = do_lookup("".join(chunk), "DB + AI")
             with b2:
-                chk = st.checkbox("✅ Đã học xong", value=is_done, key=f"chk_{level}_{i}")
+                st.markdown('<div style="margin-top:6px">', unsafe_allow_html=True)
+                chk = st.checkbox("Đã học xong", value=is_done, key=f"chk_{level}_{i}")
+                st.markdown('</div>', unsafe_allow_html=True)
                 if chk and not is_done:
                     st.session_state[prog_key].add(lid)
                 elif not chk and is_done:
