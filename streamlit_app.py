@@ -131,26 +131,27 @@ div[data-testid="stRadio"] > label,
 div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] {
   display: flex; flex-direction: row; gap: 0;
-  background: #ede6d8; border-radius: 4px;
-  border: 1px solid #c8a45a88;
+  background: #fff; border-radius: 4px;
+  border: 1px solid #c0392b55;
   padding: 0; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
   display: flex; align-items: center; justify-content: center;
   flex: 1; background: transparent;
-  border-right: 1px solid #c8a45a55;
+  border-right: 1px solid #e0d0be;
   padding: 10px 8px;
-  color: #6a5a40 !important; font-weight: 700; cursor: pointer;
+  color: #5a4030 !important; font-weight: 700; cursor: pointer;
   transition: all .2s; white-space: nowrap; font-size: .9rem;
   letter-spacing: .5px;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:last-child { border-right: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
-  background: #c0392b !important; color: #fff8f0 !important;
+  background: #c0392b !important; color: #fff !important;
   box-shadow: inset 0 -3px 0 rgba(0,0,0,.15);
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover {
-  background: #f0e8d8 !important; color: #8b0000 !important;
+  background: #ffeaea !important; color: #8b0000 !important;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
@@ -189,7 +190,7 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { 
 /* ── Buttons ── */
 button[data-testid="baseButton-primary"] {
   background: linear-gradient(135deg, #c0392b, #8b0000) !important;
-  border: 1px solid #c0392b !important; color: #fff8f0 !important;
+  border: 1px solid #c0392b !important; color: #fff !important;
   border-radius: 3px !important; font-weight: 700 !important; letter-spacing: .5px;
 }
 button[data-testid="baseButton-primary"]:hover {
@@ -197,11 +198,12 @@ button[data-testid="baseButton-primary"]:hover {
   box-shadow: 0 4px 14px rgba(192,57,43,.3) !important;
 }
 button[data-testid="baseButton-secondary"] {
-  background: #fff8f0 !important; border: 1px solid #c8a45a88 !important;
-  color: #8a6010 !important; border-radius: 3px !important;
+  background: #f5f0e8 !important; border: 1.5px solid #b8902a !important;
+  color: #5a3a0a !important; border-radius: 3px !important; font-weight: 600 !important;
 }
 button[data-testid="baseButton-secondary"]:hover {
-  border-color: #c0392b !important; color: #c0392b !important;
+  background: #fff3e0 !important; border-color: #c0392b !important;
+  color: #8b0000 !important;
 }
 
 /* ── Download button ── */
@@ -763,10 +765,10 @@ elif active_tab == TAB_NAMES[1]:
     pct = done_n / len(chunks) if chunks else 0
     st.markdown(f"""
 <div style="display:flex;align-items:center;gap:16px;margin:8px 0 4px">
-  <span style="color:#cdd6f4;font-size:.95rem">
+  <span style="color:#3a2a1a;font-size:.95rem">
     <b>{level}</b> · {len(level_data[level])} chữ · {len(chunks)} bài
   </span>
-  <span style="color:#a6e3a1;font-size:.85rem">✅ {done_n}/{len(chunks)} hoàn thành</span>
+  <span style="color:#2d6e4a;font-size:.85rem">✅ {done_n}/{len(chunks)} hoàn thành</span>
 </div>""", unsafe_allow_html=True)
     st.progress(pct)
     for i, chunk in enumerate(chunks):
@@ -777,7 +779,7 @@ elif active_tab == TAB_NAMES[1]:
         icon    = "✅" if is_done else "📖"
         with st.expander(f"{icon} Bài {i+1} ({len(chunk)} chữ) — {' '.join(chunk)}",
                          expanded=has_res):
-            st.markdown(f'<div style="font-size:1.6rem;letter-spacing:3px;color:#cdd6f4;margin-bottom:10px">{"  ".join(chunk)}</div>',
+            st.markdown(f'<div style="font-size:1.6rem;letter-spacing:3px;color:#1a3060;margin-bottom:10px">{"  ".join(chunk)}</div>',
                         unsafe_allow_html=True)
             b1, b2 = st.columns([1, 1])
             with b1:
