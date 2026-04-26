@@ -288,11 +288,14 @@ button[data-testid="stDownloadButton-downloadButton"]:hover {
 }
 
 /* ── Input, selectbox ── */
-[data-testid="stTextInput"] > div {
+[data-testid="stTextInput"] > div,
+[data-testid="stTextInput"] div[data-baseweb="input"],
+[data-testid="stTextInput"] div[data-baseweb="base-input"] {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
+  outline: none !important;
 }
 [data-testid="stTextInput"] input {
   background: #ffffff !important;
@@ -305,9 +308,16 @@ button[data-testid="stDownloadButton-downloadButton"]:hover {
   transition: border-color .18s, box-shadow .18s !important;
   outline: none !important;
 }
-[data-testid="stTextInput"] input:focus {
+[data-testid="stTextInput"] input:focus,
+[data-testid="stTextInput"] input:focus-visible {
   border-color: #e84040 !important;
   box-shadow: 0 0 0 3px rgba(232,64,64,.15), 0 2px 10px rgba(0,0,0,.06) !important;
+  outline: none !important;
+}
+[data-testid="stTextInput"] div[data-baseweb="input"]:focus-within,
+[data-testid="stTextInput"] div[data-baseweb="base-input"]:focus-within {
+  border: none !important;
+  box-shadow: none !important;
   outline: none !important;
 }
 [data-testid="stTextInput"] input::placeholder { color: #b8a898 !important; }
