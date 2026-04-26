@@ -266,7 +266,7 @@ function shuffleDeck(){
 }
 function renderDone(){
   spawnConfetti();
-  const em=known.length===DECK.length?'\uD83C\uDF89':known.length>DECK.length/2?'\u2B50':'\uD83D\uDCAA';
+  const em=known.length===DECK.length?'🎉':known.length>DECK.length/2?'⭐':'💪';
   document.getElementById('root').innerHTML=`
   <div class="fc-done">
     <div style="font-size:2.6rem">${em}</div>
@@ -277,7 +277,7 @@ function renderDone(){
       <div class="fc-ds"><span class="fc-ds-num n-u">${unk.length}</span><span class="fc-ds-lbl">\u2717 CH\u01afA THU\u1ed8C</span></div>
       <div class="fc-ds"><span class="fc-ds-num n-t">${DECK.length}</span><span class="fc-ds-lbl">T\u1ed4NG S\u1ed0 TH\u1ba2</span></div>
     </div>
-    ${unk.length>0?`<button class="fc-done-btn" onclick="reviewUnk()">\uD83D\uDD01 \u00d4n l\u1ea1i ${unk.length} th\u1ba3 ch\u01b0a thu\u1ed9c</button>`:''}
+    ${unk.length>0?`<button class="fc-done-btn" onclick="reviewUnk()">🔁 \u00d4n l\u1ea1i ${unk.length} th\u1ba3 ch\u01b0a thu\u1ed9c</button>`:''}
     <button class="fc-done-btn sec" onclick="restartDeck()">\u21ba H\u1ecdc l\u1ea1i t\u1eeb \u0111\u1ea7u</button>
   </div>`;
 }
