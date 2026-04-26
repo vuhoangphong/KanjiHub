@@ -258,7 +258,9 @@ button[data-testid="baseButton-primary"]:active {
 }
 
 /* Secondary — pill outline vàng nhạt */
-button[data-testid="baseButton-secondary"] {
+button[data-testid="baseButton-secondary"],
+button[kind="secondary"],
+[data-testid="stBaseButton-secondary"] {
   background: #fff !important;
   border: 2px solid #e8d5a8 !important;
   color: #8a5a20 !important;
@@ -269,7 +271,8 @@ button[data-testid="baseButton-secondary"] {
   box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
   transition: all .2s cubic-bezier(.4,0,.2,1) !important;
 }
-button[data-testid="baseButton-secondary"]:hover {
+button[data-testid="baseButton-secondary"]:hover,
+[data-testid="stBaseButton-secondary"]:hover {
   background: #fff5ea !important;
   border-color: #e84040 !important;
   color: #c0392b !important;
@@ -924,12 +927,17 @@ if active_tab == TAB_NAMES[0]:
 
 # === TAB 2 ===
 elif active_tab == TAB_NAMES[1]:
-    _c_logo, _c_title = st.columns([1, 9])
-    with _c_logo:
-        if _logo_uri:
-            st.markdown(f'<img src="{_logo_uri}" style="width:58px;height:58px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);margin-top:4px">', unsafe_allow_html=True)
-    with _c_title:
-        st.markdown('<div class="sec-title" style="margin-top:8px">🗺️ Lộ trình học Kanji</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'''
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+  {'<img src="' + _logo_uri + '" style="width:56px;height:56px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">' if _logo_uri else ''}
+  <div>
+    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">🗺️ Lộ trình học Kanji</div>
+    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Chọn cấp độ → tra từng bài</div>
+  </div>
+</div>''',
+        unsafe_allow_html=True
+    )
     level_data = {
         "N5": list(MNN_N5.keys()), "N4": list(N4_VI.keys()),
         "N3": list(N3_VI.keys()),  "N2": list(N2_VI.keys()),
@@ -1014,12 +1022,17 @@ elif active_tab == TAB_NAMES[1]:
 
 # === TAB 3 ===
 elif active_tab == TAB_NAMES[2]:
-    _c_logo, _c_title = st.columns([1, 9])
-    with _c_logo:
-        if _logo_uri:
-            st.markdown(f'<img src="{_logo_uri}" style="width:58px;height:58px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);margin-top:4px">', unsafe_allow_html=True)
-    with _c_title:
-        st.markdown('<div class="sec-title" style="margin-top:8px">📖 Từ Vựng theo Bài</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'''
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+  {'<img src="' + _logo_uri + '" style="width:56px;height:56px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">' if _logo_uri else ''}
+  <div>
+    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">📖 Từ Vựng theo Bài</div>
+    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Học từ vựng theo chủ đề</div>
+  </div>
+</div>''',
+        unsafe_allow_html=True
+    )
     if not VOCAB_LESSONS:
         st.info("Chưa có bài từ vựng nào.")
     else:
