@@ -436,6 +436,9 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child {
 TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng"]
 if "tab_radio" not in st.session_state:
     st.session_state["tab_radio"] = TAB_NAMES[0]
+# Áp dụng pending tab switch TRƯỚC khi widget render
+if "pending_tab" in st.session_state:
+    st.session_state["tab_radio"] = st.session_state.pop("pending_tab")
 
 active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
                       key="tab_radio", label_visibility="collapsed")
@@ -550,7 +553,7 @@ elif active_tab == TAB_NAMES[1]:
                         res = do_lookup("".join(chunk), "DB + AI")
                     st.session_state[res_key] = res
                     st.session_state.results   = res
-                    st.session_state["tab_radio"] = TAB_NAMES[0]  # nhảy về Tra Kanji
+                    st.session_state["pending_tab"] = TAB_NAMES[0]  # nhảy về Tra Kanji
                     st.rerun()
             with b2:
                 st.markdown('<div style="margin-top:6px">', unsafe_allow_html=True)
