@@ -63,84 +63,90 @@ def has_cjk(text):
 _FC_TEMPLATE = """<!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#dce8f5;padding:10px 6px 6px;overflow-x:hidden}
-/* ── Layout: arrow | card | arrow ── */
+body{font-family:'Segoe UI',system-ui,sans-serif;background:transparent;padding:8px 4px 4px;overflow-x:hidden}
+/* ── Wrapper centered ── */
+.fc-wrap{max-width:520px;margin:0 auto}
+/* ── Layout: arrow | scene | arrow ── */
 .fc-outer{display:flex;align-items:center;gap:6px;margin-bottom:10px}
-.fc-arrow{background:#c5d5e8;border:none;border-radius:50%;width:34px;height:34px;font-size:1.2rem;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;color:#3a5570;
-  flex-shrink:0;transition:background .14s}.fc-arrow:hover{background:#b0c4db}
-/* ── Card ── */
-.fc-card-area{flex:1;min-width:0}
-.fc-card{background:#1e2d40;border-radius:8px;overflow:hidden;cursor:pointer;
-  transition:transform .08s;user-select:none}.fc-card:active{transform:scale(.998)}
-.fc-body{min-height:230px;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;padding:26px 18px 14px;position:relative}
+.fc-arrow{background:rgba(0,0,0,.07);border:none;border-radius:50%;width:30px;height:30px;font-size:1.1rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;color:#5a6a7a;
+  flex-shrink:0;transition:background .14s}.fc-arrow:hover{background:rgba(0,0,0,.13)}
+/* ── 3D Scene ── */
+.fc-scene{flex:1;perspective:900px;min-width:0}
+.fc-card{position:relative;width:100%;height:220px;transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.645,.045,.355,1);cursor:pointer;border-radius:12px}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:20px 22px 14px;overflow:hidden}
+.fc-front{background:#1e2d40}
+.fc-back{background:#1e2d40;transform:rotateY(180deg)}
 /* star */
-.fc-star{position:absolute;top:10px;right:12px;font-size:1rem;color:#4a6080;
+.fc-star{position:absolute;top:9px;right:11px;font-size:.95rem;color:#4a6080;
   background:none;border:none;cursor:pointer;padding:2px}.fc-star:hover{color:#c8a45a}
 /* front */
-.fc-main{font-size:2.4rem;font-weight:700;color:#fff;text-align:center;
+.fc-main{font-size:2.2rem;font-weight:700;color:#fff;text-align:center;
   font-family:'Noto Serif JP','Segoe UI',serif;line-height:1.25;margin-bottom:6px}
-.fc-sub{font-size:.88rem;color:#7a95b0;text-align:center}
+.fc-sub{font-size:.86rem;color:#7a95b0;text-align:center}
 /* back */
-.fc-b-meaning{font-size:1.35rem;font-weight:700;color:#fff;text-align:center;margin-bottom:4px}
-.fc-b-hv{font-size:.72rem;color:#e07878;font-weight:700;letter-spacing:1px;margin-bottom:10px}
-.fc-b-jp{font-size:.78rem;color:#b0c4d8;text-align:center;
+.fc-b-meaning{font-size:1.3rem;font-weight:700;color:#fff;text-align:center;margin-bottom:4px}
+.fc-b-hv{font-size:.7rem;color:#e07878;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.fc-b-jp{font-size:.75rem;color:#b0c4d8;text-align:center;
   font-family:'Noto Serif JP','Segoe UI',serif;margin-bottom:3px}
-.fc-b-vi{font-size:.74rem;color:#7a95b0;text-align:center;font-style:italic}
-/* audio btn */
+.fc-b-vi{font-size:.72rem;color:#7a95b0;text-align:center;font-style:italic}
+/* TTS on face */
 .fc-audio{background:none;border:none;color:#5a7898;cursor:pointer;margin-top:10px;
-  display:flex;align-items:center;gap:4px;font-size:.82rem;padding:4px 10px;
+  display:flex;align-items:center;gap:4px;font-size:.8rem;padding:3px 9px;
   border-radius:6px;transition:all .14s}
 .fc-audio:hover{color:#8099b0;background:rgba(255,255,255,.07)}
 .fc-audio.speaking{color:#60a0e0;animation:pulse .5s ease infinite alternate}
 @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.12)}}
 /* flash overlay */
-.fc-ov{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .18s}
+.fc-ov{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .18s;border-radius:12px}
 .fc-ov.green{background:rgba(39,174,96,.18)}.fc-ov.red{background:rgba(220,53,69,.16)}.fc-ov.show{opacity:1}
 /* keyboard shortcut bar */
-.fc-kb{background:#162030;padding:8px 12px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;
-  border-top:1px solid rgba(255,255,255,.07)}
-.fc-kb-lbl{font-size:.6rem;color:#5a7898;margin-right:3px;flex-shrink:0}
-.fc-kb-item{display:flex;align-items:center;gap:3px;margin-right:4px}
+.fc-kb{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.22);
+  padding:5px 10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.fc-kb-lbl{font-size:.58rem;color:#5a7898;margin-right:2px;flex-shrink:0}
+.fc-kb-item{display:flex;align-items:center;gap:3px;margin-right:3px}
 .fc-kb-key{background:#243345;border:1px solid #344d60;border-radius:3px;
-  padding:2px 5px;font-size:.58rem;color:#7a9ab0;font-weight:600}
-.fc-kb-act{font-size:.58rem;color:#5a7898}
+  padding:1px 4px;font-size:.56rem;color:#7a9ab0;font-weight:600}
+.fc-kb-act{font-size:.56rem;color:#5a7898}
 /* ── Below-card controls ── */
 .fc-controls{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .fc-tabs{display:flex;gap:5px}
 .fc-tab{background:#3b82f6;color:#fff;border:none;border-radius:6px;
-  padding:5px 11px;font-size:.76rem;font-weight:600;cursor:pointer;opacity:.45;transition:opacity .14s}
-.fc-tab.active{opacity:1}.fc-tab:hover{opacity:.85}
+  padding:5px 10px;font-size:.73rem;font-weight:600;cursor:pointer;opacity:.4;transition:opacity .14s}
+.fc-tab.active{opacity:1}.fc-tab:hover{opacity:.82}
 /* center: ✗ counter ✓ */
 .fc-center{display:flex;align-items:center;gap:9px}
-.fc-unk-btn,.fc-known-btn{border:none;border-radius:50%;width:34px;height:34px;
-  font-size:.95rem;color:#fff;cursor:pointer;display:flex;align-items:center;
+.fc-unk-btn,.fc-known-btn{border:none;border-radius:50%;width:32px;height:32px;
+  font-size:.9rem;color:#fff;cursor:pointer;display:flex;align-items:center;
   justify-content:center;transition:transform .12s,box-shadow .12s}
-.fc-unk-btn{background:#dc3545}.fc-unk-btn:hover{transform:scale(1.08);box-shadow:0 3px 10px rgba(220,53,69,.4)}
-.fc-known-btn{background:#28a745}.fc-known-btn:hover{transform:scale(1.08);box-shadow:0 3px 10px rgba(40,167,69,.4)}
-.fc-counter{font-size:.85rem;font-weight:700;color:#1a2a3a;min-width:44px;text-align:center}
+.fc-unk-btn{background:#dc3545}.fc-unk-btn:hover{transform:scale(1.09);box-shadow:0 3px 10px rgba(220,53,69,.4)}
+.fc-known-btn{background:#28a745}.fc-known-btn:hover{transform:scale(1.09);box-shadow:0 3px 10px rgba(40,167,69,.4)}
+.fc-counter{font-size:.82rem;font-weight:700;color:#2a3a4a;min-width:42px;text-align:center}
 /* right icons */
-.fc-right{display:flex;align-items:center;gap:6px}
-.fc-dir-btn{background:#fff;border:1.5px solid #c5d5e8;border-radius:6px;padding:4px 9px;
-  font-size:.7rem;color:#1a2a3a;font-weight:600;cursor:pointer;white-space:nowrap;
+.fc-right{display:flex;align-items:center;gap:5px}
+.fc-dir-btn{background:#fff;border:1.5px solid #d0d8e0;border-radius:6px;padding:4px 8px;
+  font-size:.68rem;color:#2a3a4a;font-weight:600;cursor:pointer;white-space:nowrap;
   display:flex;align-items:center;gap:3px;transition:all .14s}
 .fc-dir-btn:hover{background:#f0f5ff;border-color:#3b82f6;color:#3b82f6}
-.fc-icon-btn{background:none;border:none;font-size:1rem;color:#4a6080;cursor:pointer;
+.fc-icon-btn{background:none;border:none;font-size:.95rem;color:#5a6a7a;cursor:pointer;
   padding:4px;border-radius:6px;display:flex;align-items:center;transition:all .14s}
-.fc-icon-btn:hover{color:#1a2a3a;background:#c5d5e8}
+.fc-icon-btn:hover{color:#1a2a3a;background:rgba(0,0,0,.07)}
 /* shake */
 @keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-7px)}35%{transform:translateX(6px)}55%{transform:translateX(-4px)}75%{transform:translateX(3px)}}
 /* done */
-.fc-done{text-align:center;padding:22px 16px;background:#1e2d40;border-radius:8px;color:#fff}
-.fc-done-title{font-size:1.3rem;font-weight:900;margin:8px 0 5px}
-.fc-done-sub{font-size:.8rem;color:#7a95b0;margin-bottom:16px}
-.fc-done-stats{display:inline-flex;gap:18px;background:#162030;border-radius:12px;padding:12px 22px;margin-bottom:16px}
+.fc-done{text-align:center;padding:20px 14px;background:#1e2d40;border-radius:12px;color:#fff;max-width:520px;margin:0 auto}
+.fc-done-title{font-size:1.25rem;font-weight:900;margin:7px 0 4px}
+.fc-done-sub{font-size:.78rem;color:#7a95b0;margin-bottom:14px}
+.fc-done-stats{display:inline-flex;gap:16px;background:#162030;border-radius:10px;padding:11px 20px;margin-bottom:14px}
 .fc-ds{display:flex;flex-direction:column;align-items:center;gap:2px}
-.fc-ds-num{font-size:1.6rem;font-weight:900}.fc-ds-lbl{font-size:.6rem;color:#5a7898;letter-spacing:.5px}
+.fc-ds-num{font-size:1.5rem;font-weight:900}.fc-ds-lbl{font-size:.58rem;color:#5a7898;letter-spacing:.5px}
 .n-k{color:#28a745}.n-u{color:#dc3545}.n-t{color:#c8a45a}
-.fc-done-btn{background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:8px 18px;
-  font-size:.8rem;font-weight:700;cursor:pointer;margin:4px;transition:background .14s}
+.fc-done-btn{background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:7px 16px;
+  font-size:.78rem;font-weight:700;cursor:pointer;margin:3px;transition:background .14s}
 .fc-done-btn:hover{background:#2563eb}.fc-done-btn.sec{background:#2a3c50;color:#7a95b0}
 .fc-done-btn.sec:hover{background:#3a4c60;color:#fff}
 /* confetti */
@@ -172,60 +178,73 @@ function render(){
   const d=cur(),tot=DECK.length;
   const fTxt=getFront(d),fSub=getFrontSub(d);
   const bMain=getBackMain(d),bSub=getBackSub(d);
-  const bExJp=(!flipped||mode!=='word'||dir!=='jp-vi')?'':(d.back_ex_jp||'');
-  const bExVi=(!flipped||mode!=='word'||dir!=='jp-vi')?'':(d.back_ex_vi||'');
+  const bExJp=mode==='word'&&dir==='jp-vi'?(d.back_ex_jp||''):'';
+  const bExVi=mode==='word'&&dir==='jp-vi'?(d.back_ex_vi||''):'';
   const dirLbl=dir==='jp-vi'?'JP\u2192VI':'VI\u2192JP';
+  const jp=d.jp_word||d.front;
   document.getElementById('root').innerHTML=`
-  <div class="fc-outer">
-    <button class="fc-arrow" onclick="prevCard()">&#8249;</button>
-    <div class="fc-card-area">
-      <div class="fc-card" id="card" onclick="doFlip()">
-        <div class="fc-body" id="body">
-          <button class="fc-star" onclick="event.stopPropagation()" title="Đánh dấu">&#9733;</button>
-          <div class="fc-ov" id="ov"></div>
-          ${flipped?`
+  <div class="fc-wrap">
+    <div class="fc-outer">
+      <button class="fc-arrow" onclick="prevCard()">&#8249;</button>
+      <div class="fc-scene">
+        <div class="fc-card ${flipped?'flipped':''}" id="card">
+          <div class="fc-face fc-front" onclick="doFlip()">
+            <div class="fc-ov" id="ov-f"></div>
+            <button class="fc-star" onclick="event.stopPropagation()" title="Đánh dấu">&#9733;</button>
+            <div class="fc-main">${fTxt}</div>
+            ${fSub?`<div class="fc-sub">${fSub}</div>`:''}
+            <button class="fc-audio" id="abtn-f" onclick="event.stopPropagation();speakCard()">&#128264; Phát âm</button>
+            <div class="fc-kb">
+              <span class="fc-kb-lbl">Phím tắt:</span>
+              <span class="fc-kb-item"><span class="fc-kb-key">Space</span><span class="fc-kb-act">lật</span></span>
+              <span class="fc-kb-item"><span class="fc-kb-key">Z</span><span class="fc-kb-act">biết</span></span>
+              <span class="fc-kb-item"><span class="fc-kb-key">X</span><span class="fc-kb-act">chưa biết</span></span>
+              <span class="fc-kb-item"><span class="fc-kb-key">R</span><span class="fc-kb-act">nghe audio</span></span>
+            </div>
+          </div>
+          <div class="fc-face fc-back" onclick="doFlip()">
+            <div class="fc-ov" id="ov-b"></div>
+            <button class="fc-star" onclick="event.stopPropagation()" title="Đánh dấu">&#9733;</button>
             <div class="fc-b-meaning">${bMain}</div>
             ${bSub?`<div class="fc-b-hv">${bSub}</div>`:''}
             ${bExJp?`<div class="fc-b-jp">\u300c${bExJp}\u300d</div>`:''}
             ${bExVi?`<div class="fc-b-vi">${bExVi}</div>`:''}
-          `:`
-            <div class="fc-main">${fTxt}</div>
-            ${fSub?`<div class="fc-sub">${fSub}</div>`:''}
-          `}
-          <button class="fc-audio" id="abtn" onclick="event.stopPropagation();speakCard()">&#128264; Phát âm</button>
-        </div>
-        <div class="fc-kb">
-          <span class="fc-kb-lbl">Phím tắt:</span>
-          <span class="fc-kb-item"><span class="fc-kb-key">Space</span><span class="fc-kb-act">lật</span></span>
-          <span class="fc-kb-item"><span class="fc-kb-key">Z</span><span class="fc-kb-act">biết</span></span>
-          <span class="fc-kb-item"><span class="fc-kb-key">X</span><span class="fc-kb-act">chưa biết</span></span>
-          <span class="fc-kb-item"><span class="fc-kb-key">R</span><span class="fc-kb-act">nghe audio</span></span>
+            <button class="fc-audio" id="abtn-b" onclick="event.stopPropagation();speakCard()">&#128264; Phát âm</button>
+            <div class="fc-kb">
+              <span class="fc-kb-lbl">Phím tắt:</span>
+              <span class="fc-kb-item"><span class="fc-kb-key">Space</span><span class="fc-kb-act">lật</span></span>
+              <span class="fc-kb-item"><span class="fc-kb-key">Z</span><span class="fc-kb-act">biết</span></span>
+              <span class="fc-kb-item"><span class="fc-kb-key">X</span><span class="fc-kb-act">chưa biết</span></span>
+              <span class="fc-kb-item"><span class="fc-kb-key">R</span><span class="fc-kb-act">nghe audio</span></span>
+            </div>
+          </div>
         </div>
       </div>
+      <button class="fc-arrow" onclick="nextCard()">&#8250;</button>
     </div>
-    <button class="fc-arrow" onclick="nextCard()">&#8250;</button>
-  </div>
-  <div class="fc-controls">
-    <div class="fc-tabs">
-      <button class="fc-tab ${mode==='word'?'active':''}" onclick="setMode('word')">Từ đơn</button>
-      <button class="fc-tab ${mode==='ex'?'active':''}" onclick="setMode('ex')">Ví dụ</button>
-    </div>
-    <div class="fc-center">
-      <button class="fc-unk-btn" onclick="markUnk()" title="Chưa biết">&#10005;</button>
-      <span class="fc-counter">${idx+1} / ${tot}</span>
-      <button class="fc-known-btn" onclick="markKnown()" title="Đã biết">&#10003;</button>
-    </div>
-    <div class="fc-right">
-      <button class="fc-dir-btn" onclick="toggleDir()">&#8652; ${dirLbl}</button>
-      <button class="fc-icon-btn" onclick="restartDeck()" title="Làm lại">&#8635;</button>
-      <button class="fc-icon-btn" onclick="shuffleDeck()" title="Trộn thẻ">&#128256;</button>
+    <div class="fc-controls">
+      <div class="fc-tabs">
+        <button class="fc-tab ${mode==='word'?'active':''}" onclick="setMode('word')">Từ đơn</button>
+        <button class="fc-tab ${mode==='ex'?'active':''}" onclick="setMode('ex')">Ví dụ</button>
+      </div>
+      <div class="fc-center">
+        <button class="fc-unk-btn" onclick="markUnk()" title="Chưa biết">&#10005;</button>
+        <span class="fc-counter">${idx+1} / ${tot}</span>
+        <button class="fc-known-btn" onclick="markKnown()" title="Đã biết">&#10003;</button>
+      </div>
+      <div class="fc-right">
+        <button class="fc-dir-btn" onclick="toggleDir()">&#8652; ${dirLbl}</button>
+        <button class="fc-icon-btn" onclick="restartDeck()" title="Làm lại">&#8635;</button>
+        <button class="fc-icon-btn" onclick="shuffleDeck()" title="Trộn thẻ">&#128256;</button>
+      </div>
     </div>
   </div>`;
 }
 function doFlip(){
   flipped=!flipped;
-  if(flipped) setTimeout(()=>speakCard(),380);
-  render();
+  const card=document.getElementById('card');
+  if(card) card.classList.toggle('flipped',flipped);
+  if(flipped) setTimeout(()=>speakCard(),580);
 }
 function speakCard(){speak((cur().jp_word||cur().front));}
 function speak(text){
@@ -236,26 +255,30 @@ function speak(text){
   const vv=window.speechSynthesis.getVoices();
   const jpv=vv.find(v=>v.lang==='ja-JP')||vv.find(v=>v.lang.startsWith('ja'));
   if(jpv)u.voice=jpv;
-  const btn=document.getElementById('abtn');
-  if(btn){btn.classList.add('speaking');u.onend=()=>btn&&btn.classList.remove('speaking');}
+  ['abtn-f','abtn-b'].forEach(id=>{
+    const btn=document.getElementById(id);
+    if(btn){btn.classList.add('speaking');u.onend=()=>btn&&btn.classList.remove('speaking');}
+  });
   window.speechSynthesis.speak(u);
 }
 function flash(col){
-  const o=document.getElementById('ov');if(!o)return;
-  o.className='fc-ov '+col+' show';
-  setTimeout(()=>o&&o.classList.remove('show'),400);
+  ['ov-f','ov-b'].forEach(id=>{
+    const o=document.getElementById(id);if(!o)return;
+    o.className='fc-ov '+col+' show';
+    setTimeout(()=>o&&o.classList.remove('show'),400);
+  });
 }
 function advance(){
   if(idx>=DECK.length-1){done=true;render();}else{idx++;flipped=false;render();}
 }
 function nextCard(){advance();}
 function prevCard(){if(idx>0){idx--;flipped=false;render();}}
-function markKnown(){known.push(DECK[idx]);flash('green');setTimeout(advance,340);}
+function markKnown(){known.push(DECK[idx]);flash('green');setTimeout(advance,380);}
 function markUnk(){
   unk.push(DECK[idx]);flash('red');
   const c=document.getElementById('card');
   if(c){c.style.animation='shake .22s ease';setTimeout(()=>c&&(c.style.animation=''),220);}
-  setTimeout(advance,440);
+  setTimeout(advance,460);
 }
 function setMode(m){mode=m;flipped=false;render();}
 function toggleDir(){dir=dir==='jp-vi'?'vi-jp':'jp-vi';flipped=false;render();}
@@ -269,7 +292,7 @@ function renderDone(){
   const em=known.length===DECK.length?'🎉':known.length>DECK.length/2?'⭐':'💪';
   document.getElementById('root').innerHTML=`
   <div class="fc-done">
-    <div style="font-size:2.6rem">${em}</div>
+    <div style="font-size:2.4rem">${em}</div>
     <div class="fc-done-title">${known.length===DECK.length?'Ho\u00e0n h\u1ea3o! B\u1ea1n thu\u1ed9c t\u1ea5t c\u1ea3!':'\u0110\u00e3 xong b\u1ed9 th\u1ba3!'}</div>
     <div class="fc-done-sub">K\u1ebft qu\u1ea3 phi\u00ean h\u1ecdc</div>
     <div class="fc-done-stats">
@@ -296,8 +319,8 @@ function spawnConfetti(){
 document.addEventListener('keydown',e=>{
   if(done)return;
   if(e.code==='Space'){e.preventDefault();doFlip();}
-  else if(e.key==='z'||e.key==='Z'){if(flipped)markKnown();}
-  else if(e.key==='x'||e.key==='X'){if(flipped)markUnk();}
+  else if(e.key==='z'||e.key==='Z'){markKnown();}
+  else if(e.key==='x'||e.key==='X'){markUnk();}
   else if(e.key==='r'||e.key==='R')speakCard();
 });
 window.speechSynthesis.onvoiceschanged=()=>{};
