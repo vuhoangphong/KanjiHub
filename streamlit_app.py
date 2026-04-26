@@ -137,14 +137,14 @@ div[data-testid="stRadio"] > div[role="radiogroup"] {
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
   display: flex; align-items: center; justify-content: center;
   flex: 1;
-  background: #ffffff;
-  border: 2px solid #e8ddd0;
-  border-radius: 50px;
-  padding: 10px 16px;
-  color: #7a5a40 !important; font-weight: 700; cursor: pointer;
-  transition: all .2s cubic-bezier(.4,0,.2,1);
+  background: #ffffff !important;
+  border: 2px solid #e8ddd0 !important;
+  border-radius: 50px !important;
+  padding: 10px 16px !important;
+  color: #7a5a40 !important; font-weight: 700 !important; cursor: pointer;
+  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
   white-space: nowrap; font-size: .9rem; letter-spacing: .3px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+  box-shadow: 0 2px 6px rgba(0,0,0,.06) !important;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
   background: linear-gradient(135deg, #e84040 0%, #b8200e 100%) !important;
@@ -261,10 +261,41 @@ button[data-testid="stDownloadButton-downloadButton"]:hover {
 
 /* ── Input, selectbox ── */
 [data-testid="stTextInput"] input,
-[data-testid="stSelectbox"] select,
-div[data-baseweb="select"] {
-  background: #ffffff !important; border: 1px solid #c8a45a88 !important;
-  border-radius: 3px !important; color: #1a1209 !important;
+[data-testid="stSelectbox"] select {
+  background: #ffffff !important; border: 1.5px solid #e0d0be !important;
+  border-radius: 50px !important; color: #3a2a1a !important;
+  padding: 0.4rem 1rem !important;
+}
+
+/* Selectbox control (baseweb) */
+div[data-baseweb="select"] > div:first-child {
+  background: #ffffff !important;
+  border: 1.5px solid #e0d0be !important;
+  border-radius: 50px !important;
+  color: #3a2a1a !important;
+}
+div[data-baseweb="select"] * { color: #3a2a1a !important; }
+
+/* Dropdown popup list */
+div[data-baseweb="popover"] div[data-baseweb="menu"],
+div[data-baseweb="popover"] ul[data-testid="stSelectboxVirtualDropdown"] {
+  background: #fff !important;
+  border: 1px solid #e0d0be !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12) !important;
+}
+div[data-baseweb="option"] {
+  background: #fff !important; color: #3a2a1a !important;
+}
+div[data-baseweb="option"]:hover,
+div[data-baseweb="option"][aria-selected="true"] {
+  background: #fff5f0 !important; color: #c0392b !important;
+}
+
+/* Sidebar selectbox */
+[data-testid="stSidebar"] div[data-baseweb="select"] > div:first-child {
+  background: #fff !important; border: 1.5px solid #d8c8a8 !important;
+  border-radius: 50px !important; color: #3a2a1a !important;
 }
 [data-testid="stTextInput"] input::placeholder { color: #b0a090 !important; }
 
