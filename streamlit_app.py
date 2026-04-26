@@ -361,6 +361,16 @@ div[data-baseweb="select"] > div:first-child {
   border: 1.5px solid #e0d0be !important;
   border-radius: 50px !important;
   color: #3a2a1a !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+div[data-baseweb="select"] > div:first-child:focus,
+div[data-baseweb="select"] > div:first-child:focus-within,
+div[data-baseweb="select"] > div:first-child:focus-visible,
+div[data-baseweb="select"]:focus-within > div:first-child {
+  border-color: #e84040 !important;
+  box-shadow: 0 0 0 3px rgba(232,64,64,.15) !important;
+  outline: none !important;
 }
 div[data-baseweb="select"],
 div[data-baseweb="select"] *,
