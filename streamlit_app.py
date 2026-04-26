@@ -144,6 +144,45 @@ st.markdown("""
 [data-testid="stSidebar"] * { color: #3a2a1a !important; }
 [data-testid="stSidebar"] input { background: #fff !important; color: #1a1209 !important; }
 
+/* ── Site Header (sticky top bar) ── */
+.site-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 24px; margin-bottom: 16px;
+  background: linear-gradient(135deg, #fff8f0 0%, #fdf4e8 100%);
+  border-bottom: 2px solid #c0392b22;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 2px 12px rgba(192,57,43,.07);
+}
+.site-header-left { display: flex; align-items: center; gap: 12px; }
+.site-header-logo { width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 2px 8px rgba(192,57,43,.3); flex-shrink: 0; }
+.site-header-name { font-size: 1.25rem; font-weight: 900; color: #1a1209; letter-spacing: 3px; font-family: Georgia, 'Noto Serif JP', serif; }
+.site-header-sub  { font-size: .72rem; color: #9a8a70; letter-spacing: 1.5px; display: block; margin-top: 1px; }
+.site-header-right { display: flex; gap: 16px; align-items: center; }
+.site-header-link { font-size: .78rem; color: #7a5a40; text-decoration: none; letter-spacing: .5px; font-weight: 600; }
+.site-header-link:hover { color: #c0392b; }
+.site-header-badge {
+  font-size: .65rem; background: #c0392b; color: #fff;
+  border-radius: 20px; padding: 2px 10px; font-weight: 700; letter-spacing: .5px;
+}
+
+/* ── Site Footer ── */
+.site-footer {
+  margin-top: 48px; padding: 28px 24px 20px;
+  background: linear-gradient(160deg, #fff8f0 0%, #fdf4e8 100%);
+  border-top: 2px solid #c0392b22;
+  border-radius: 12px 12px 0 0;
+  text-align: center;
+}
+.site-footer-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+.site-footer-logo img { width: 36px; height: 36px; border-radius: 50%; box-shadow: 0 2px 6px rgba(192,57,43,.25); }
+.site-footer-logo span { font-size: 1.05rem; font-weight: 900; color: #1a1209; letter-spacing: 3px; font-family: Georgia, serif; }
+.site-footer-links { display: flex; justify-content: center; gap: 20px; margin: 8px 0 12px; flex-wrap: wrap; }
+.site-footer-links a { font-size: .78rem; color: #7a5a40; text-decoration: none; font-weight: 600; }
+.site-footer-links a:hover { color: #c0392b; }
+.site-footer-divider { border: none; border-top: 1px solid #e0d4be; margin: 10px 0; }
+.site-footer-copy { font-size: .72rem; color: #a89a80; letter-spacing: .5px; }
+.site-footer-jp { font-size: .8rem; color: #c0392b55; letter-spacing: 6px; margin-top: 6px; font-family: 'Noto Serif JP', serif; }
+
 /* ── App header / Logo ── */
 .app-header {
   text-align: center; padding: 1.8rem 0 1.2rem;
@@ -925,6 +964,24 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child {
 </style>
 """, unsafe_allow_html=True)
 
+# ── Site Header ───────────────────────────────────────────────────────────────
+_logo_img = f'<img src="{_logo_uri}" class="site-header-logo">' if _logo_uri else '漢'
+st.markdown(f"""
+<div class="site-header">
+  <div class="site-header-left">
+    {_logo_img}
+    <div>
+      <span class="site-header-name">KANJI HUB</span>
+      <span class="site-header-sub">漢字 · 学習 · ベトナム語</span>
+    </div>
+  </div>
+  <div class="site-header-right">
+    <span class="site-header-badge">JLPT N5→N1</span>
+    <span style="font-size:.78rem;color:#9a8a70">Tra Kanji · Lộ trình · Từ vựng · PDF · AI</span>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
 TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng"]
 if "tab_radio" not in st.session_state:
@@ -1130,3 +1187,25 @@ elif active_tab == TAB_NAMES[2]:
   {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
+
+# ── Site Footer (ngoài tất cả tabs — luôn hiện) ──────────────────────────────
+_logo_footer = f'<img src="{_logo_uri}">' if _logo_uri else ''
+st.markdown(f"""
+<div class="site-footer">
+  <div class="site-footer-logo">
+    {_logo_footer}
+    <span>KANJI HUB</span>
+  </div>
+  <div class="site-footer-links">
+    <a href="#">🔍 Tra Kanji</a>
+    <a href="#">🗺️ Lộ trình JLPT</a>
+    <a href="#">📖 Từ Vựng</a>
+    <a href="https://github.com/vuhoangphong/KanjiHub" target="_blank">⭐ GitHub</a>
+  </div>
+  <hr class="site-footer-divider">
+  <div class="site-footer-copy">
+    © 2026 Kanji Hub · Miễn phí · Không quảng cáo · Dành cho người học tiếng Nhật
+  </div>
+  <div class="site-footer-jp">漢字 · 学習 · 平仮名 · 片仮名</div>
+</div>
+""", unsafe_allow_html=True)
