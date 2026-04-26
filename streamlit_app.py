@@ -1086,8 +1086,9 @@ if active_tab == TAB_NAMES[0]:
         ("月", "Nguyệt", "Mặt trăng, tháng"),
         ("風", "Phong", "Gió, phong cách"),
     ]
-    _rng = _random.Random(__import__('datetime').date.today().toordinal())
-    _k, _hv, _mean = _rng.choice(_kanji_pool)
+    if "_hero_kanji" not in st.session_state:
+        st.session_state["_hero_kanji"] = _random.choice(_kanji_pool)
+    _k, _hv, _mean = st.session_state["_hero_kanji"]
 
     st.markdown(f'''
 <div class="hero">
