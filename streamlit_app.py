@@ -11,6 +11,8 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import streamlit as st
+import streamlit.components.v1 as _components
+import streamlit.components.v1 as _components
 
 # --- Path setup ---
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -208,26 +210,36 @@ def render_card(info, idx, prefix):
             f' onerror="this.style.display:none" style="display:block;margin:4px auto 0">'
             if gif_src else ""
         )
-        speak_text = kanji if kanji else reading
-        safe_speak = speak_text.replace("'", "\\'") if speak_text else ""
-        tts_btn = f"""
-<button onclick="(function(){{
-  var u = new SpeechSynthesisUtterance('{safe_speak}');
-  u.lang='ja-JP'; u.rate=0.85;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
-}})()" title="Phát âm tiếng Nhật" style="
-  background:#2a2a3e;border:1px solid #585b70;border-radius:8px;
-  color:#89b4fa;font-size:1.1rem;cursor:pointer;
-  padding:4px 10px;margin-top:6px;display:block;margin-left:auto;margin-right:auto;
-">🔊</button>""" if safe_speak else ""
         st.markdown(f"""
 <div style="text-align:center;line-height:1">
   <div class="kanji-char">{kanji}</div>
   <div class="kanji-read">{reading}</div>
-  {tts_btn}
   {gif_html}
 </div>""", unsafe_allow_html=True)
+
+        # TTS button chạy JS thực sự qua components iframe
+        speak_text = kanji if kanji else reading
+        if speak_text:
+            safe = speak_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
+            _components.html(f"""
+<button onclick="speak()" title="Phát âm tiếng Nhật" style="
+  background:#2a2a3e;border:1px solid #585b70;border-radius:8px;
+  color:#89b4fa;font-size:1.15rem;cursor:pointer;
+  padding:3px 0;width:100%;font-family:sans-serif;
+">🔊</button>
+<script>
+function speak() {{
+  try {{
+    var synth = window.parent.speechSynthesis || window.speechSynthesis;
+    var Utt   = window.parent.SpeechSynthesisUtterance || window.SpeechSynthesisUtterance;
+    synth.cancel();
+    var u = new Utt('{safe}');
+    u.lang = 'ja-JP'; u.rate = 0.85;
+    synth.speak(u);
+  }} catch(e) {{ console.error('TTS', e); }}
+}}
+</script>
+""", height=42)
 
     with col_r:
         h1, h2 = st.columns([3, 2])
