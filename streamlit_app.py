@@ -106,6 +106,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:transparent;padding:
 .fc-btn-unk{border-color:#e74c3c;color:#c0392b}
 .fc-btn-unk:hover{background:#fdf2f2}
 .fc-btn-nav{padding:8px 14px;font-size:.83rem}
+.fc-btn-tts{border-color:#3a7bd5;color:#2c5f9e;padding:8px 14px;font-size:.9rem}
+.fc-btn-tts:hover{background:#f0f5ff}
+.fc-btn-tts.speaking{animation:pulse .5s ease infinite alternate}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.12)}}
+/* TTS on card face */
+.fc-tts-face{position:absolute;bottom:10px;right:12px;background:rgba(255,255,255,.8);
+  border:1.5px solid #e0d4be;border-radius:99px;padding:4px 10px;
+  font-size:.78rem;color:#3a7bd5;cursor:pointer;font-weight:700;
+  backdrop-filter:blur(4px);transition:all .15s ease;z-index:2}
+.fc-tts-face:hover{background:#fff;box-shadow:0 2px 8px rgba(58,123,213,.2);transform:scale(1.05)}
 /* Verdict */
 .fc-verdict{display:flex;gap:12px;justify-content:center;margin-top:4px;
   opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;pointer-events:none}
@@ -151,6 +161,7 @@ function render(){
         <div class="fc-face fc-front">
           <div class="fc-word">${d.front}</div>
           ${d.front_sub?`<div class="fc-reading">${d.front_sub}</div>`:''}
+          <button class="fc-tts-face" onclick="event.stopPropagation();speak('${d.jp_word}')" title="Phát âm tiếng Nhật">🔊 Phát âm</button>
           <div class="fc-hint">↻ nhấn để lật thẻ</div>
         </div>
         <div class="fc-face fc-back">
@@ -158,6 +169,7 @@ function render(){
           ${d.back_sub?`<div class="fc-hv">${d.back_sub}</div>`:''}
           ${d.back_ex_jp?`<div class="fc-ex-jp">「${d.back_ex_jp}」</div>`:''}
           ${d.back_ex_vi?`<div class="fc-ex-vi">${d.back_ex_vi}</div>`:''}
+          <button class="fc-tts-face" onclick="event.stopPropagation();speak('${d.jp_word}')" title="Phát âm tiếng Nhật">🔊 Phát âm</button>
           <div class="fc-hint">↻ nhấn để xem lại</div>
         </div>
         <div class="fc-ov" id="ov"></div>
@@ -165,6 +177,7 @@ function render(){
     </div></div>
     <div class="fc-ctrl">
       <button class="fc-btn fc-btn-nav" onclick="prevCard()">← Trước</button>
+      <button class="fc-btn fc-btn-tts" id="tts-btn" onclick="speak(c().jp_word)">🔊</button>
       <button class="fc-btn fc-btn-flip" onclick="doFlip()">↻ Lật thẻ</button>
       <button class="fc-btn fc-btn-nav" onclick="nextCard()">Tiếp →</button>
     </div>
@@ -187,6 +200,19 @@ function doFlip(){
   flipped=!flipped;
   document.getElementById('card').classList.toggle('flipped',flipped);
   document.getElementById('verdict').classList.toggle('vis',flipped);
+  if(flipped) setTimeout(()=>speak(c().jp_word),580);
+}
+function speak(text){
+  if(!text||!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='ja-JP';u.rate=0.9;u.pitch=1;
+  const voices=window.speechSynthesis.getVoices();
+  const jpv=voices.find(v=>v.lang==='ja-JP')||voices.find(v=>v.lang.startsWith('ja'));
+  if(jpv)u.voice=jpv;
+  const btn=document.getElementById('tts-btn');
+  if(btn){btn.classList.add('speaking');u.onend=()=>btn.classList.remove('speaking');}
+  window.speechSynthesis.speak(u);
 }
 function flash(col){
   const o=document.getElementById('ov');
@@ -1631,6 +1657,7 @@ elif active_tab == TAB_NAMES[3]:
                         "front": _w.get("word", ""), "front_sub": _w.get("reading", ""),
                         "back_main": _w.get("meaning", ""), "back_sub": _w.get("hanviet", ""),
                         "back_ex_jp": _w.get("example", ""), "back_ex_vi": _w.get("exampleVi", ""),
+                        "jp_word": _w.get("word", ""),
                     })
                 else:
                     _hv = _w.get("hanviet", "")
@@ -1639,6 +1666,7 @@ elif active_tab == TAB_NAMES[3]:
                         "back_main": _w.get("word", ""),
                         "back_sub": _w.get("reading", "") + (" · " + _hv if _hv else ""),
                         "back_ex_jp": _w.get("example", ""), "back_ex_vi": _w.get("exampleVi", ""),
+                        "jp_word": _w.get("word", ""),
                     })
             st.session_state["fc_html"] = _build_fc_html(_json.dumps(_deck, ensure_ascii=False))
 
