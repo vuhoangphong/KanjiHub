@@ -1,0 +1,104 @@
+name: Build KanjiHub
+
+on:
+  push:
+    tags:
+      - 'v*'          # trigger khi push tag vd: v1.0.0
+  workflow_dispatch:  # hoặc chạy thủ công từ GitHub UI
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install customtkinter edge-tts google-genai reportlab pillow requests pyinstaller
+
+      - name: Copy NotoSansJP font
+        run: Copy-Item "C:\Windows\Fonts\NotoSansJP-VF.ttf" -Destination "NotoSansJP-VF.ttf" -ErrorAction SilentlyContinue
+        shell: pwsh
+
+      - name: Build Windows EXE
+        run: python -m PyInstaller VietKanji.spec --clean -y
+        shell: pwsh
+
+      - name: Zip Windows build
+        run: Compress-Archive -Path dist\KanjiHub -DestinationPath dist\KanjiHub-Windows.zip
+        shell: pwsh
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KanjiHub-Windows
+          path: dist/KanjiHub-Windows.zip
+          retention-days: 30
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install customtkinter edge-tts google-genai reportlab pillow requests pyinstaller
+
+      - name: Download NotoSansJP font
+        run: |
+          curl -L "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansJP-VF.ttf" \
+            -o NotoSansJP-VF.ttf || \
+          curl -L "https://fonts.gstatic.com/s/notosansjp/v53/-F6jfjtqLzI2JPCgQBnw7HFowAIO2lZ9hg.woff2" \
+            -o NotoSansJP-VF.ttf
+
+      - name: Update spec font path for macOS
+        run: |
+          # VietKanji_mac.spec đã dùng 'NotoSansJP-VF.ttf' (relative path), không cần sửa
+          echo "Using VietKanji_mac.spec"
+
+      - name: Build macOS app
+        run: python -m PyInstaller VietKanji_mac.spec --clean -y
+
+      - name: Zip macOS build
+        run: |
+          cd dist
+          zip -r KanjiHub-macOS.zip KanjiHub.app
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KanjiHub-macOS
+          path: dist/KanjiHub-macOS.zip
+          retention-days: 30
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/KanjiHub-Windows/KanjiHub-Windows.zip
+            artifacts/KanjiHub-macOS/KanjiHub-macOS.zip
+          generate_release_notes: true

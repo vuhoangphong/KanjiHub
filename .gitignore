@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+
+# App data (người dùng tạo ra khi chạy)
+lookup_cache.json
+# progress.json và history.json cần commit vì là dữ liệu ban đầu
+
+# Font (nặng, tải tự động khi build)
+NotoSansJP-VF.ttf
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+*.lnk
+
+# Misc
+*.log
+exports/
+cache_stroke/
+gen_progress.json
+ai_fill_missing.py
+gen_database.py
+gen_mnn.py
+make_icon.py
+mazii_test.json
+test_n4.py
