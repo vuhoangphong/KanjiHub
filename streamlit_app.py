@@ -60,7 +60,7 @@ def has_cjk(text):
 
 # --- Page config ---
 st.set_page_config(page_title="Kanji Hub", page_icon="✍️",
-                   layout="wide", initial_sidebar_state="expanded")
+                   layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
 <style>
@@ -138,6 +138,60 @@ st.markdown("""
 /* ── Hide Streamlit chrome ── */
 #MainMenu { visibility: hidden; }
 footer    { visibility: hidden; }
+
+/* ── Mobile Responsive (Xiaomi 15 Ultra & phones ≤ 768px) ── */
+@media (max-width: 768px) {
+  /* Thu gọn padding main area */
+  .main .block-container {
+    padding: 0.4rem 0.5rem 2rem !important;
+    max-width: 100% !important;
+  }
+  /* Header nhỏ hơn */
+  .app-header { padding: 0.6rem 0 0.2rem; margin-bottom: 0.5rem; }
+  .app-header h1 { font-size: 1.6rem; letter-spacing: 1px; }
+  .app-header p  { font-size: .75rem; }
+  /* Kanji glyph trong card */
+  .kanji-char { font-size: 2.6rem; }
+  /* Card padding nhỏ hơn */
+  .card-box { padding: 10px 10px; margin-bottom: 8px; }
+  /* Tab radio: scroll ngang thay vì tràn */
+  div[data-testid="stRadio"] > div[role="radiogroup"] {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none; }
+  div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+    padding: 8px 14px !important;
+    white-space: nowrap;
+    font-size: .85rem;
+  }
+  /* Button touch-friendly */
+  button[data-testid="baseButton-primary"],
+  button[data-testid="baseButton-secondary"] {
+    min-height: 44px !important;
+    font-size: .9rem !important;
+  }
+  /* Metric nhỏ hơn */
+  [data-testid="stMetric"] { padding: 4px !important; }
+  [data-testid="stMetricValue"] { font-size: 1.1rem !important; }
+  [data-testid="stMetricLabel"] { font-size: .7rem !important; }
+  /* Vocab card 1 cột */
+  .vocab-word  { font-size: 1.25rem; }
+  .vocab-meaning { font-size: .88rem; }
+  /* Section title */
+  .sec-title { font-size: 1.05rem; }
+  /* Expander header dễ tap hơn */
+  [data-testid="stExpander"] summary { padding: 10px 12px !important; font-size: .88rem; }
+  /* Input text lớn hơn để dễ gõ trên mobile */
+  input[type="text"], textarea {
+    font-size: 16px !important; /* tránh iOS zoom khi focus */
+  }
+  /* Ẩn sidebar toggle label */
+  [data-testid="collapsedControl"] { top: 0.4rem !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -201,7 +255,7 @@ def render_card(info, idx, prefix):
     status_txt, status_cls = status_of(info)
 
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
-    col_l, col_r = st.columns([1, 5])
+    col_l, col_r = st.columns([1, 3])
 
     with col_l:
         gif_src = gif_url(kanji) if kanji else ""
@@ -451,10 +505,9 @@ if active_tab == TAB_NAMES[0]:
                 unsafe_allow_html=True)
 
     with st.form("search_form"):
-        c1, c2, c3 = st.columns([5, 2, 1])
-        with c1:
-            query = st.text_input("q", label_visibility="collapsed",
-                                  placeholder="Nhập kanji: 山川田… hoặc tiếng Việt: Học…")
+        query = st.text_input("q", label_visibility="collapsed",
+                              placeholder="Nhập kanji: 山川田… hoặc tiếng Việt: Học…")
+        c2, c3 = st.columns([3, 1])
         with c2:
             search_mode = st.selectbox("m", ["DB", "DB + AI", "AI"],
                                        index=1, label_visibility="collapsed")
