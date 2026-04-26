@@ -288,12 +288,29 @@ button[data-testid="stDownloadButton-downloadButton"]:hover {
 }
 
 /* ── Input, selectbox ── */
-[data-testid="stTextInput"] input,
-[data-testid="stSelectbox"] select {
-  background: #ffffff !important; border: 1.5px solid #e0d0be !important;
-  border-radius: 50px !important; color: #3a2a1a !important;
-  padding: 0.4rem 1rem !important;
+[data-testid="stTextInput"] > div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
+[data-testid="stTextInput"] input {
+  background: #ffffff !important;
+  border: 2px solid #ddd0be !important;
+  border-radius: 14px !important;
+  color: #3a2a1a !important;
+  padding: 0.65rem 1.2rem !important;
+  font-size: 1rem !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06) !important;
+  transition: border-color .18s, box-shadow .18s !important;
+  outline: none !important;
+}
+[data-testid="stTextInput"] input:focus {
+  border-color: #e84040 !important;
+  box-shadow: 0 0 0 3px rgba(232,64,64,.15), 0 2px 10px rgba(0,0,0,.06) !important;
+  outline: none !important;
+}
+[data-testid="stTextInput"] input::placeholder { color: #b8a898 !important; }
 
 /* Selectbox control (baseweb) */
 div[data-baseweb="select"] > div:first-child {
@@ -325,7 +342,6 @@ div[data-baseweb="option"][aria-selected="true"] {
   background: #fff !important; border: 1.5px solid #d8c8a8 !important;
   border-radius: 50px !important; color: #3a2a1a !important;
 }
-[data-testid="stTextInput"] input::placeholder { color: #b0a090 !important; }
 
 /* ── Expander ── */
 [data-testid="stExpander"] {
