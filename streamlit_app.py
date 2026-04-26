@@ -360,9 +360,12 @@ with tab_path:
 
     for i, chunk in enumerate(chunks):
         lid     = f"{level}_{i+1}"
+        res_key = f"path_res_{lid}"
         is_done = lid in st.session_state[prog_key]
+        has_res = bool(st.session_state.get(res_key))
         icon    = "✅" if is_done else "📖"
-        with st.expander(f"{icon} Bai {i+1} ({len(chunk)} chu) — {'  '.join(chunk)}"):
+        with st.expander(f"{icon} Bai {i+1} ({len(chunk)} chu) — {'  '.join(chunk)}",
+                         expanded=has_res):
             st.markdown(f'<span style="font-size:1.5rem;letter-spacing:4px">{"  ".join(chunk)}</span>',
                         unsafe_allow_html=True)
             b1, b2 = st.columns([2, 3])
@@ -370,8 +373,7 @@ with tab_path:
                 if st.button(f"🔍 Tra bai {i+1}", key=f"tra_{level}_{i}"):
                     st.session_state[prog_key].add(lid)
                     with st.spinner("Dang tra…"):
-                        st.session_state.path_results = do_lookup("".join(chunk), "DB + AI")
-                    st.rerun()
+                        st.session_state[res_key] = do_lookup("".join(chunk), "DB + AI")
             with b2:
                 chk = st.checkbox("Da hoc", value=is_done, key=f"chk_{level}_{i}")
                 if chk and not is_done:
@@ -379,22 +381,23 @@ with tab_path:
                 elif not chk and is_done:
                     st.session_state[prog_key].discard(lid)
 
-    path_results = st.session_state.path_results
-    if path_results:
-        st.divider()
-        st.markdown("### Ket qua tra cuu")
-        valid_p = [i for i in path_results if i.get("viet") or i.get("meaning_vi")]
-        if valid_p:
-            try:
-                safe_p = "".join(i["kanji"] for i in valid_p[:10])
-                st.download_button("📄 Tai PDF bai nay",
-                                   data=make_pdf_bytes(valid_p),
-                                   file_name=f"Kanji_{safe_p}.pdf",
-                                   mime="application/pdf", key="dl_path")
-            except Exception:
-                pass
-        for idx, info in enumerate(path_results):
-            render_card(info, idx=idx, prefix="p")
+            # Hiển thị kết quả ngay trong expander
+            bai_results = st.session_state.get(res_key, [])
+            if bai_results:
+                st.divider()
+                valid_p = [r for r in bai_results if r.get("viet") or r.get("meaning_vi")]
+                if valid_p:
+                    try:
+                        safe_p = "".join(r["kanji"] for r in valid_p[:10])
+                        st.download_button("📄 Tai PDF bai nay",
+                                           data=make_pdf_bytes(valid_p),
+                                           file_name=f"Kanji_{safe_p}.pdf",
+                                           mime="application/pdf",
+                                           key=f"dl_path_{lid}")
+                    except Exception:
+                        pass
+                for idx, info in enumerate(bai_results):
+                    render_card(info, idx=idx, prefix=f"p_{lid}")
 
 # === TAB 3 ===
 with tab_vocab:
