@@ -544,19 +544,24 @@ with tab_path:
         _components.html("""
 <script>
 (function() {
-  // Chờ DOM sẵn sàng rồi click tab đầu tiên
-  function clickFirstTab() {
-    var tabs = window.parent.document.querySelectorAll('[data-baseweb="tab"]');
-    if (tabs && tabs.length > 0) {
-      tabs[0].click();
+  function clickTab() {
+    var doc = window.parent.document;
+    // Thử nhiều selector để tìm tab đầu tiên
+    var tab = doc.querySelector('[role="tab"]')
+           || doc.querySelector('[data-baseweb="tab"]')
+           || doc.querySelector('button[class*="tab"]');
+    if (tab) {
+      tab.click();
+      // Scroll lên đầu trang
+      window.parent.scrollTo({top: 0, behavior: 'smooth'});
     } else {
-      setTimeout(clickFirstTab, 100);
+      setTimeout(clickTab, 150);
     }
   }
-  setTimeout(clickFirstTab, 150);
+  setTimeout(clickTab, 200);
 })();
 </script>
-""", height=0)
+""", height=1)
 
 # === TAB 3 ===
 with tab_vocab:
