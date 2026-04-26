@@ -85,15 +85,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:transparent;padding:
 .fc-star{position:absolute;top:9px;right:11px;font-size:.95rem;color:#4a6080;
   background:none;border:none;cursor:pointer;padding:2px}.fc-star:hover{color:#c8a45a}
 /* front */
-.fc-main{font-size:2.8rem;font-weight:700;color:#fff;text-align:center;
-  font-family:'Noto Serif JP','Segoe UI',serif;line-height:1.2;margin-bottom:10px}
-.fc-sub{font-size:1.05rem;color:#7a95b0;text-align:center}
+.fc-main{font-size:3.6rem;font-weight:700;color:#fff;text-align:center;
+  font-family:'Noto Serif JP','Segoe UI',serif;line-height:1.2;margin-bottom:12px}
+.fc-sub{font-size:1.25rem;color:#7a95b0;text-align:center}
 /* back */
-.fc-b-meaning{font-size:1.7rem;font-weight:700;color:#fff;text-align:center;margin-bottom:6px;line-height:1.3}
-.fc-b-hv{font-size:.85rem;color:#e07878;font-weight:700;letter-spacing:1.5px;margin-bottom:14px}
-.fc-b-jp{font-size:.9rem;color:#b0c4d8;text-align:center;
-  font-family:'Noto Serif JP','Segoe UI',serif;margin-bottom:5px;line-height:1.5}
-.fc-b-vi{font-size:.85rem;color:#7a95b0;text-align:center;font-style:italic;line-height:1.5}
+.fc-b-meaning{font-size:2.1rem;font-weight:700;color:#fff;text-align:center;margin-bottom:8px;line-height:1.3}
+.fc-b-hv{font-size:1rem;color:#e07878;font-weight:700;letter-spacing:1.5px;margin-bottom:16px}
+.fc-b-jp{font-size:1rem;color:#b0c4d8;text-align:center;
+  font-family:'Noto Serif JP','Segoe UI',serif;margin-bottom:6px;line-height:1.6}
+.fc-b-vi{font-size:.95rem;color:#7a95b0;text-align:center;font-style:italic;line-height:1.6}
 /* TTS on face */
 .fc-audio{background:none;border:none;color:#5a7898;cursor:pointer;margin-top:10px;
   display:flex;align-items:center;gap:4px;font-size:.8rem;padding:3px 9px;
