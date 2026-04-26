@@ -583,12 +583,35 @@ def do_lookup(query, search_mode):
     return infos or []
 
 
+# --- Nạp key từ Streamlit Secrets (ưu tiên) ---
+def _load_secrets():
+    """Đọc key từ st.secrets nếu có, set vào config để các hàm lookup dùng được."""
+    try:
+        gk = st.secrets.get("GEMINI_API_KEY", "")
+        ok = st.secrets.get("OPENROUTER_API_KEY", "")
+        pv = st.secrets.get("AI_PROVIDER", "")
+        if gk and not get_gemini_key():
+            set_gemini_key(gk)
+        if ok and not get_openrouter_key():
+            set_openrouter_key(ok)
+        if pv and get_ai_provider() == "gemini":
+            set_ai_provider(pv)
+    except Exception:
+        pass
+
+_load_secrets()
+
 # --- Sidebar ---
 with st.sidebar:
     st.markdown("## ✍️ Kanji Hub")
     st.caption("Ứng dụng học Kanji cho người Việt")
     st.divider()
     st.markdown("### ⚙️ Cài đặt AI")
+
+    # Kiểm tra xem secrets có sẵn không
+    _has_secret_gem = bool(st.secrets.get("GEMINI_API_KEY", "")) if hasattr(st, "secrets") else False
+    _has_secret_or  = bool(st.secrets.get("OPENROUTER_API_KEY", "")) if hasattr(st, "secrets") else False
+
     prov_options = ["gemini", "openrouter"]
     cur_prov = get_ai_provider()
     new_prov = st.selectbox("Nhà cung cấp AI", prov_options,
@@ -596,14 +619,27 @@ with st.sidebar:
     if new_prov != cur_prov:
         set_ai_provider(new_prov)
         st.rerun()
-    gem_key = st.text_input("🔑 Gemini API Key", value=get_gemini_key(),
-                            type="password", placeholder="AIzaSy…", key="sb_gkey")
-    or_key  = st.text_input("🔑 OpenRouter API Key", value=get_openrouter_key(),
-                            type="password", placeholder="sk-or-…", key="sb_okey")
-    if st.button("💾 Lưu cài đặt", use_container_width=True, key="sb_save", type="primary"):
-        set_gemini_key(gem_key)
-        set_openrouter_key(or_key)
-        st.success("✓ Đã lưu!")
+
+    if _has_secret_gem:
+        st.success("✓ Gemini key đã được cấu hình sẵn")
+    else:
+        gem_key = st.text_input("🔑 Gemini API Key", value=get_gemini_key(),
+                                type="password", placeholder="AIzaSy…", key="sb_gkey")
+
+    if _has_secret_or:
+        st.success("✓ OpenRouter key đã được cấu hình sẵn")
+    else:
+        or_key = st.text_input("🔑 OpenRouter API Key", value=get_openrouter_key(),
+                               type="password", placeholder="sk-or-…", key="sb_okey")
+
+    if not _has_secret_gem or not _has_secret_or:
+        if st.button("💾 Lưu cài đặt", use_container_width=True, key="sb_save", type="primary"):
+            if not _has_secret_gem:
+                set_gemini_key(gem_key)
+            if not _has_secret_or:
+                set_openrouter_key(or_key)
+            st.success("✓ Đã lưu!")
+
     st.divider()
     st.markdown("""
 **📌 Cách nhập:**
