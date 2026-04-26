@@ -266,6 +266,12 @@ button[data-testid="baseButton-secondary"]:hover {
   transform: translateY(-1px) !important;
 }
 
+/* Download button wrapper — xóa nền đen mặc định */
+[data-testid="stDownloadButton"] > div,
+[data-testid="stDownloadButton"] > button > div {
+  background: transparent !important;
+}
+
 /* Download button — pill outline xanh lá nhạt */
 a[data-testid="stDownloadButton-downloadButton"],
 button[data-testid="stDownloadButton-downloadButton"] {
@@ -329,7 +335,11 @@ div[data-baseweb="select"] > div:first-child {
   border-radius: 50px !important;
   color: #3a2a1a !important;
 }
-div[data-baseweb="select"] * { color: #3a2a1a !important; }
+div[data-baseweb="select"],
+div[data-baseweb="select"] *,
+div[data-baseweb="select"] input,
+div[data-baseweb="select"] [data-testid="stSelectboxValue"],
+div[data-baseweb="select"] span { color: #3a2a1a !important; background: transparent !important; }
 
 /* Dropdown popup list */
 div[data-baseweb="popover"] div[data-baseweb="menu"],
