@@ -1359,6 +1359,34 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# ── Xóa badge "Hosted with Streamlit" bằng JS (CSS không đủ vì inject sau load) ──
+_components.html("""<script>
+(function() {
+  var SELS = [
+    '[data-testid="stDecoration"]',
+    '[data-testid="stToolbar"]',
+    '[data-testid="stDeployButton"]',
+    '.viewerBadge_container__r5tak',
+    '.viewerBadge_link__qRIco',
+    '#stDecoration'
+  ];
+  function hideAll() {
+    SELS.forEach(function(sel) {
+      try {
+        window.parent.document.querySelectorAll(sel).forEach(function(el) {
+          el.style.setProperty('display', 'none', 'important');
+        });
+      } catch(e) {}
+    });
+  }
+  hideAll();
+  var obs = new MutationObserver(hideAll);
+  try {
+    obs.observe(window.parent.document.body, {childList: true, subtree: true});
+  } catch(e) {}
+})();
+</script>""", height=0, scrolling=False)
+
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
 TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng", "🃏 Flash Card"]
 if "tab_radio" not in st.session_state:
