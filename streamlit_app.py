@@ -258,21 +258,26 @@ footer, [data-testid="stBottom"], [data-testid="stStatusWidget"] { display: none
   box-shadow: 0 4px 16px rgba(192,57,43,.3); text-decoration: none !important;
   border: none; cursor: pointer; margin-bottom: 6px;
 }
-.hero-kanji-day {
-  display: inline-flex; align-items: center; gap: 12px;
-  background: #fff; border: 1.5px solid #e0d4be; border-radius: 12px;
-  padding: 10px 20px; margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+.hero-kanji-block {
+  display: inline-flex; align-items: stretch; gap: 0;
+  background: #fff; border: 1.5px solid #e0d4be; border-radius: 14px;
+  margin-top: 22px; overflow: hidden;
+  box-shadow: 0 3px 14px rgba(0,0,0,.08); max-width: 560px; width: 100%;
 }
-.hero-kanji-char { font-size: 2rem; font-family: 'Noto Serif JP', serif; color: #1a1209; }
-.hero-kanji-info { text-align: left; }
-.hero-kanji-label { font-size: .65rem; color: #c0392b; font-weight: 700; letter-spacing: 2px; display: block; }
-.hero-kanji-mean  { font-size: .88rem; color: #3a2a1a; font-weight: 600; }
+.hero-kanji-left {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #fdf6ec; border-right: 1.5px solid #e0d4be;
+  padding: 18px 24px; min-width: 90px;
+}
+.hero-kanji-char { font-size: 3rem; font-family: 'Noto Serif JP', serif; color: #1a1209; line-height: 1; }
+.hero-kanji-reading { font-size: .7rem; color: #c0392b; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
+.hero-kanji-right { display: flex; flex-direction: column; justify-content: center; padding: 16px 20px; text-align: left; }
+.hero-kanji-label { font-size: .6rem; color: #c0392b; font-weight: 700; letter-spacing: 2px; display: block; margin-bottom: 4px; }
+.hero-kanji-mean  { font-size: .95rem; color: #1a1209; font-weight: 700; margin-bottom: 10px; }
 .hero-kanji-quote {
-  margin-top: 14px; font-size: .82rem; color: #6b5240;
-  font-style: italic; max-width: 480px; line-height: 1.55;
-  padding: 8px 16px; border-left: 3px solid #c0392b;
-  background: rgba(192,57,43,.05); border-radius: 0 8px 8px 0;
+  font-size: .8rem; color: #6b5240; font-style: italic;
+  line-height: 1.6; padding-top: 10px;
+  border-top: 1px dashed #e0d4be;
 }
 
 /* ── Feature Cards ── */
@@ -1091,18 +1096,58 @@ if active_tab == TAB_NAMES[0]:
         ("花", "Hoa", "Hoa, bông hoa"),
         ("月", "Nguyệt", "Mặt trăng, tháng"),
         ("風", "Phong", "Gió, phong cách"),
+        ("火", "Hỏa", "Lửa, ngọn lửa"),
+        ("水", "Thủy", "Nước, dòng chảy"),
+        ("空", "Không", "Bầu trời, khoảng trống"),
+        ("光", "Quang", "Ánh sáng, rực rỡ"),
+        ("時", "Thời", "Thời gian, thời đại"),
+        ("命", "Mệnh", "Sinh mệnh, số phận"),
+        ("人", "Nhân", "Con người, nhân loại"),
+        ("和", "Hòa", "Hòa bình, hài hòa"),
+        ("信", "Tín", "Lòng tin, chữ tín"),
+        ("勇", "Dũng", "Dũng cảm, can đảm"),
+        ("静", "Tĩnh", "Yên tĩnh, bình thản"),
+        ("忍", "Nhẫn", "Nhẫn nại, kiên nhẫn"),
+        ("義", "Nghĩa", "Chính nghĩa, đạo nghĩa"),
+        ("知", "Tri", "Tri thức, hiểu biết"),
+        ("友", "Hữu", "Bạn bè, hữu nghị"),
+        ("希", "Hi", "Hi vọng, ước muốn"),
+        ("自", "Tự", "Bản thân, tự do"),
+        ("真", "Chân", "Sự thật, chân thực"),
+        ("誠", "Thành", "Thành thật, chân thành"),
+        ("幸", "Hạnh", "Hạnh phúc, may mắn"),
     ]
     _kanji_quotes = {
-        "夢": ("Người không có ước mơ thì chẳng khác nào đang ngủ.", "Aristotle"),
-        "心": ("Nơi nào có tâm, nơi đó có đường.", "Tục ngữ Nhật"),
+        "夢": ("Người không có ước mơ thì chẳng khác nào đang ngủ. Hãy mơ lớn và dám theo đuổi nó đến cùng.", "Aristotle"),
+        "心": ("Nơi nào có tâm, nơi đó có đường. Trái tim chân thật là la bàn dẫn lối khi lý trí mù quáng.", "Tục ngữ Nhật"),
         "道": ("Đường đi không khó vì ngăn sông cách núi, mà khó vì lòng người ngại núi e sông.", "Nguyễn Bá Học"),
-        "力": ("Sức mạnh không đến từ thể xác — nó đến từ ý chí bất khuất.", "Mahatma Gandhi"),
-        "愛": ("Yêu thương là cho đi mà không cần nhận lại.", "Tục ngữ"),
-        "学": ("Học, học nữa, học mãi.", "Lenin"),
-        "山": ("Núi càng cao, tầm nhìn càng rộng. Gian khổ càng lớn, ý chí càng bền.", "Tục ngữ"),
-        "花": ("Hoa đẹp không chỉ ở sắc, mà còn ở chỗ biết nở đúng lúc.", "Tục ngữ Nhật"),
-        "月": ("Dù đêm tối đến đâu, mặt trăng vẫn luôn tỏa sáng trên cao.", "Tục ngữ"),
-        "風": ("Gió không để lại vết, nhưng ta biết gió đã qua vì cây rung.", "Thiền ngữ"),
+        "力": ("Sức mạnh không đến từ thể xác — nó đến từ ý chí bất khuất. Kẻ mạnh nhất là kẻ chiến thắng chính mình.", "Mahatma Gandhi"),
+        "愛": ("Yêu thương là cho đi mà không cần nhận lại. Tình yêu thật sự không đo bằng lời nói mà bằng hành động.", "Tục ngữ"),
+        "学": ("Học, học nữa, học mãi. Tri thức là thứ duy nhất càng chia sẻ lại càng sinh sôi.", "Lenin"),
+        "山": ("Núi càng cao, tầm nhìn càng rộng. Gian khổ càng lớn, ý chí càng bền — đừng sợ leo dốc.", "Tục ngữ"),
+        "花": ("Hoa đẹp không chỉ ở sắc, mà còn ở chỗ biết nở đúng lúc. Mỗi người có một mùa xuân riêng.", "Tục ngữ Nhật"),
+        "月": ("Dù đêm tối đến đâu, mặt trăng vẫn luôn tỏa sáng trên cao — hy vọng chưa bao giờ tắt hẳn.", "Tục ngữ"),
+        "風": ("Gió không để lại vết, nhưng ta biết gió đã qua vì cây rung. Ảnh hưởng của bạn lớn hơn bạn nghĩ.", "Thiền ngữ"),
+        "火": ("Lửa thử vàng, gian nan thử sức. Không có áp lực, kim cương chỉ là mảnh than đá.", "Tục ngữ"),
+        "水": ("Nước mềm nhưng đục được đá. Sự kiên trì lặng lẽ luôn thắng sức mạnh hung hăng.", "Lão Tử"),
+        "空": ("Bầu trời không giới hạn — ước mơ của bạn cũng vậy. Chỉ có tư duy mới là rào cản thật sự.", "Thiền ngữ"),
+        "光": ("Thắp một ngọn nến còn hơn ngàn lần nguyền rủa bóng tối. Hãy là ánh sáng bạn muốn thấy.", "Khổng Tử"),
+        "時": ("Thời gian là thứ công bằng nhất — ai cũng có 24 giờ. Sự khác biệt nằm ở cách bạn dùng nó.", "Tục ngữ"),
+        "命": ("Cuộc đời không phải là những gì xảy ra với bạn, mà là những gì bạn làm với những gì xảy ra.", "Viktor Frankl"),
+        "人": ("Con người là thước đo của vạn vật. Hãy đối xử với người khác như bạn muốn được đối xử.", "Protagoras"),
+        "和": ("Hòa thuận là gốc rễ của hạnh phúc. Một gia đình hòa thuận, nghìn việc thành công.", "Tục ngữ Nhật"),
+        "信": ("Mất tiền mất ít, mất danh dự mất nhiều, mất chữ tín mất tất cả.", "Tục ngữ"),
+        "勇": ("Dũng cảm không phải là không sợ hãi — mà là tiến bước dù đang sợ. Hành động mới tạo ra dũng khí.", "Mark Twain"),
+        "静": ("Trong tĩnh lặng ta nghe được tiếng lòng. Tâm bình thì thế giới bình.", "Thiền ngữ"),
+        "忍": ("Nhẫn một thời khắc nóng giận, tránh trăm ngày hối hận. Kiên nhẫn là mẹ của mọi đức hạnh.", "Tục ngữ Nhật"),
+        "義": ("Sống có nghĩa khí, dẫu chết vẫn thơm. Làm điều đúng dù không ai nhìn — đó mới là đạo nghĩa.", "Tục ngữ"),
+        "知": ("Biết mình biết người, trăm trận trăm thắng. Nhưng trí tuệ thật sự bắt đầu từ việc thừa nhận sự thiếu hiểu biết.", "Tôn Tử"),
+        "友": ("Bạn tốt là người nói thật khi bạn cần nghe, không phải khi bạn muốn nghe.", "Tục ngữ"),
+        "希": ("Hy vọng không phải là chiến lược, nhưng không có hy vọng thì không có chiến lược nào đứng vững.", "Napoleon"),
+        "自": ("Tự do thật sự không phải là làm những gì bạn muốn, mà là muốn những điều đúng đắn.", "Jean-Paul Sartre"),
+        "真": ("Sự thật đôi khi đau, nhưng dối trá còn đau hơn về lâu dài. Hãy sống thật.", "Tục ngữ"),
+        "誠": ("Thành thật là nền tảng của mọi mối quan hệ bền vững. Một lời nói thật hơn ngàn lời hoa mỹ.", "Khổng Tử"),
+        "幸": ("Hạnh phúc không phải là đích đến — nó là cách ta đi. Tìm niềm vui trong từng khoảnh khắc nhỏ.", "Thiền ngữ"),
     }
     if "_hero_kanji" not in st.session_state:
         st.session_state["_hero_kanji"] = _random.choice(_kanji_pool)
@@ -1114,14 +1159,17 @@ if active_tab == TAB_NAMES[0]:
   <span class="hero-jp">日本語を勉強しましょう</span>
   <div class="hero-title">Tra Kanji · Học Tiếng Nhật</div>
   <p class="hero-sub">Nghĩa tiếng Việt · Âm Hán Việt · Lộ trình JLPT · Luyện viết PDF · AI phân tích</p>
-  <div class="hero-kanji-day">
-    <span class="hero-kanji-char">{_k}</span>
-    <div class="hero-kanji-info">
+  <div class="hero-kanji-block">
+    <div class="hero-kanji-left">
+      <span class="hero-kanji-char">{_k}</span>
+      <span class="hero-kanji-reading">{_hv}</span>
+    </div>
+    <div class="hero-kanji-right">
       <span class="hero-kanji-label">✦ KANJI HÔM NAY</span>
-      <span class="hero-kanji-mean">{_hv} — {_mean}</span>
+      <span class="hero-kanji-mean">{_mean}</span>
+      <div class="hero-kanji-quote">"{_quote}"<br><em>— {_qauthor}</em></div>
     </div>
   </div>
-  <div class="hero-kanji-quote">"{_quote}" <br><em>— {_qauthor}</em></div>
 </div>
 ''', unsafe_allow_html=True)
 
