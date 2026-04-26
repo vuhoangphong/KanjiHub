@@ -17,18 +17,24 @@ import streamlit as st
 _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 
-from kanji_lookup import (
-    get_kanji_info, search_by_viet, search_by_viet_gemini,
-    MANUAL_VI, N4_VI, MNN_N4_EXTRA, MNN_N5, N3_VI, N2_VI, N1_VI,
-    get_gemini_key, set_gemini_key, GeminiQuotaError, AIQuotaError,
-    lookup_kanji_gemini, lookup_kanji_openrouter,
-    get_ai_provider, set_ai_provider,
-    get_openrouter_key, set_openrouter_key,
-    extract_kanji, has_cjk,
-    analyze_kanji_ai,
-)
-from pdf_generator import generate_pdf, generate_vocab_table_pdf
-from vocab_lessons import VOCAB_LESSONS
+try:
+    from kanji_lookup import (
+        get_kanji_info, search_by_viet, search_by_viet_gemini,
+        MANUAL_VI, N4_VI, MNN_N4_EXTRA, MNN_N5, N3_VI, N2_VI, N1_VI,
+        get_gemini_key, set_gemini_key, GeminiQuotaError, AIQuotaError,
+        lookup_kanji_gemini, lookup_kanji_openrouter,
+        get_ai_provider, set_ai_provider,
+        get_openrouter_key, set_openrouter_key,
+        extract_kanji, has_cjk,
+        analyze_kanji_ai,
+    )
+    from pdf_generator import generate_pdf, generate_vocab_table_pdf
+    from vocab_lessons import VOCAB_LESSONS
+except Exception as _import_err:
+    import traceback
+    st.error(f"**Import Error:** {_import_err}")
+    st.code(traceback.format_exc())
+    st.stop()
 
 # ─── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
