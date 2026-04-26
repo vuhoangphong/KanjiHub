@@ -369,18 +369,27 @@ div[data-baseweb="select"] [data-testid="stSelectboxValue"],
 div[data-baseweb="select"] span { color: #3a2a1a !important; background: transparent !important; }
 
 /* Dropdown popup list */
+div[data-baseweb="popover"],
 div[data-baseweb="popover"] div[data-baseweb="menu"],
-div[data-baseweb="popover"] ul[data-testid="stSelectboxVirtualDropdown"] {
+div[data-baseweb="popover"] ul[data-testid="stSelectboxVirtualDropdown"],
+div[data-baseweb="popover"] li {
   background: #fff !important;
   border: 1px solid #e0d0be !important;
   border-radius: 12px !important;
   box-shadow: 0 8px 24px rgba(0,0,0,.12) !important;
+  color: #3a2a1a !important;
 }
-div[data-baseweb="option"] {
-  background: #fff !important; color: #3a2a1a !important;
+div[data-baseweb="option"],
+div[data-baseweb="option"] *,
+div[data-baseweb="popover"] li,
+div[data-baseweb="popover"] li * {
+  background: #fff !important;
+  color: #3a2a1a !important;
 }
 div[data-baseweb="option"]:hover,
-div[data-baseweb="option"][aria-selected="true"] {
+div[data-baseweb="option"]:hover *,
+div[data-baseweb="option"][aria-selected="true"],
+div[data-baseweb="option"][aria-selected="true"] * {
   background: #fff5f0 !important; color: #c0392b !important;
 }
 
