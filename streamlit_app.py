@@ -134,7 +134,9 @@ st.markdown("""
     repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(184,144,42,.07) 39px, rgba(184,144,42,.07) 40px),
     repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(184,144,42,.07) 39px, rgba(184,144,42,.07) 40px);
 }
-.main .block-container { max-width: 900px; padding: 1rem 1.5rem 3rem; }
+.main .block-container { max-width: 900px; padding: 1rem 1.5rem 0.5rem; }
+footer { display: none !important; }
+[data-testid="stBottom"] { display: none !important; }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
