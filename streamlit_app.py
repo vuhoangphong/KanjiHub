@@ -130,30 +130,35 @@ st.markdown("""
 div[data-testid="stRadio"] > label,
 div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] {
-  display: flex; flex-direction: row; gap: 6px;
+  display: flex; flex-direction: row; gap: 8px;
   background: transparent;
-  border: none; padding: 4px 0; overflow: visible;
+  border: none; padding: 6px 0; overflow: visible;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
   display: flex; align-items: center; justify-content: center;
   flex: 1;
-  background: #fff;
-  border: 1.5px solid #ddd0be;
-  border-radius: 8px;
-  padding: 10px 12px;
-  color: #5a4030 !important; font-weight: 700; cursor: pointer;
-  transition: all .18s; white-space: nowrap; font-size: .9rem;
-  letter-spacing: .3px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.07);
+  background: #ffffff;
+  border: 2px solid #e8ddd0;
+  border-radius: 50px;
+  padding: 10px 16px;
+  color: #7a5a40 !important; font-weight: 700; cursor: pointer;
+  transition: all .2s cubic-bezier(.4,0,.2,1);
+  white-space: nowrap; font-size: .9rem; letter-spacing: .3px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
-  background: #c0392b !important; color: #fff !important;
-  border-color: #c0392b !important;
-  box-shadow: 0 3px 10px rgba(192,57,43,.3);
+  background: linear-gradient(135deg, #e84040 0%, #b8200e 100%) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 14px rgba(192,57,43,.35), 0 1px 3px rgba(0,0,0,.1);
+  transform: translateY(-1px);
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover:not(:has(input:checked)) {
-  border-color: #c0392b99 !important; color: #8b0000 !important;
-  background: #fff9f9 !important;
+  border-color: #f0a090 !important;
+  color: #c0392b !important;
+  background: #fff5f4 !important;
+  box-shadow: 0 3px 10px rgba(192,57,43,.12);
+  transform: translateY(-1px);
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
