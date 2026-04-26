@@ -67,11 +67,53 @@ if os.path.exists(_logo_path):
         _logo_uri = "data:image/png;base64," + base64.b64encode(_f.read()).decode()
 
 # --- Page config ---
-st.set_page_config(page_title="Kanji Hub", page_icon="✍️",
-                   layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(
+    page_title="Kanji Hub — Tra Cứu Kanji Nhật, Nghĩa Tiếng Việt, Luyện Viết",
+    page_icon="✍️",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
 
 if _logo_uri:
     st.logo(_logo_uri, icon_image=_logo_uri)
+
+# --- SEO meta tags ---
+st.markdown("""
+<meta name="description" content="Kanji Hub — Tra cứu Kanji tiếng Nhật nhanh chóng, xem nghĩa tiếng Việt, âm Hán Việt, cách đọc, bảng luyện viết PDF. Hỗ trợ AI Gemini phân tích sâu.">
+<meta name="keywords" content="kanji, học tiếng nhật, tra kanji, nghĩa tiếng việt, hán việt, jlpt, n5 n4 n3 n2 n1, luyện viết kanji, kanji hub">
+<meta name="author" content="Kanji Hub">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://kanjihub.streamlit.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kanjihub.streamlit.app/">
+<meta property="og:title" content="Kanji Hub — Tra Cứu Kanji Nhật · Nghĩa Tiếng Việt · Luyện Viết">
+<meta property="og:description" content="Tra cứu Kanji tiếng Nhật nhanh chóng, xem nghĩa tiếng Việt, âm Hán Việt, cách đọc, bảng luyện viết PDF. Hỗ trợ AI phân tích sâu.">
+<meta property="og:image" content="https://kanjihub.streamlit.app/app/static/logo.png">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:site_name" content="Kanji Hub">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kanji Hub — Tra Kanji Nhật · Tiếng Việt">
+<meta name="twitter:description" content="Tra cứu Kanji tiếng Nhật, nghĩa tiếng Việt, luyện viết PDF. Hỗ trợ AI.">
+<meta name="twitter:image" content="https://kanjihub.streamlit.app/app/static/logo.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Kanji Hub",
+  "url": "https://kanjihub.streamlit.app/",
+  "description": "Tra cứu Kanji tiếng Nhật, nghĩa tiếng Việt, âm Hán Việt, lộ trình học JLPT N5-N1, luyện viết PDF, phân tích AI.",
+  "applicationCategory": "EducationApplication",
+  "operatingSystem": "Web",
+  "inLanguage": ["vi", "ja"],
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "VND" },
+  "author": { "@type": "Organization", "name": "Kanji Hub" },
+  "keywords": "kanji, tiếng nhật, jlpt, hán việt, luyện viết, tra cứu"
+}
+</script>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <style>

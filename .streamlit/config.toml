@@ -1,3 +1,9 @@
 [server]
 enableStaticServing = true
 
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+
