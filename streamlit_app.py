@@ -195,65 +195,68 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { 
 .vocab-example { font-size: .8rem; color: #8a7a6a; font-style: italic; margin-top: 2px; }
 
 /* ── Buttons ── */
-/* Primary — urushi đỏ đẹp */
+/* Primary — đỏ urushi gradient, full pill */
 button[data-testid="baseButton-primary"] {
-  background: #c0392b !important;
+  background: linear-gradient(135deg, #e84040 0%, #b8200e 100%) !important;
   border: none !important;
   color: #fff !important;
-  border-radius: 8px !important;
+  border-radius: 50px !important;
   font-weight: 700 !important;
   font-size: .92rem !important;
   letter-spacing: .4px !important;
-  padding: 0.5rem 1.2rem !important;
-  box-shadow: 0 3px 10px rgba(192,57,43,.28) !important;
-  transition: all .18s !important;
+  padding: 0.55rem 1.6rem !important;
+  box-shadow: 0 4px 14px rgba(192,57,43,.32), 0 1px 3px rgba(0,0,0,.08) !important;
+  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
 }
 button[data-testid="baseButton-primary"]:hover {
-  background: #a82820 !important;
-  box-shadow: 0 5px 16px rgba(192,57,43,.38) !important;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #ff5555 0%, #c8300e 100%) !important;
+  box-shadow: 0 6px 20px rgba(192,57,43,.42), 0 2px 6px rgba(0,0,0,.1) !important;
+  transform: translateY(-2px) !important;
 }
 button[data-testid="baseButton-primary"]:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(192,57,43,.2) !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(192,57,43,.25) !important;
 }
 
-/* Secondary — outlined sạch */
+/* Secondary — pill outline vàng nhạt */
 button[data-testid="baseButton-secondary"] {
   background: #fff !important;
-  border: 1.5px solid #c8a45a !important;
-  color: #7a4a10 !important;
-  border-radius: 8px !important;
+  border: 2px solid #e8d5a8 !important;
+  color: #8a5a20 !important;
+  border-radius: 50px !important;
   font-weight: 600 !important;
   font-size: .9rem !important;
-  padding: 0.45rem 1rem !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,.07) !important;
-  transition: all .18s !important;
+  padding: 0.5rem 1.4rem !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
+  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
 }
 button[data-testid="baseButton-secondary"]:hover {
-  background: #fff8ee !important;
-  border-color: #c0392b !important;
-  color: #8b0000 !important;
-  box-shadow: 0 3px 10px rgba(192,57,43,.15) !important;
+  background: #fff5ea !important;
+  border-color: #e84040 !important;
+  color: #c0392b !important;
+  box-shadow: 0 4px 14px rgba(192,57,43,.14) !important;
+  transform: translateY(-1px) !important;
 }
 
-/* Download button */
+/* Download button — pill outline xanh lá nhạt */
 a[data-testid="stDownloadButton-downloadButton"],
 button[data-testid="stDownloadButton-downloadButton"] {
   background: #fff !important;
-  border: 1.5px solid #b8902a !important;
-  color: #7a5010 !important;
-  border-radius: 8px !important;
+  border: 2px solid #b8d4b0 !important;
+  color: #3a6a30 !important;
+  border-radius: 50px !important;
   font-weight: 600 !important;
-  padding: 0.45rem 1rem !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,.07) !important;
-  transition: all .18s !important;
+  padding: 0.5rem 1.4rem !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
+  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
 }
 a[data-testid="stDownloadButton-downloadButton"]:hover,
 button[data-testid="stDownloadButton-downloadButton"]:hover {
-  background: #fffbf0 !important;
-  border-color: #c0392b !important;
-  color: #8b0000 !important;
+  background: #f0faf0 !important;
+  border-color: #4a8a40 !important;
+  color: #2a5a20 !important;
+  box-shadow: 0 4px 14px rgba(74,138,64,.18) !important;
+  transform: translateY(-1px) !important;
 }
 
 /* ── Input, selectbox ── */
@@ -335,7 +338,7 @@ footer    { visibility: hidden; }
   div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none; }
   div[data-testid="stRadio"] > div[role="radiogroup"] > label { padding: 10px 12px !important; font-size: .82rem; }
   button[data-testid="baseButton-primary"],
-  button[data-testid="baseButton-secondary"] { min-height: 44px !important; font-size: .92rem !important; border-radius: 8px !important; }
+  button[data-testid="baseButton-secondary"] { min-height: 44px !important; font-size: .92rem !important; border-radius: 50px !important; }
   [data-testid="stMetricValue"] { font-size: 1.1rem !important; }
   [data-testid="stMetricLabel"] { font-size: .7rem !important; }
   .sec-title  { font-size: 1rem; }
