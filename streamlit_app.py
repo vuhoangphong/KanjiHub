@@ -135,8 +135,10 @@ st.markdown("""
     repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(184,144,42,.07) 39px, rgba(184,144,42,.07) 40px);
 }
 .main .block-container { max-width: 900px; padding: 1rem 1.5rem 0.5rem; }
-footer { display: none !important; }
-[data-testid="stBottom"] { display: none !important; }
+[data-testid="stMainBlockContainer"] { padding-bottom: 0 !important; }
+[data-testid="stMain"] { padding-bottom: 0 !important; }
+[data-testid="stAppViewContainer"] > section { padding-bottom: 0 !important; }
+footer, [data-testid="stBottom"], [data-testid="stStatusWidget"] { display: none !important; }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
