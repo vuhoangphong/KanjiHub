@@ -18,7 +18,7 @@ import threading
 
 GEMINI_MODEL = "gemini-2.0-flash"  # free tier trên Google AI Studio
 
-OPENROUTER_MODEL = "meta-llama/llama-3.1-8b-instruct:free"  # free, không tốn credit
+OPENROUTER_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"  # free, không tốn credit
 
 import unicodedata
 
