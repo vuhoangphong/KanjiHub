@@ -16,9 +16,9 @@ import threading
 
 
 
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-2.0-flash"  # free tier trên Google AI Studio
 
-OPENROUTER_MODEL = "google/gemini-2.0-flash-001" # Model mặc định trên OpenRouter
+OPENROUTER_MODEL = "google/gemma-3-27b-it:free"  # free, không tốn credit
 
 import unicodedata
 
