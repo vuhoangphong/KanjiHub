@@ -402,23 +402,33 @@ with st.sidebar:
 # ── CSS cho custom tab radio ──────────────────────────────────────────────────
 st.markdown("""
 <style>
-div[data-testid="stHorizontalBlock"] > div:has(> div[data-testid="stRadio"]) {
-  background: #181825; border-radius: 12px; padding: 4px 6px; margin-bottom: 8px;
+/* Ẩn label chính của radio widget (tiêu đề "tab") */
+div[data-testid="stRadio"] > label,
+div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
+/* Nút radio nằm ngang, bỏ circle, styled như tab */
+div[data-testid="stRadio"] > div[role="radiogroup"] {
+  display: flex; flex-direction: row; gap: 4px;
+  background: #181825; border-radius: 12px; padding: 4px 6px;
 }
-div[data-testid="stRadio"] > label { display: none; }
-div[data-testid="stRadio"] [data-testid="stMarkdownContainer"] { display: none; }
-div[data-testid="stRadio"] > div { flex-direction: row; gap: 4px; }
-div[data-testid="stRadio"] > div label {
+div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+  display: flex; align-items: center;
   background: transparent; border-radius: 8px; padding: 6px 18px;
-  color: #6c7086 !important; font-weight: 600; cursor: pointer; border: none;
-  transition: all .15s;
+  color: #6c7086 !important; font-weight: 600; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
 }
-div[data-testid="stRadio"] > div label:has(input:checked) {
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
   background: #313244 !important; color: #cdd6f4 !important;
 }
-div[data-testid="stRadio"] > div label:hover { color: #cdd6f4 !important; }
-div[data-testid="stRadio"] > div [data-testid="stMarkdownContainer"] p { display: inline; }
-div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover {
+  color: #cdd6f4 !important;
+}
+/* Ẩn circle input, giữ text */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] {
+  display: none;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child {
+  display: none;
+}
 </style>
 """, unsafe_allow_html=True)
 
