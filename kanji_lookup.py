@@ -18,7 +18,7 @@ import threading
 
 GEMINI_MODEL = "gemini-2.0-flash"  # free tier trên Google AI Studio
 
-OPENROUTER_MODEL = "google/gemma-3-27b-it:free"  # free, không tốn credit
+OPENROUTER_MODEL = "meta-llama/llama-3.1-8b-instruct:free"  # free, không tốn credit
 
 import unicodedata
 
@@ -578,7 +578,11 @@ def analyze_kanji_ai(kanji: str) -> str:
             resp = requests.post(url, headers=headers, json=payload, timeout=20)
             resp.encoding = 'utf-8'
             data = resp.json()
-            return data["choices"][0]["message"]["content"].strip()
+            if "choices" in data and data["choices"]:
+                return data["choices"][0]["message"]["content"].strip()
+            err = data.get("error", {})
+            err_msg = err.get("message", "") if isinstance(err, dict) else str(err)
+            return f"✗ OpenRouter: {err_msg or data}"
 
         except Exception as e:
 
