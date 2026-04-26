@@ -329,6 +329,11 @@ button[data-testid="stDownloadButton-downloadButton"]:hover {
 [data-testid="stTextInput"] input::placeholder { color: #b8a898 !important; }
 
 /* Selectbox control (baseweb) */
+[data-testid="stWidgetLabel"],
+[data-testid="stWidgetLabel"] p,
+[data-testid="stWidgetLabel"] label {
+  color: #5a4030 !important;
+}
 div[data-baseweb="select"] > div:first-child {
   background: #ffffff !important;
   border: 1.5px solid #e0d0be !important;
