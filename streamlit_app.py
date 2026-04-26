@@ -59,6 +59,220 @@ def has_cjk(text):
     return False
 
 
+# ── Flash Card HTML builder ─────────────────────────────────────────────────
+_FC_TEMPLATE = """<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:transparent;padding:0 0 12px;overflow-x:hidden}
+/* Progress */
+.fc-bar-wrap{height:6px;background:#e8e0d4;border-radius:99px;margin-bottom:5px;overflow:hidden}
+.fc-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#c0392b,#c8a45a);transition:width .45s ease}
+.fc-bar-lbl{font-size:.7rem;color:#9a8a70;letter-spacing:.5px;text-align:right;margin-bottom:14px}
+/* Scene */
+.fc-scene{perspective:1000px;width:100%;max-width:480px;height:230px;margin:0 auto 16px;position:relative}
+.fc-wrap{width:100%;height:100%;position:relative}
+.fc-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.645,.045,.355,1);cursor:pointer;border-radius:18px}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;border-radius:18px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:20px 26px;
+  box-shadow:0 6px 28px rgba(0,0,0,.09)}
+.fc-front{background:linear-gradient(145deg,#fff8f0,#fdf4e8);border:2px solid #e0d4be}
+.fc-back{background:linear-gradient(145deg,#fff5f2,#fde8e0);border:2px solid #c0392b44;transform:rotateY(180deg)}
+.fc-hint{position:absolute;bottom:10px;font-size:.62rem;color:#c0b090;letter-spacing:.5px}
+/* Front */
+.fc-word{font-size:2.5rem;font-weight:700;color:#1a1209;font-family:'Noto Serif JP',serif;
+  line-height:1;margin-bottom:8px;text-align:center}
+.fc-reading{font-size:.95rem;color:#7a5a40;text-align:center}
+/* Back */
+.fc-meaning{font-size:1.15rem;font-weight:700;color:#1a1209;text-align:center;margin-bottom:4px}
+.fc-hv{font-size:.75rem;color:#c0392b;font-weight:700;letter-spacing:1px;margin-bottom:10px}
+.fc-ex-jp{font-size:.73rem;color:#3a2a1a;text-align:center;font-family:'Noto Serif JP',serif;margin-bottom:2px}
+.fc-ex-vi{font-size:.7rem;color:#6b5240;text-align:center;font-style:italic}
+/* Overlay */
+.fc-ov{position:absolute;inset:0;border-radius:18px;pointer-events:none;opacity:0;transition:opacity .18s}
+.fc-ov.green{background:rgba(39,174,96,.13)}.fc-ov.red{background:rgba(192,57,43,.11)}
+.fc-ov.show{opacity:1}
+/* Controls */
+.fc-ctrl{display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.fc-btn{padding:8px 18px;border-radius:99px;border:2px solid #e0d4be;background:#fff;
+  font-size:.8rem;font-weight:700;cursor:pointer;transition:all .16s ease;letter-spacing:.2px;color:#3a2a1a}
+.fc-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.10)}
+.fc-btn-flip{background:#1a1209;color:#fff;border-color:#1a1209;padding:8px 26px}
+.fc-btn-flip:hover{background:#3a2a1a}
+.fc-btn-known{border-color:#27ae60;color:#1e8449}
+.fc-btn-known:hover{background:#f0faf4}
+.fc-btn-unk{border-color:#e74c3c;color:#c0392b}
+.fc-btn-unk:hover{background:#fdf2f2}
+.fc-btn-nav{padding:8px 14px;font-size:.83rem}
+/* Verdict */
+.fc-verdict{display:flex;gap:12px;justify-content:center;margin-top:4px;
+  opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;pointer-events:none}
+.fc-verdict.vis{opacity:1;transform:translateY(0);pointer-events:auto}
+/* Stats */
+.fc-stats{display:flex;gap:18px;justify-content:center;font-size:.73rem;color:#9a8a70;margin-top:8px;letter-spacing:.3px}
+.s-known{color:#27ae60;font-weight:700}.s-unk{color:#e74c3c;font-weight:700}
+/* Animations */
+@keyframes slideInR{from{opacity:0;transform:translateX(52px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes slideInL{from{opacity:0;transform:translateX(-52px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes exitR{0%{opacity:1;transform:translateX(0) scale(1) rotate(0)}30%{transform:translateX(14px) scale(1.02) rotate(2deg)}100%{opacity:0;transform:translateX(110px) scale(.9) rotate(6deg)}}
+@keyframes exitL{0%{opacity:1;transform:translateX(0) scale(1) rotate(0)}100%{opacity:0;transform:translateX(-110px) scale(.9) rotate(-5deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-9px) rotate(-1.5deg)}35%{transform:translateX(7px) rotate(1.5deg)}55%{transform:translateX(-5px)}75%{transform:translateX(3px)}}
+@keyframes popIn{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+/* Done screen */
+.fc-done{text-align:center;padding:24px 16px;animation:popIn .4s cubic-bezier(.22,1,.36,1) forwards}
+.fc-done-emoji{font-size:3.2rem;margin-bottom:10px}
+.fc-done-title{font-size:1.3rem;font-weight:900;color:#1a1209;margin-bottom:6px}
+.fc-done-sub{font-size:.82rem;color:#9a8a70;margin-bottom:18px}
+.fc-done-stats{display:inline-flex;gap:22px;background:#fff;border:1.5px solid #e0d4be;
+  border-radius:14px;padding:14px 26px;margin-bottom:20px;box-shadow:0 3px 12px rgba(0,0,0,.07)}
+.fc-ds{display:flex;flex-direction:column;align-items:center;gap:3px}
+.fc-ds-num{font-size:1.7rem;font-weight:900}
+.fc-ds-lbl{font-size:.65rem;color:#9a8a70;letter-spacing:.5px}
+.n-k{color:#27ae60}.n-u{color:#e74c3c}.n-t{color:#c8a45a}
+/* Confetti */
+.cp{position:fixed;pointer-events:none;animation:cf linear forwards}
+@keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+</style></head>
+<body><div id="root"></div>
+<script>
+const DECK=__DECK_JSON__;
+let idx=0,flipped=false,known=[],unk=[],done=false;
+function c(){return DECK[idx]}
+function render(){
+  if(done){renderDone();return}
+  const d=c(),tot=DECK.length,pct=Math.round(idx/tot*100);
+  document.getElementById('root').innerHTML=`
+    <div class="fc-bar-wrap"><div class="fc-bar" id="pb" style="width:${pct}%"></div></div>
+    <div class="fc-bar-lbl">${idx+1} / ${tot} thẻ</div>
+    <div class="fc-scene"><div class="fc-wrap" id="wrap">
+      <div class="fc-card" id="card">
+        <div class="fc-face fc-front">
+          <div class="fc-word">${d.front}</div>
+          ${d.front_sub?`<div class="fc-reading">${d.front_sub}</div>`:''}
+          <div class="fc-hint">↻ nhấn để lật thẻ</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-meaning">${d.back_main}</div>
+          ${d.back_sub?`<div class="fc-hv">${d.back_sub}</div>`:''}
+          ${d.back_ex_jp?`<div class="fc-ex-jp">「${d.back_ex_jp}」</div>`:''}
+          ${d.back_ex_vi?`<div class="fc-ex-vi">${d.back_ex_vi}</div>`:''}
+          <div class="fc-hint">↻ nhấn để xem lại</div>
+        </div>
+        <div class="fc-ov" id="ov"></div>
+      </div>
+    </div></div>
+    <div class="fc-ctrl">
+      <button class="fc-btn fc-btn-nav" onclick="prevCard()">← Trước</button>
+      <button class="fc-btn fc-btn-flip" onclick="doFlip()">↻ Lật thẻ</button>
+      <button class="fc-btn fc-btn-nav" onclick="nextCard()">Tiếp →</button>
+    </div>
+    <div class="fc-verdict" id="verdict">
+      <button class="fc-btn fc-btn-unk" onclick="markUnk()">✗ Chưa thuộc</button>
+      <button class="fc-btn fc-btn-known" onclick="markKnown()">✓ Đã thuộc</button>
+    </div>
+    <div class="fc-stats">
+      <span>📦 Còn lại: <strong>${tot-idx}</strong></span>
+      <span class="s-known">✓ Thuộc: ${known.length}</span>
+      <span class="s-unk">✗ Chưa: ${unk.length}</span>
+    </div>`;
+  document.getElementById('card').addEventListener('click',doFlip);
+  if(flipped){
+    document.getElementById('card').classList.add('flipped');
+    document.getElementById('verdict').classList.add('vis');
+  }
+}
+function doFlip(){
+  flipped=!flipped;
+  document.getElementById('card').classList.toggle('flipped',flipped);
+  document.getElementById('verdict').classList.toggle('vis',flipped);
+}
+function flash(col){
+  const o=document.getElementById('ov');
+  if(!o)return;
+  o.className='fc-ov '+col+' show';
+  setTimeout(()=>o.classList.remove('show'),380);
+}
+function advance(dir){
+  const w=document.getElementById('wrap');
+  w.style.animation=(dir==='r'?'exitR':'exitL')+' .32s ease forwards';
+  setTimeout(()=>{
+    if(idx>=DECK.length-1){done=true;render();return}
+    idx++;flipped=false;render();
+    const nw=document.getElementById('wrap');
+    nw.style.animation=(dir==='r'?'slideInR':'slideInL')+' .36s cubic-bezier(.22,1,.36,1) forwards';
+  },300);
+}
+function nextCard(){advance('r')}
+function prevCard(){
+  if(idx<=0)return;
+  const w=document.getElementById('wrap');
+  w.style.animation='exitR .28s ease forwards';
+  setTimeout(()=>{idx--;flipped=false;render();
+    document.getElementById('wrap').style.animation='slideInL .36s cubic-bezier(.22,1,.36,1) forwards';
+  },260);
+}
+function markKnown(){
+  known.push(DECK[idx]);flash('green');
+  const w=document.getElementById('wrap');
+  w.style.animation='exitR .38s cubic-bezier(.4,0,.2,1) forwards';
+  setTimeout(()=>{
+    if(idx>=DECK.length-1){done=true;render();return}
+    idx++;flipped=false;render();
+    document.getElementById('wrap').style.animation='slideInR .36s cubic-bezier(.22,1,.36,1) forwards';
+  },360);
+}
+function markUnk(){
+  unk.push(DECK[idx]);flash('red');
+  const w=document.getElementById('wrap');
+  w.style.animation='shake .22s ease, exitL .32s ease .22s forwards';
+  setTimeout(()=>{
+    if(idx>=DECK.length-1){done=true;render();return}
+    idx++;flipped=false;render();
+    document.getElementById('wrap').style.animation='slideInL .36s cubic-bezier(.22,1,.36,1) forwards';
+  },500);
+}
+function renderDone(){
+  spawnConfetti();
+  const em=known.length===DECK.length?'🎉':known.length>DECK.length/2?'⭐':'💪';
+  const title=known.length===DECK.length?'Hoàn hảo! Bạn thuộc tất cả!':'Đã xong bộ thẻ!';
+  document.getElementById('root').innerHTML=`
+    <div class="fc-done">
+      <div class="fc-done-emoji">${em}</div>
+      <div class="fc-done-title">${title}</div>
+      <div class="fc-done-sub">Kết quả phiên học</div>
+      <div class="fc-done-stats">
+        <div class="fc-ds"><span class="fc-ds-num n-k">${known.length}</span><span class="fc-ds-lbl">✓ ĐÃ THUỘC</span></div>
+        <div class="fc-ds"><span class="fc-ds-num n-u">${unk.length}</span><span class="fc-ds-lbl">✗ CHƯA THUỘC</span></div>
+        <div class="fc-ds"><span class="fc-ds-num n-t">${DECK.length}</span><span class="fc-ds-lbl">TỔNG SỐ THẺ</span></div>
+      </div>
+      ${unk.length>0?`<button class="fc-btn fc-btn-flip" style="margin-right:10px" onclick="reviewUnk()">🔁 Ôn lại ${unk.length} thẻ chưa thuộc</button>`:''}
+      <button class="fc-btn" onclick="location.reload()">↺ Học lại từ đầu</button>
+    </div>`;
+}
+function reviewUnk(){
+  const tmp=[...unk];
+  DECK.length=0;tmp.forEach(c=>DECK.push(c));
+  idx=0;flipped=false;known=[];unk=[];done=false;render();
+}
+function spawnConfetti(){
+  const cols=['#c0392b','#c8a45a','#27ae60','#3a7bd5','#9b59b6','#e67e22'];
+  for(let i=0;i<26;i++){
+    const el=document.createElement('div');
+    el.className='cp';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${5+Math.random()*6}px;height:${5+Math.random()*6}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.2+Math.random()*1.8}s;animation-delay:${Math.random()*.6}s`;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+render();
+</script></body></html>"""
+
+def _build_fc_html(deck_json: str) -> str:
+    return _FC_TEMPLATE.replace("__DECK_JSON__", deck_json)
+
+
 # --- Logo ---
 _logo_path = os.path.join(_HERE, "static", "logo.png")
 _logo_uri = None
@@ -368,6 +582,17 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3):has(inp
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(1):hover:not(:has(input:checked)) { background: #fff5f4 !important; transform: translateY(-1px) !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(2):hover:not(:has(input:checked)) { background: #f0f5ff !important; transform: translateY(-1px) !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3):hover:not(:has(input:checked)) { background: #f0faf4 !important; transform: translateY(-1px) !important; }
+/* Tab 4 — Flash Card: vàng đồng */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4),
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4) * {
+  border-color: #c8a45a !important; color: #8a6c20 !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4):has(input:checked) {
+  background: #c8a45a !important; border-color: #c8a45a !important;
+  box-shadow: 0 4px 14px rgba(200,164,90,.35) !important; transform: translateY(-1px) !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4):has(input:checked) * { color: #fff !important; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4):hover:not(:has(input:checked)) { background: #fdf8ec !important; transform: translateY(-1px) !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
 
@@ -1071,7 +1296,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
-TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng"]
+TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng", "🃏 Flash Card"]
 if "tab_radio" not in st.session_state:
     st.session_state["tab_radio"] = TAB_NAMES[0]
 # Áp dụng pending tab switch TRƯỚC khi widget render
@@ -1356,6 +1581,68 @@ elif active_tab == TAB_NAMES[2]:
   {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
+
+# === TAB 4: Flash Card ===
+elif active_tab == TAB_NAMES[3]:
+    import json as _json, random as _rand
+    _logo_fc = (f'<img src="{_logo_uri}" style="width:56px;height:56px;border-radius:50%;'
+                f'box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">') if _logo_uri else ''
+    st.markdown(f"""
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+  {_logo_fc}
+  <div>
+    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">🃏 Flash Card</div>
+    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Luyện thuộc từ vựng bằng thẻ lật 3D</div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
+    _fc_lessons = sorted(VOCAB_LESSONS.keys())
+    _fc_src_opts = [f"Bài {n}  ({len(VOCAB_LESSONS[n])} từ)" for n in _fc_lessons] + ["🎲 Ngẫu nhiên (tất cả bài)"]
+
+    _c1, _c2, _c3, _c4 = st.columns([2.2, 2, 1.2, 1])
+    with _c1:
+        _fc_src = st.selectbox("Nguồn", _fc_src_opts, key="fc_src", label_visibility="collapsed")
+    with _c2:
+        _fc_front = st.selectbox("Mặt trước", ["Từ tiếng Nhật → Nghĩa", "Nghĩa → Từ tiếng Nhật"],
+                                 key="fc_front", label_visibility="collapsed")
+    with _c3:
+        _fc_count = st.selectbox("Số thẻ", [10, 20, 30, "Tất cả"], key="fc_count", label_visibility="collapsed")
+    with _c4:
+        _fc_go = st.button("🃏 Bắt đầu", type="primary", use_container_width=True, key="fc_go")
+
+    if _fc_go or "fc_html" in st.session_state:
+        if _fc_go:
+            if _fc_src.startswith("Bài "):
+                _ln = int(_fc_src.split()[1])
+                _words = list(VOCAB_LESSONS.get(_ln, []))
+            else:
+                _words = []
+                for _ws in VOCAB_LESSONS.values():
+                    _words.extend(_ws)
+            _rand.shuffle(_words)
+            _cnt = _fc_count if _fc_count == "Tất cả" else int(_fc_count)
+            if _cnt != "Tất cả" and len(_words) > _cnt:
+                _words = _words[:_cnt]
+            _jp_front = (_fc_front == "Từ tiếng Nhật → Nghĩa")
+            _deck = []
+            for _w in _words:
+                if _jp_front:
+                    _deck.append({
+                        "front": _w.get("word", ""), "front_sub": _w.get("reading", ""),
+                        "back_main": _w.get("meaning", ""), "back_sub": _w.get("hanviet", ""),
+                        "back_ex_jp": _w.get("example", ""), "back_ex_vi": _w.get("exampleVi", ""),
+                    })
+                else:
+                    _hv = _w.get("hanviet", "")
+                    _deck.append({
+                        "front": _w.get("meaning", ""), "front_sub": "",
+                        "back_main": _w.get("word", ""),
+                        "back_sub": _w.get("reading", "") + (" · " + _hv if _hv else ""),
+                        "back_ex_jp": _w.get("example", ""), "back_ex_vi": _w.get("exampleVi", ""),
+                    })
+            st.session_state["fc_html"] = _build_fc_html(_json.dumps(_deck, ensure_ascii=False))
+
+        _components.html(st.session_state["fc_html"], height=540, scrolling=False)
 
 # ── Site Footer (chỉ hiện ở tab Lộ trình và Từ Vựng) ──────────────────────────
 if active_tab != TAB_NAMES[0]:
