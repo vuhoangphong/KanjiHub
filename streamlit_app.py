@@ -362,83 +362,137 @@ def render_card(info, idx, prefix):
     meaning = info.get("meaning_vi", "")
     meo     = info.get("meo", "")
     vocab   = info.get("vocab", [])
+    meanings_en = info.get("meanings_en", [])
     status_txt, status_cls = status_of(info)
 
-    st.markdown('<div class="card-box">', unsafe_allow_html=True)
-    col_l, col_r = st.columns([1, 3])
+    gif_src = gif_url(kanji) if kanji else ""
+    gif_html = (f'<img src="{gif_src}" width="90" height="90" title="Thứ tự nét viết"'
+                f' style="border-radius:4px;background:#fff;padding:2px;display:block;margin:0 auto"'
+                f' onerror="this.style.display=\'none\'">'
+                if gif_src else "")
 
-    with col_l:
-        gif_src = gif_url(kanji) if kanji else ""
-        gif_html = (
-            f'<img src="{gif_src}" width="80" title="Thứ tự nét viết"'
-            f' onerror="this.style.display:none" style="display:block;margin:4px auto 0">'
-            if gif_src else ""
+    vocab_html = ""
+    if vocab:
+        items = "".join(
+            f'<div class="rc-vocab-item"><span class="rc-vocab-w">{v[0]}</span>'
+            f'<span class="rc-vocab-r">（{v[1]}）</span>'
+            f'<span class="rc-vocab-m">— {v[2]}</span></div>'
+            for v in vocab[:3]
         )
-        st.markdown(f"""
-<div style="text-align:center;line-height:1">
-  <div class="kanji-char">{kanji}</div>
-  <div class="kanji-read">{reading}</div>
-  {gif_html}
-</div>""", unsafe_allow_html=True)
+        vocab_html = f'<div class="rc-vocab-block">{items}</div>'
+    elif meanings_en:
+        vocab_html = (f'<div class="rc-vocab-block">'
+                      f'<span class="rc-vocab-m">{" · ".join(meanings_en[:3])}</span>'
+                      f'</div>')
 
-        # TTS button chạy JS thực sự qua components iframe
+    meo_html = (f'<div class="rc-meo">💡 {meo}</div>' if meo else "")
+    mean_html = (f'<div class="rc-meaning">📖 {meaning}</div>' if meaning else "")
+
+    st.markdown(f"""
+<style>
+.rc-card {{
+  display:flex; gap:0; margin-bottom:12px;
+  background:#1e1408; border:1px solid #c8a45a33;
+  border-radius:4px; overflow:hidden;
+  transition: box-shadow .2s;
+}}
+.rc-card:hover {{ box-shadow: 0 4px 20px rgba(192,57,43,.15); border-color:#c8a45a66; }}
+.rc-left {{
+  min-width:110px; max-width:110px;
+  background: linear-gradient(160deg,#150e04,#1a1008);
+  border-right:1px solid #c8a45a22;
+  display:flex; flex-direction:column; align-items:center;
+  padding:14px 8px 10px; gap:6px;
+}}
+.rc-kanji {{
+  font-size:3.2rem; font-weight:900; color:#f0e0c0; line-height:1;
+  font-family:'Noto Serif JP',Georgia,serif;
+  text-shadow:0 2px 12px rgba(200,164,90,.3);
+}}
+.rc-reading {{
+  font-size:.72rem; color:#c8a45a; letter-spacing:1.5px;
+  background:#120d06; border:1px solid #c8a45a33;
+  border-radius:2px; padding:2px 6px;
+}}
+.rc-right {{ flex:1; padding:14px 16px 12px; display:flex; flex-direction:column; gap:6px; }}
+.rc-top {{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }}
+.rc-viet {{ font-size:1.25rem; font-weight:900; color:#e8a0a0; font-family:'Noto Serif JP',serif; letter-spacing:1px; }}
+.rc-badge {{
+  font-size:.65rem; font-weight:700; letter-spacing:.5px;
+  border-radius:2px; padding:2px 8px; white-space:nowrap;
+}}
+.rc-meaning {{ color:#c8b898; font-size:.88rem; line-height:1.5; }}
+.rc-meo {{
+  color:#8ab488; font-size:.82rem; font-style:italic;
+  border-left:2px solid #4a5c3a; padding-left:8px; line-height:1.4;
+}}
+.rc-vocab-block {{
+  border-top:1px solid #c8a45a22; padding-top:6px; display:flex; flex-direction:column; gap:3px;
+}}
+.rc-vocab-item {{ font-size:.84rem; }}
+.rc-vocab-w {{ color:#f0e0c0; font-weight:700; }}
+.rc-vocab-r {{ color:#c8a45a; }}
+.rc-vocab-m {{ color:#d4a0b0; }}
+@media(max-width:600px) {{
+  .rc-left {{ min-width:80px; max-width:80px; padding:10px 6px 8px; }}
+  .rc-kanji {{ font-size:2.4rem; }}
+  .rc-right {{ padding:10px 10px 8px; }}
+  .rc-viet  {{ font-size:1.05rem; }}
+}}
+</style>
+<div class="rc-card">
+  <div class="rc-left">
+    <div class="rc-kanji">{kanji}</div>
+    <div class="rc-reading">{reading or '—'}</div>
+    {gif_html}
+  </div>
+  <div class="rc-right">
+    <div class="rc-top">
+      <span class="rc-viet">{viet or kanji}</span>
+      <span class="rc-badge {status_cls}">{status_txt}</span>
+    </div>
+    {mean_html}
+    {meo_html}
+    {vocab_html}
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+    # TTS + AI button nằm ngoài HTML để dùng được JS và st.button
+    btn_l, btn_r, _ = st.columns([1, 2, 3])
+    with btn_l:
         speak_text = kanji if kanji else reading
         if speak_text:
             safe = speak_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
             _components.html(f"""
-<button onclick="speak()" title="Phát âm tiếng Nhật" style="
-  background:#2a2a3e;border:1px solid #585b70;border-radius:8px;
-  color:#89b4fa;font-size:1.15rem;cursor:pointer;
-  padding:3px 0;width:100%;font-family:sans-serif;
-">🔊</button>
+<button onclick="speak()" title="Phát âm" style="
+  background:#1e1408;border:1px solid #c8a45a55;border-radius:2px;
+  color:#c8a45a;font-size:1rem;cursor:pointer;padding:6px 0;
+  width:100%;font-family:sans-serif;transition:background .15s;
+" onmouseover="this.style.background='#2a1a08'"
+  onmouseout="this.style.background='#1e1408'">🔊 Nghe</button>
 <script>
-function speak() {{
-  try {{
-    var synth = window.parent.speechSynthesis || window.speechSynthesis;
-    var Utt   = window.parent.SpeechSynthesisUtterance || window.SpeechSynthesisUtterance;
-    synth.cancel();
-    var u = new Utt('{safe}');
-    u.lang = 'ja-JP'; u.rate = 0.85;
-    synth.speak(u);
-  }} catch(e) {{ console.error('TTS', e); }}
+function speak(){{
+  try{{
+    var s=window.parent.speechSynthesis||window.speechSynthesis;
+    var U=window.parent.SpeechSynthesisUtterance||window.SpeechSynthesisUtterance;
+    s.cancel(); var u=new U('{safe}'); u.lang='ja-JP'; u.rate=0.85; s.speak(u);
+  }}catch(e){{}}
 }}
 </script>
-""", height=42)
-
-    with col_r:
-        h1, h2 = st.columns([3, 2])
-        with h1:
-            st.markdown(f'<span class="kanji-viet">{viet}</span>', unsafe_allow_html=True)
-        with h2:
-            st.markdown(f'<span class="badge {status_cls}">{status_txt}</span>', unsafe_allow_html=True)
-        if meaning:
-            st.markdown(f'<div class="kanji-mean">📖 {meaning}</div>', unsafe_allow_html=True)
-        if meo:
-            st.markdown(f'<div class="kanji-meo">💡 {meo}</div>', unsafe_allow_html=True)
-        if vocab:
-            st.markdown("<hr style='margin:6px 0;border-color:#313244'>", unsafe_allow_html=True)
-            for item in vocab[:2]:
-                w, r, m = item[0], item[1], item[2]
-                st.markdown(f'<div class="vocab-item">• <b>{w}</b>（{r}）— {m}</div>',
-                            unsafe_allow_html=True)
-        elif info.get("meanings_en"):
-            st.markdown("<hr style='margin:6px 0;border-color:#313244'>", unsafe_allow_html=True)
-            st.markdown(f'<div class="vocab-item">{" / ".join(info["meanings_en"][:3])}</div>',
-                        unsafe_allow_html=True)
+""", height=38)
+    with btn_r:
         if viet or meaning:
             res_key = f"ai_res_{uid}"
-            st.markdown("<div style='margin-top:8px'>", unsafe_allow_html=True)
-            if st.button("🤖 Phân tích AI", key=f"analyze_{uid}",
-                         use_container_width=False):
+            if st.button("🤖 Phân tích AI", key=f"analyze_{uid}", use_container_width=True):
                 with st.spinner("Đang hỏi AI…"):
                     st.session_state[res_key] = analyze_kanji_ai(kanji)
             if res_key in st.session_state:
-                st.markdown(st.session_state[res_key])
-            st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown(f'<div style="background:#120d06;border:1px solid #c8a45a33;'
+                            f'border-radius:2px;padding:10px 12px;font-size:.85rem;color:#c8b898;'
+                            f'margin-top:4px">{st.session_state[res_key]}</div>',
+                            unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def do_lookup(query, search_mode):
