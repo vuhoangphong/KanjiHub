@@ -251,7 +251,8 @@ def wrap_mixed_text(text: str, font_vi: str, font_cjk: str,
 
 
 def draw_practice_cell(c: canvas.Canvas, x: float, y: float, size: float,
-                       kanji: str = "", alpha_color=None, is_sample=False):
+                       kanji: str = "", alpha_color=None, is_sample=False,
+                       font_cjk: str = "Helvetica"):
     """
     Vẽ 1 ô luyện viết (hình vuông + đường kẻ chéo + kanji).
     x, y = góc dưới-trái của ô.
@@ -284,7 +285,7 @@ def draw_practice_cell(c: canvas.Canvas, x: float, y: float, size: float,
 
     # Kanji
     if kanji:
-        font_name = "CJKFont" if "CJKFont" in pdfmetrics.getRegisteredFontNames() else "Helvetica"
+        font_name = font_cjk
         c.setFillColor(alpha_color if alpha_color else colors.black)
         font_size = size * 0.72 if is_sample else size * 0.65
         c.setFont(font_name, font_size)
@@ -455,14 +456,17 @@ def draw_kanji_block(c: canvas.Canvas, info: dict, y_top: float, fonts: dict,
 
         if col == 0:
             draw_practice_cell(c, cx, cy, cell_size, kanji,
-                                alpha_color=colors.black, is_sample=True)
+                                alpha_color=colors.black, is_sample=True,
+                                font_cjk=font_cjk)
         elif col <= 5:
             fade = CLR_KANJI_FADED[col - 1]
             draw_practice_cell(c, cx, cy, cell_size, kanji,
-                                alpha_color=fade, is_sample=False)
+                                alpha_color=fade, is_sample=False,
+                                font_cjk=font_cjk)
         else:
             draw_practice_cell(c, cx, cy, cell_size, "",
-                                alpha_color=None, is_sample=False)
+                                alpha_color=None, is_sample=False,
+                                font_cjk=font_cjk)
 
     # ── Hàng ô trắng bổ sung ─────────────────────────────────────────────────
     for r in range(extra_rows):
