@@ -134,35 +134,54 @@ div[data-testid="stRadio"] > div[role="radiogroup"] {
   background: transparent;
   border: none; padding: 6px 0; overflow: visible;
 }
+/* Base label */
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
   display: flex !important; align-items: center !important; justify-content: center !important;
   flex: 1 !important;
   background: #ffffff !important;
-  border: 2px solid #e8ddd0 !important;
+  border: 2.5px solid #e0d4be !important;
   border-radius: 50px !important;
-  padding: 10px 16px !important;
-  color: #6a4a30 !important; font-weight: 700 !important; cursor: pointer !important;
-  transition: all .2s cubic-bezier(.4,0,.2,1) !important;
-  white-space: nowrap !important; font-size: .9rem !important; letter-spacing: .3px !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06) !important;
+  padding: 10px 18px !important;
+  font-weight: 700 !important; cursor: pointer !important;
+  transition: all .18s ease !important;
+  white-space: nowrap !important; font-size: .88rem !important; letter-spacing: .2px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07) !important;
 }
-div[data-testid="stRadio"] > div[role="radiogroup"] > label * {
-  color: #6a4a30 !important;
+/* Tab 1 — Tra Kanji: đỏ */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(1),
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(1) * {
+  border-color: #e84040 !important; color: #c0392b !important;
 }
-div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
-  background: linear-gradient(135deg, #e84040 0%, #b8200e 100%) !important;
-  color: #fff !important;
-  border-color: transparent !important;
-  box-shadow: 0 4px 14px rgba(192,57,43,.35), 0 1px 3px rgba(0,0,0,.1);
-  transform: translateY(-1px);
+/* Tab 2 — Lộ trình: xanh dương */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(2),
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(2) * {
+  border-color: #3a7bd5 !important; color: #2c5f9e !important;
 }
-div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover:not(:has(input:checked)) {
-  border-color: #f0a090 !important;
-  color: #c0392b !important;
-  background: #fff5f4 !important;
-  box-shadow: 0 3px 10px rgba(192,57,43,.12);
-  transform: translateY(-1px);
+/* Tab 3 — Từ Vựng: xanh lá */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3),
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3) * {
+  border-color: #27ae60 !important; color: #1e8449 !important;
 }
+/* Active: fill solid */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(1):has(input:checked) {
+  background: #e84040 !important; border-color: #e84040 !important;
+  box-shadow: 0 4px 14px rgba(232,64,64,.30) !important; transform: translateY(-1px) !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(1):has(input:checked) * { color: #fff !important; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(2):has(input:checked) {
+  background: #3a7bd5 !important; border-color: #3a7bd5 !important;
+  box-shadow: 0 4px 14px rgba(58,123,213,.30) !important; transform: translateY(-1px) !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(2):has(input:checked) * { color: #fff !important; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3):has(input:checked) {
+  background: #27ae60 !important; border-color: #27ae60 !important;
+  box-shadow: 0 4px 14px rgba(39,174,96,.30) !important; transform: translateY(-1px) !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3):has(input:checked) * { color: #fff !important; }
+/* Hover inactive */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(1):hover:not(:has(input:checked)) { background: #fff5f4 !important; transform: translateY(-1px) !important; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(2):hover:not(:has(input:checked)) { background: #f0f5ff !important; transform: translateY(-1px) !important; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3):hover:not(:has(input:checked)) { background: #f0faf4 !important; transform: translateY(-1px) !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
 
