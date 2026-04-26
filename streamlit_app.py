@@ -62,17 +62,80 @@ st.set_page_config(page_title="Kanji Hub", page_icon="✍️",
 
 st.markdown("""
 <style>
-  .kanji-char{font-size:3rem;font-weight:900;color:#CDD6F4;text-align:center;line-height:1.1;margin-bottom:2px}
-  .kanji-read{font-size:.8rem;color:#89B4FA;text-align:center}
-  .kanji-viet{font-size:1.1rem;font-weight:700;color:#CBA6F7}
-  .kanji-mean{color:#CDD6F4;font-size:.95rem}
-  .kanji-meo{color:#A6E3A1;font-style:italic;font-size:.85rem}
-  .vocab-item{color:#F5C2E7;font-size:.88rem}
-  .tag-db{color:#2ECC71;font-size:.75rem;font-weight:600}
-  .tag-ai{color:#A78BFA;font-size:.75rem;font-weight:600}
-  .tag-jisho{color:#F39C12;font-size:.75rem;font-weight:600}
-  .tag-miss{color:#E74C3C;font-size:.75rem;font-weight:600}
-  .card-box{background:#1E1E2E;border:1px solid #313244;border-radius:10px;padding:14px 16px;margin-bottom:10px}
+/* ── Reset & Base ── */
+[data-testid="stAppViewContainer"] { background: #11111b; }
+[data-testid="stSidebar"] { background: #181825; border-right: 1px solid #313244; }
+[data-testid="stSidebar"] * { color: #cdd6f4 !important; }
+
+/* ── App header ── */
+.app-header {
+  text-align: center; padding: 1.2rem 0 0.4rem;
+  background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+  border-radius: 16px; margin-bottom: 1rem;
+}
+.app-header h1 { font-size: 2.4rem; font-weight: 900; color: #cdd6f4; margin: 0; letter-spacing: 2px; }
+.app-header p  { color: #6c7086; font-size: .9rem; margin: 4px 0 0; }
+
+/* ── Kanji card ── */
+.card-box {
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.card-box:hover { border-color: #585b70; box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+
+/* ── Kanji glyph ── */
+.kanji-char {
+  font-size: 3.6rem; font-weight: 900; color: #cdd6f4;
+  text-align: center; line-height: 1.05; margin-bottom: 2px;
+  text-shadow: 0 2px 8px rgba(137,180,250,.25);
+}
+.kanji-read { font-size: .78rem; color: #89b4fa; text-align: center; letter-spacing: .5px; }
+
+/* ── Info text ── */
+.kanji-viet { font-size: 1.15rem; font-weight: 800; color: #cba6f7; }
+.kanji-mean { color: #cdd6f4; font-size: .93rem; margin-top: 2px; }
+.kanji-meo  { color: #a6e3a1; font-style: italic; font-size: .82rem; margin-top: 4px; }
+.vocab-item { color: #f5c2e7; font-size: .86rem; }
+
+/* ── Status badges ── */
+.badge {
+  display: inline-block; border-radius: 20px;
+  padding: 2px 10px; font-size: .7rem; font-weight: 700; letter-spacing: .3px;
+}
+.tag-db   { background: #1a3d2b; color: #a6e3a1; border: 1px solid #2d6a4f; }
+.tag-ai   { background: #2d2046; color: #cba6f7; border: 1px solid #5a3e8a; }
+.tag-jisho{ background: #3d2800; color: #fab387; border: 1px solid #7a4f00; }
+.tag-miss { background: #3d0f0f; color: #f38ba8; border: 1px solid #7a1f1f; }
+
+/* ── Section titles ── */
+.sec-title {
+  font-size: 1.3rem; font-weight: 800; color: #cdd6f4;
+  border-left: 4px solid #89b4fa; padding-left: 10px; margin-bottom: 12px;
+}
+
+/* ── Vocab word card ── */
+.vocab-card {
+  background: #181825; border: 1px solid #313244;
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
+  transition: border-color .2s;
+}
+.vocab-card:hover { border-color: #585b70; }
+.vocab-word  { font-size: 1.5rem; font-weight: 900; color: #cdd6f4; }
+.vocab-kana  { font-size: .85rem; color: #89b4fa; }
+.vocab-hanviet { font-size: .78rem; color: #a6adc8; font-style: italic; }
+.vocab-meaning { font-size: .95rem; color: #cba6f7; margin-top: 4px; }
+.vocab-example { font-size: .82rem; color: #6c7086; font-style: italic; margin-top: 2px; }
+
+/* ── Progress bar label ── */
+.prog-label { font-size: .8rem; color: #6c7086; text-align: right; margin-top: -6px; }
+
+/* ── Hide Streamlit chrome ── */
+#MainMenu { visibility: hidden; }
+footer    { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -153,26 +216,26 @@ def render_card(info, idx, prefix):
         with h1:
             st.markdown(f'<span class="kanji-viet">{viet}</span>', unsafe_allow_html=True)
         with h2:
-            st.markdown(f'<span class="{status_cls}">{status_txt}</span>', unsafe_allow_html=True)
+            st.markdown(f'<span class="badge {status_cls}">{status_txt}</span>', unsafe_allow_html=True)
         if meaning:
-            st.markdown(f'<div class="kanji-mean">Nghia: {meaning}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="kanji-mean">📖 {meaning}</div>', unsafe_allow_html=True)
         if meo:
             st.markdown(f'<div class="kanji-meo">💡 {meo}</div>', unsafe_allow_html=True)
         if vocab:
             st.markdown("<hr style='margin:6px 0;border-color:#313244'>", unsafe_allow_html=True)
             for item in vocab[:2]:
                 w, r, m = item[0], item[1], item[2]
-                st.markdown(f'<div class="vocab-item">• {w}（{r}）— {m}</div>',
+                st.markdown(f'<div class="vocab-item">• <b>{w}</b>（{r}）— {m}</div>',
                             unsafe_allow_html=True)
         elif info.get("meanings_en"):
             st.markdown("<hr style='margin:6px 0;border-color:#313244'>", unsafe_allow_html=True)
             st.markdown(f'<div class="vocab-item">{" / ".join(info["meanings_en"][:3])}</div>',
                         unsafe_allow_html=True)
         if viet or meaning:
-            with st.expander("🔍 Phan tich AI chuyen sau", expanded=False):
+            with st.expander("🤖 Phân tích AI chuyên sâu", expanded=False):
                 res_key = f"ai_res_{uid}"
-                if st.button("Phan tich ngay", key=f"analyze_{uid}"):
-                    with st.spinner("Dang hoi AI…"):
+                if st.button("▶ Phân tích ngay", key=f"analyze_{uid}"):
+                    with st.spinner("Đang hỏi AI…"):
                         st.session_state[res_key] = analyze_kanji_ai(kanji)
                 if res_key in st.session_state:
                     st.markdown(st.session_state[res_key])
@@ -268,120 +331,151 @@ def do_lookup(query, search_mode):
 
 # --- Sidebar ---
 with st.sidebar:
-    st.markdown("## ⚙️ Cai dat AI")
+    st.markdown("## ✍️ Kanji Hub")
+    st.caption("Ứng dụng học Kanji cho người Việt")
+    st.divider()
+    st.markdown("### ⚙️ Cài đặt AI")
     prov_options = ["gemini", "openrouter"]
     cur_prov = get_ai_provider()
-    new_prov = st.selectbox("Nha cung cap AI", prov_options,
+    new_prov = st.selectbox("Nhà cung cấp AI", prov_options,
                             index=prov_options.index(cur_prov), key="sb_prov")
     if new_prov != cur_prov:
         set_ai_provider(new_prov)
         st.rerun()
-    gem_key = st.text_input("Gemini API Key", value=get_gemini_key(),
+    gem_key = st.text_input("🔑 Gemini API Key", value=get_gemini_key(),
                             type="password", placeholder="AIzaSy…", key="sb_gkey")
-    or_key  = st.text_input("OpenRouter API Key", value=get_openrouter_key(),
+    or_key  = st.text_input("🔑 OpenRouter API Key", value=get_openrouter_key(),
                             type="password", placeholder="sk-or-…", key="sb_okey")
-    if st.button("💾 Luu cai dat", use_container_width=True, key="sb_save"):
+    if st.button("💾 Lưu cài đặt", use_container_width=True, key="sb_save", type="primary"):
         set_gemini_key(gem_key)
         set_openrouter_key(or_key)
-        st.success("✓ Da luu!")
-    st.markdown("---")
-    st.markdown("**Cach nhap:**\n- Kanji: `山川田`\n- Tieng Viet: `Hoc`, `Tinh`\n- Danh sach: `会社,学校`")
-    st.caption("Kanji Hub • Streamlit Web")
+        st.success("✓ Đã lưu!")
+    st.divider()
+    st.markdown("""
+**📌 Cách nhập:**
+- Kanji: `山川田`
+- Tiếng Việt: `Học`, `Tình`
+- Danh sách: `会社,学校`
+
+**🎯 Chế độ tra:**
+- `DB` — nhanh, offline
+- `DB + AI` — kết hợp
+- `AI` — chỉ dùng AI
+""")
+    st.caption("Kanji Hub v2 • Streamlit Cloud")
 
 
 # --- Tabs ---
-tab_search, tab_path, tab_vocab = st.tabs(["🔍 Tra Kanji", "🗺️ Lo trinh hoc", "📖 Tu Vung"])
+tab_search, tab_path, tab_vocab = st.tabs(["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng"])
 
 # === TAB 1 ===
 with tab_search:
-    st.markdown("## ✍️ Kanji Hub")
+    st.markdown('<div class="app-header"><h1>✍️ Kanji Hub</h1>'
+                '<p>Tra cứu Kanji Nhật · Nghĩa tiếng Việt · Luyện viết</p></div>',
+                unsafe_allow_html=True)
+
     with st.form("search_form"):
         c1, c2, c3 = st.columns([5, 2, 1])
         with c1:
             query = st.text_input("q", label_visibility="collapsed",
-                                  placeholder="Nhap kanji: 山川田… hoac tieng Viet: Hoc…")
+                                  placeholder="Nhập kanji: 山川田… hoặc tiếng Việt: Học…")
         with c2:
             search_mode = st.selectbox("m", ["DB", "DB + AI", "AI"],
                                        index=1, label_visibility="collapsed")
         with c3:
-            submitted = st.form_submit_button("🔍 Tra", use_container_width=True)
+            submitted = st.form_submit_button("🔍 Tra", use_container_width=True, type="primary")
 
     if submitted and query:
-        with st.spinner("⏳ Dang tra cuu…"):
+        with st.spinner("⏳ Đang tra cứu…"):
             st.session_state.results = do_lookup(query, search_mode)
 
     results = st.session_state.results
 
     if results:
         valid = [i for i in results if i.get("viet") or i.get("meaning_vi")]
+        errs  = [i for i in results if status_of(i)[0].startswith("✗")]
+
+        # Stats row
+        col_a, col_b, col_c = st.columns(3)
+        col_a.metric("Tổng", len(results))
+        col_b.metric("Tìm thấy", len(results) - len(errs))
+        col_c.metric("Không có", len(errs))
+
         if valid:
             r1, r2 = st.columns([3, 2])
             with r1:
-                rows_map = {"1 hang (6 o)": 0, "2 hang (18 o)": 1,
-                            "3 hang (30 o)": 2, "4 hang (42 o)": 3}
-                sel = st.selectbox("So hang luyen viet", list(rows_map.keys()), key="sr_rows")
+                rows_map = {"1 hàng (6 ô)": 0, "2 hàng (18 ô)": 1,
+                            "3 hàng (30 ô)": 2, "4 hàng (42 ô)": 3}
+                sel = st.selectbox("Số hàng luyện viết", list(rows_map.keys()), key="sr_rows")
             with r2:
                 st.write("")
                 try:
                     pdf_b = make_pdf_bytes(valid, rows_map[sel])
                     safe  = "".join(extract_kanji("".join(i["kanji"] for i in valid))[:10]) or "Kanji"
-                    st.download_button("📄 Tai PDF luyen viet", data=pdf_b,
+                    st.download_button("📄 Tải PDF luyện viết", data=pdf_b,
                                        file_name=f"Kanji_{safe}.pdf",
                                        mime="application/pdf", key="dl_search",
                                        use_container_width=True)
                 except Exception as e:
-                    st.error(f"Loi PDF: {e}")
+                    st.error(f"Lỗi PDF: {e}")
 
-        errs = [i for i in results if status_of(i)[0].startswith("✗")]
-        st.caption(f"**{len(results)}** kanji • ✓ {len(results)-len(errs)} trong DB "
-                   f"• ✗ {len(errs)} khong tim duoc")
         st.divider()
         for idx, info in enumerate(results):
             render_card(info, idx=idx, prefix="s")
     elif submitted and query:
-        st.warning("Khong tim thay. Thu go co dau hoac chuyen sang che do AI.")
+        st.warning("Không tìm thấy. Thử gõ có dấu hoặc chuyển sang chế độ AI.")
 
 # === TAB 2 ===
 with tab_path:
-    st.markdown("## 🗺️ Lo trinh hoc Kanji")
+    st.markdown('<div class="sec-title">🗺️ Lộ trình học Kanji</div>', unsafe_allow_html=True)
     level_data = {
         "N5": list(MNN_N5.keys()), "N4": list(N4_VI.keys()),
         "N3": list(N3_VI.keys()),  "N2": list(N2_VI.keys()),
         "N1": list(N1_VI.keys()),
     }
-    level  = st.selectbox("Cap do", list(level_data.keys()), key="pl_sel")
-    chunks = [level_data[level][i:i+10] for i in range(0, len(level_data[level]), 10)]
+
+    lv_cols = st.columns(len(level_data))
+    for ci, lv in enumerate(level_data):
+        lv_cols[ci].button(lv, key=f"lvbtn_{lv}", use_container_width=True,
+                           type="primary" if st.session_state.get("pl_sel_val", "N5") == lv else "secondary",
+                           on_click=lambda l=lv: st.session_state.update({"pl_sel_val": l}))
+
+    level = st.session_state.get("pl_sel_val", "N5")
+
+    chunks   = [level_data[level][i:i+10] for i in range(0, len(level_data[level]), 10)]
     prog_key = f"prog_{level}"
     if prog_key not in st.session_state:
         st.session_state[prog_key] = set()
     done_n = len(st.session_state[prog_key])
-    st.info(f"**{level}** — {len(level_data[level])} chu — {len(chunks)} bai • "
-            f"Da hoan thanh: {done_n}/{len(chunks)} bai")
 
+    # Progress bar
+    pct = done_n / len(chunks) if chunks else 0
+    st.progress(pct, text=f"**{level}** — {len(level_data[level])} chữ · {len(chunks)} bài · Hoàn thành {done_n}/{len(chunks)}")
+
+    st.write("")
     for i, chunk in enumerate(chunks):
         lid     = f"{level}_{i+1}"
         res_key = f"path_res_{lid}"
         is_done = lid in st.session_state[prog_key]
         has_res = bool(st.session_state.get(res_key))
         icon    = "✅" if is_done else "📖"
-        with st.expander(f"{icon} Bai {i+1} ({len(chunk)} chu) — {'  '.join(chunk)}",
+        with st.expander(f"{icon} Bài {i+1} ({len(chunk)} chữ) — {'  '.join(chunk)}",
                          expanded=has_res):
-            st.markdown(f'<span style="font-size:1.5rem;letter-spacing:4px">{"  ".join(chunk)}</span>',
+            st.markdown(f'<span style="font-size:1.8rem;letter-spacing:6px;color:#cdd6f4">{"  ".join(chunk)}</span>',
                         unsafe_allow_html=True)
             b1, b2 = st.columns([2, 3])
             with b1:
-                if st.button(f"🔍 Tra bai {i+1}", key=f"tra_{level}_{i}"):
+                if st.button(f"🔍 Tra bài {i+1}", key=f"tra_{level}_{i}", type="primary"):
                     st.session_state[prog_key].add(lid)
-                    with st.spinner("Dang tra…"):
+                    with st.spinner("Đang tra…"):
                         st.session_state[res_key] = do_lookup("".join(chunk), "DB + AI")
             with b2:
-                chk = st.checkbox("Da hoc", value=is_done, key=f"chk_{level}_{i}")
+                chk = st.checkbox("✅ Đã học xong", value=is_done, key=f"chk_{level}_{i}")
                 if chk and not is_done:
                     st.session_state[prog_key].add(lid)
                 elif not chk and is_done:
                     st.session_state[prog_key].discard(lid)
 
-            # Hiển thị kết quả ngay trong expander
             bai_results = st.session_state.get(res_key, [])
             if bai_results:
                 st.divider()
@@ -389,7 +483,7 @@ with tab_path:
                 if valid_p:
                     try:
                         safe_p = "".join(r["kanji"] for r in valid_p[:10])
-                        st.download_button("📄 Tai PDF bai nay",
+                        st.download_button("📄 Tải PDF bài này",
                                            data=make_pdf_bytes(valid_p),
                                            file_name=f"Kanji_{safe_p}.pdf",
                                            mime="application/pdf",
@@ -401,28 +495,32 @@ with tab_path:
 
 # === TAB 3 ===
 with tab_vocab:
-    st.markdown("## 📖 Bai Tu Vung")
+    st.markdown('<div class="sec-title">📖 Từ Vựng theo Bài</div>', unsafe_allow_html=True)
     if not VOCAB_LESSONS:
-        st.info("Chua co bai tu vung nao.")
+        st.info("Chưa có bài từ vựng nào.")
     else:
         lesson_nums = sorted(VOCAB_LESSONS.keys())
-        sel_lesson  = st.selectbox("Chon bai", lesson_nums,
-                                   format_func=lambda n: f"Bai {n}  ({len(VOCAB_LESSONS[n])} tu)",
+        sel_lesson  = st.selectbox("Chọn bài", lesson_nums,
+                                   format_func=lambda n: f"Bài {n}  ({len(VOCAB_LESSONS[n])} từ)",
                                    key="vl_sel")
         words = VOCAB_LESSONS[sel_lesson]
-        st.info(f"**Bai {sel_lesson}** — {len(words)} tu vung")
-        for idx, item in enumerate(words):
-            c1, c2 = st.columns([1, 3])
-            with c1:
-                st.markdown(
-                    f"**{idx+1}. {item['word']}**  \n"
-                    f"<span style='color:#89B4FA'>（{item.get('reading','')}）</span>  \n"
-                    f"<span style='color:#CBA6F7;font-size:.8rem'>{item.get('hanviet','')}</span>",
-                    unsafe_allow_html=True)
-            with c2:
-                st.markdown(f"▸ {item.get('meaning', '')}")
-                if item.get("example"):
-                    st.caption(f"Vi du: {item['example']}")
-                if item.get("exampleVi"):
-                    st.caption(f"↳ {item['exampleVi']}")
-            st.divider()
+        st.info(f"**Bài {sel_lesson}** — {len(words)} từ vựng")
+        # Grid 2 cột
+        for row_i in range(0, len(words), 2):
+            cols = st.columns(2)
+            for ci in range(2):
+                wi = row_i + ci
+                if wi >= len(words):
+                    break
+                item = words[wi]
+                with cols[ci]:
+                    st.markdown(f"""
+<div class="vocab-card">
+  <div class="vocab-word">{item['word']}</div>
+  <div class="vocab-kana">（{item.get('reading', '')}）
+    <span class="vocab-hanviet">{item.get('hanviet', '')}</span>
+  </div>
+  <div class="vocab-meaning">▸ {item.get('meaning', '')}</div>
+  {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
+  {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
+</div>""", unsafe_allow_html=True)
