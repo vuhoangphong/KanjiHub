@@ -167,7 +167,7 @@ st.markdown("""
 
 /* ── Site Footer ── */
 .site-footer {
-  margin-top: 48px; padding: 28px 24px 20px;
+  margin-top: 16px; padding: 16px 24px 14px;
   background: linear-gradient(160deg, #fff8f0 0%, #fdf4e8 100%);
   border-top: 2px solid #c0392b22;
   border-radius: 12px 12px 0 0;
@@ -1200,7 +1200,6 @@ st.markdown(f"""
     <a href="#">🔍 Tra Kanji</a>
     <a href="#">🗺️ Lộ trình JLPT</a>
     <a href="#">📖 Từ Vựng</a>
-    <a href="https://github.com/vuhoangphong/KanjiHub" target="_blank">⭐ GitHub</a>
   </div>
   <hr class="site-footer-divider">
   <div class="site-footer-copy">
