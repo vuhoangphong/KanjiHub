@@ -64,164 +64,242 @@ st.set_page_config(page_title="Kanji Hub", page_icon="✍️",
 
 st.markdown("""
 <style>
-/* ── Reset & Base ── */
-[data-testid="stAppViewContainer"] { background: #11111b; }
-[data-testid="stSidebar"] { background: #181825; border-right: 1px solid #313244; }
-[data-testid="stSidebar"] * { color: #cdd6f4 !important; }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap');
 
-/* ── App header ── */
+/* ── Bảng màu Nhật Bản ──
+   Sumi (mực): #1a1209
+   Washi (giấy): #f5ede0
+   Urushi đỏ: #c0392b / #8b0000
+   Beni đỏ hồng: #c94040
+   Kincha vàng: #c8a45a
+   Hanada xanh chàm: #1d4e6e
+   Rikyū xanh rêu: #4a5c3a
+*/
+
+/* ── Reset & Base ── */
+[data-testid="stAppViewContainer"] {
+  background: #1a1209;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,164,90,.06) 39px, rgba(200,164,90,.06) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(200,164,90,.06) 39px, rgba(200,164,90,.06) 40px);
+}
+.main .block-container { max-width: 900px; padding: 1rem 1.5rem 3rem; }
+[data-testid="stSidebar"] {
+  background: #120d06;
+  border-right: 2px solid #c8a45a44;
+}
+[data-testid="stSidebar"] * { color: #e8d5b0 !important; }
+
+/* ── App header / Logo ── */
 .app-header {
-  text-align: center; padding: 1.4rem 0 1rem;
-  background: linear-gradient(160deg, #16101a 0%, #1a0a0a 50%, #16101a 100%);
-  border-radius: 16px; margin-bottom: 1rem;
-  border: 1px solid #2a1a1a;
+  text-align: center; padding: 1.8rem 0 1.2rem;
+  background: linear-gradient(160deg, #120d06 0%, #1e1008 50%, #120d06 100%);
+  border-radius: 4px; margin-bottom: 1.2rem;
+  border-top: 3px solid #c0392b;
+  border-bottom: 1px solid #c8a45a55;
   position: relative; overflow: hidden;
 }
-/* nền văn hoạ nhật nhẹ */
 .app-header::before {
-  content: "鯖 鳥 山 川 花 月 雪 風";
-  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
-  font-size: .65rem; color: rgba(180,30,30,.18); letter-spacing: 8px;
-  white-space: nowrap; pointer-events: none;
-}
-.app-header::after {
-  content: "";
-  position: absolute; bottom: 0; left: 10%; right: 10%; height: 1px;
-  background: linear-gradient(90deg, transparent, #c0392b55, transparent);
+  content: "山 川 花 月 雪 風 龍 鳥 竹 梅 松 波";
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+  font-size: .6rem; color: rgba(200,164,90,.12); letter-spacing: 10px;
+  white-space: nowrap; pointer-events: none; font-family: 'Noto Serif JP', serif;
 }
 .logo-seal {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 72px; height: 72px; border-radius: 50%;
-  background: radial-gradient(circle at 38% 35%, #c0392b, #8b0000);
-  border: 3px solid #e74c3c;
-  box-shadow: 0 0 0 4px rgba(192,57,43,.18), 0 4px 20px rgba(139,0,0,.45);
-  font-size: 2.1rem; color: #fff; font-weight: 900;
-  margin-bottom: 10px; line-height: 1;
-  text-shadow: 1px 1px 3px rgba(0,0,0,.6);
+  width: 76px; height: 76px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #c94040, #7a0000);
+  border: 3px solid #e05050;
+  box-shadow: 0 0 0 5px rgba(192,57,43,.15), 0 6px 24px rgba(139,0,0,.5);
+  font-size: 2.2rem; color: #f5ede0; font-weight: 900;
+  margin-bottom: 12px; line-height: 1;
+  font-family: 'Noto Serif JP', serif;
 }
 .logo-title {
-  font-size: 2rem; font-weight: 900; color: #f0e6d3;
-  margin: 0; letter-spacing: 4px;
-  text-shadow: 0 2px 12px rgba(192,57,43,.3);
-  font-family: Georgia, serif;
+  font-size: 2rem; font-weight: 900; color: #f0e0c0;
+  margin: 0; letter-spacing: 6px;
+  text-shadow: 0 2px 16px rgba(192,57,43,.4);
+  font-family: Georgia, 'Noto Serif JP', serif;
 }
-.logo-jp { color: #c0392b; font-size: 1rem; letter-spacing: 6px;
-  display: block; margin-top: 2px; }
-.logo-sub { color: #7a6a5a; font-size: .8rem; margin: 6px 0 0;
-  letter-spacing: 1.5px; }
+.logo-jp { color: #c0392b; font-size: .95rem; letter-spacing: 8px;
+  display: block; margin-top: 4px; font-family: 'Noto Serif JP', serif; }
+.logo-sub { color: #7a6a50; font-size: .78rem; margin: 8px 0 0; letter-spacing: 2px; }
 
-/* ── Kanji card ── */
-.card-box {
-  background: #1e1e2e;
-  border: 1px solid #313244;
-  border-radius: 14px;
-  padding: 16px 18px;
-  margin-bottom: 12px;
-  transition: border-color .2s, box-shadow .2s;
+/* ── Tab radio — kiểu noren (rèm vải Nhật) ── */
+div[data-testid="stRadio"] > label,
+div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
+div[data-testid="stRadio"] > div[role="radiogroup"] {
+  display: flex; flex-direction: row; gap: 2px;
+  background: #120d06; border-radius: 0;
+  border: 1px solid #c8a45a44;
+  padding: 0; overflow: hidden;
 }
-.card-box:hover { border-color: #585b70; box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+  display: flex; align-items: center; justify-content: center;
+  flex: 1; background: #1a1209;
+  border-right: 1px solid #c8a45a33;
+  padding: 10px 8px;
+  color: #7a6a50 !important; font-weight: 700; cursor: pointer;
+  transition: all .2s; white-space: nowrap; font-size: .9rem;
+  letter-spacing: .5px;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:last-child { border-right: none; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
+  background: #c0392b !important; color: #f5ede0 !important;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,.3);
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover {
+  background: #2a1a0a !important; color: #c8a45a !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
+
+/* ── Kanji card — kiểu shoji ── */
+.card-box {
+  background: #1e1408;
+  border: 1px solid #c8a45a33;
+  border-left: 3px solid #c0392b;
+  border-radius: 2px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: border-color .2s, box-shadow .2s;
+  position: relative;
+}
+.card-box:hover {
+  border-color: #c8a45a88;
+  border-left-color: #e05050;
+  box-shadow: 0 4px 24px rgba(192,57,43,.12);
+}
 
 /* ── Kanji glyph ── */
 .kanji-char {
-  font-size: 3.6rem; font-weight: 900; color: #cdd6f4;
+  font-size: 3.4rem; font-weight: 900; color: #f0e0c0;
   text-align: center; line-height: 1.05; margin-bottom: 2px;
-  text-shadow: 0 2px 8px rgba(137,180,250,.25);
+  font-family: 'Noto Serif JP', serif;
+  text-shadow: 0 2px 10px rgba(200,164,90,.2);
 }
-.kanji-read { font-size: .78rem; color: #89b4fa; text-align: center; letter-spacing: .5px; }
+.kanji-read { font-size: .75rem; color: #c8a45a; text-align: center; letter-spacing: 1px; }
 
 /* ── Info text ── */
-.kanji-viet { font-size: 1.15rem; font-weight: 800; color: #cba6f7; }
-.kanji-mean { color: #cdd6f4; font-size: .93rem; margin-top: 2px; }
-.kanji-meo  { color: #a6e3a1; font-style: italic; font-size: .82rem; margin-top: 4px; }
-.vocab-item { color: #f5c2e7; font-size: .86rem; }
+.kanji-viet { font-size: 1.1rem; font-weight: 800; color: #e8a0a0; }
+.kanji-mean { color: #c8b898; font-size: .9rem; margin-top: 2px; }
+.kanji-meo  { color: #8ab488; font-style: italic; font-size: .82rem; margin-top: 4px; border-left: 2px solid #4a5c3a; padding-left: 6px; }
+.vocab-item { color: #d4a0b0; font-size: .86rem; }
 
-/* ── Status badges ── */
+/* ── Status badges — kiểu hanko ── */
 .badge {
-  display: inline-block; border-radius: 20px;
-  padding: 2px 10px; font-size: .7rem; font-weight: 700; letter-spacing: .3px;
+  display: inline-block; border-radius: 2px;
+  padding: 2px 8px; font-size: .68rem; font-weight: 700; letter-spacing: .5px;
 }
-.tag-db   { background: #1a3d2b; color: #a6e3a1; border: 1px solid #2d6a4f; }
-.tag-ai   { background: #2d2046; color: #cba6f7; border: 1px solid #5a3e8a; }
-.tag-jisho{ background: #3d2800; color: #fab387; border: 1px solid #7a4f00; }
-.tag-miss { background: #3d0f0f; color: #f38ba8; border: 1px solid #7a1f1f; }
+.tag-db   { background: #0d1f15; color: #8ab488; border: 1px solid #4a5c3a; }
+.tag-ai   { background: #1a1030; color: #b8a0d8; border: 1px solid #5a3e7a; }
+.tag-jisho{ background: #201408; color: #c8a45a; border: 1px solid #7a5a20; }
+.tag-miss { background: #200808; color: #e08080; border: 1px solid #7a2020; }
 
-/* ── Section titles ── */
+/* ── Section titles — kiểu kakejiku (tranh treo) ── */
 .sec-title {
-  font-size: 1.3rem; font-weight: 800; color: #cdd6f4;
-  border-left: 4px solid #89b4fa; padding-left: 10px; margin-bottom: 12px;
+  font-size: 1.2rem; font-weight: 800; color: #f0e0c0;
+  border-left: 4px solid #c0392b; padding-left: 12px; margin-bottom: 14px;
+  font-family: 'Noto Serif JP', serif; letter-spacing: 1px;
 }
 
 /* ── Vocab word card ── */
 .vocab-card {
-  background: #181825; border: 1px solid #313244;
-  border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
+  background: #1e1408; border: 1px solid #c8a45a33;
+  border-bottom: 2px solid #c0392b44;
+  border-radius: 2px; padding: 12px 14px; margin-bottom: 8px;
   transition: border-color .2s;
 }
-.vocab-card:hover { border-color: #585b70; }
-.vocab-word  { font-size: 1.5rem; font-weight: 900; color: #cdd6f4; }
-.vocab-kana  { font-size: .85rem; color: #89b4fa; }
-.vocab-hanviet { font-size: .78rem; color: #a6adc8; font-style: italic; }
-.vocab-meaning { font-size: .95rem; color: #cba6f7; margin-top: 4px; }
-.vocab-example { font-size: .82rem; color: #6c7086; font-style: italic; margin-top: 2px; }
+.vocab-card:hover { border-color: #c8a45a66; }
+.vocab-word   { font-size: 1.4rem; font-weight: 900; color: #f0e0c0; font-family: 'Noto Serif JP', serif; }
+.vocab-kana   { font-size: .84rem; color: #c8a45a; }
+.vocab-hanviet { font-size: .76rem; color: #7a6a50; font-style: italic; }
+.vocab-meaning { font-size: .92rem; color: #e8a0a0; margin-top: 4px; }
+.vocab-example { font-size: .8rem; color: #5a4a3a; font-style: italic; margin-top: 2px; }
 
-/* ── Progress bar label ── */
-.prog-label { font-size: .8rem; color: #6c7086; text-align: right; margin-top: -6px; }
+/* ── Streamlit buttons → urushi đỏ ── */
+button[data-testid="baseButton-primary"] {
+  background: linear-gradient(135deg, #c0392b, #8b0000) !important;
+  border: 1px solid #e05050 !important; color: #f5ede0 !important;
+  border-radius: 2px !important; font-weight: 700 !important; letter-spacing: .5px;
+}
+button[data-testid="baseButton-primary"]:hover {
+  background: linear-gradient(135deg, #e04040, #a01010) !important;
+  box-shadow: 0 4px 14px rgba(192,57,43,.4) !important;
+}
+button[data-testid="baseButton-secondary"] {
+  background: #1e1408 !important; border: 1px solid #c8a45a55 !important;
+  color: #c8a45a !important; border-radius: 2px !important;
+}
+button[data-testid="baseButton-secondary"]:hover {
+  border-color: #c8a45a !important; color: #f0e0c0 !important;
+}
+
+/* ── Download button ── */
+a[data-testid="stDownloadButton-downloadButton"] {
+  background: #1e1408 !important; border: 1px solid #c8a45a55 !important;
+  color: #c8a45a !important; border-radius: 2px !important;
+}
+
+/* ── Input, selectbox ── */
+[data-testid="stTextInput"] input,
+[data-testid="stSelectbox"] select,
+div[data-baseweb="select"] {
+  background: #120d06 !important; border: 1px solid #c8a45a55 !important;
+  border-radius: 2px !important; color: #f0e0c0 !important;
+}
+
+/* ── Expander ── */
+[data-testid="stExpander"] {
+  background: #1a1008 !important; border: 1px solid #c8a45a33 !important;
+  border-radius: 2px !important;
+}
+[data-testid="stExpander"] summary {
+  color: #c8b898 !important; font-size: .88rem;
+}
+
+/* ── Divider ── */
+hr { border-color: #c8a45a22 !important; }
+
+/* ── Metric ── */
+[data-testid="stMetric"] {
+  background: #1e1408; border: 1px solid #c8a45a33;
+  border-radius: 2px; padding: 8px 12px !important;
+}
+[data-testid="stMetricValue"] { color: #f0e0c0 !important; }
+[data-testid="stMetricLabel"] { color: #7a6a50 !important; }
+
+/* ── Progress bar ── */
+[data-testid="stProgressBar"] > div { background: #c0392b !important; }
+[data-testid="stProgressBar"] { background: #2a1a0a !important; }
+
+/* ── Prog label ── */
+.prog-label { font-size: .8rem; color: #7a6a50; text-align: right; margin-top: -6px; }
 
 /* ── Hide Streamlit chrome ── */
 #MainMenu { visibility: hidden; }
 footer    { visibility: hidden; }
 
-/* ── Mobile Responsive (Xiaomi 15 Ultra & phones ≤ 768px) ── */
+/* ── Mobile Responsive (≤ 768px) ── */
 @media (max-width: 768px) {
-  /* Thu gọn padding main area */
-  .main .block-container {
-    padding: 0.4rem 0.5rem 2rem !important;
-    max-width: 100% !important;
-  }
-  /* Header nhỏ hơn */
-  .app-header { padding: 0.6rem 0 0.2rem; margin-bottom: 0.5rem; }
-  .app-header h1 { font-size: 1.6rem; letter-spacing: 1px; }
-  .app-header p  { font-size: .75rem; }
-  /* Kanji glyph trong card */
+  .main .block-container { padding: 0.4rem 0.5rem 2rem !important; max-width: 100% !important; }
+  .app-header { padding: 0.8rem 0 0.6rem; margin-bottom: 0.5rem; }
+  .logo-seal  { width: 58px; height: 58px; font-size: 1.7rem; margin-bottom: 8px; }
+  .logo-title { font-size: 1.5rem; letter-spacing: 4px; }
   .kanji-char { font-size: 2.6rem; }
-  /* Card padding nhỏ hơn */
-  .card-box { padding: 10px 10px; margin-bottom: 8px; }
-  /* Tab radio: scroll ngang thay vì tràn */
+  .card-box   { padding: 10px; margin-bottom: 8px; }
   div[data-testid="stRadio"] > div[role="radiogroup"] {
-    overflow-x: auto !important;
-    flex-wrap: nowrap !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 2px;
+    overflow-x: auto !important; flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
   div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none; }
-  div[data-testid="stRadio"] > div[role="radiogroup"] > label {
-    padding: 8px 14px !important;
-    white-space: nowrap;
-    font-size: .85rem;
-  }
-  /* Button touch-friendly */
+  div[data-testid="stRadio"] > div[role="radiogroup"] > label { padding: 10px 12px !important; font-size: .82rem; }
   button[data-testid="baseButton-primary"],
-  button[data-testid="baseButton-secondary"] {
-    min-height: 44px !important;
-    font-size: .9rem !important;
-  }
-  /* Metric nhỏ hơn */
-  [data-testid="stMetric"] { padding: 4px !important; }
+  button[data-testid="baseButton-secondary"] { min-height: 44px !important; font-size: .9rem !important; }
   [data-testid="stMetricValue"] { font-size: 1.1rem !important; }
   [data-testid="stMetricLabel"] { font-size: .7rem !important; }
-  /* Vocab card 1 cột */
-  .vocab-word  { font-size: 1.25rem; }
-  .vocab-meaning { font-size: .88rem; }
-  /* Section title */
-  .sec-title { font-size: 1.05rem; }
-  /* Expander header dễ tap hơn */
-  [data-testid="stExpander"] summary { padding: 10px 12px !important; font-size: .88rem; }
-  /* Input text lớn hơn để dễ gõ trên mobile */
-  input[type="text"], textarea {
-    font-size: 16px !important; /* tránh iOS zoom khi focus */
-  }
-  /* Ẩn sidebar toggle label */
+  .sec-title  { font-size: 1rem; }
+  input[type="text"], textarea { font-size: 16px !important; }
   [data-testid="collapsedControl"] { top: 0.4rem !important; }
 }
 </style>
