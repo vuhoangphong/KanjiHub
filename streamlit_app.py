@@ -66,43 +66,45 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap');
 
-/* ── Bảng màu Nhật Bản ──
+/* ── Bảng màu Nhật Bản sáng ──
+   Washi (giấy kem): #f7f2e8
    Sumi (mực): #1a1209
-   Washi (giấy): #f5ede0
-   Urushi đỏ: #c0392b / #8b0000
-   Beni đỏ hồng: #c94040
-   Kincha vàng: #c8a45a
-   Hanada xanh chàm: #1d4e6e
-   Rikyū xanh rêu: #4a5c3a
+   Urushi đỏ: #c0392b
+   Kincha vàng: #b8902a
+   Asagi xanh nhạt: #4a7a8a
 */
 
 /* ── Reset & Base ── */
 [data-testid="stAppViewContainer"] {
-  background: #1a1209;
+  background: #f7f2e8;
   background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,164,90,.06) 39px, rgba(200,164,90,.06) 40px),
-    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(200,164,90,.06) 39px, rgba(200,164,90,.06) 40px);
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(184,144,42,.07) 39px, rgba(184,144,42,.07) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(184,144,42,.07) 39px, rgba(184,144,42,.07) 40px);
 }
 .main .block-container { max-width: 900px; padding: 1rem 1.5rem 3rem; }
+
+/* ── Sidebar ── */
 [data-testid="stSidebar"] {
-  background: #120d06;
-  border-right: 2px solid #c8a45a44;
+  background: #f0e8d8;
+  border-right: 2px solid #c8a45a66;
 }
-[data-testid="stSidebar"] * { color: #e8d5b0 !important; }
+[data-testid="stSidebar"] * { color: #3a2a1a !important; }
+[data-testid="stSidebar"] input { background: #fff !important; color: #1a1209 !important; }
 
 /* ── App header / Logo ── */
 .app-header {
   text-align: center; padding: 1.8rem 0 1.2rem;
-  background: linear-gradient(160deg, #120d06 0%, #1e1008 50%, #120d06 100%);
-  border-radius: 4px; margin-bottom: 1.2rem;
-  border-top: 3px solid #c0392b;
-  border-bottom: 1px solid #c8a45a55;
+  background: linear-gradient(160deg, #fff8f0 0%, #fdf4e8 50%, #fff8f0 100%);
+  border-radius: 6px; margin-bottom: 1.2rem;
+  border-top: 4px solid #c0392b;
+  border-bottom: 1px solid #c8a45a66;
+  box-shadow: 0 2px 12px rgba(192,57,43,.08);
   position: relative; overflow: hidden;
 }
 .app-header::before {
   content: "山 川 花 月 雪 風 龍 鳥 竹 梅 松 波";
   position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-  font-size: .6rem; color: rgba(200,164,90,.12); letter-spacing: 10px;
+  font-size: .6rem; color: rgba(184,144,42,.18); letter-spacing: 10px;
   white-space: nowrap; pointer-events: none; font-family: 'Noto Serif JP', serif;
 }
 .logo-seal {
@@ -110,199 +112,148 @@ st.markdown("""
   width: 76px; height: 76px; border-radius: 50%;
   background: radial-gradient(circle at 38% 35%, #c94040, #7a0000);
   border: 3px solid #e05050;
-  box-shadow: 0 0 0 5px rgba(192,57,43,.15), 0 6px 24px rgba(139,0,0,.5);
-  font-size: 2.2rem; color: #f5ede0; font-weight: 900;
+  box-shadow: 0 0 0 5px rgba(192,57,43,.12), 0 6px 20px rgba(139,0,0,.3);
+  font-size: 2.2rem; color: #fff8f0; font-weight: 900;
   margin-bottom: 12px; line-height: 1;
   font-family: 'Noto Serif JP', serif;
 }
 .logo-title {
-  font-size: 2rem; font-weight: 900; color: #f0e0c0;
+  font-size: 2rem; font-weight: 900; color: #1a1209;
   margin: 0; letter-spacing: 6px;
-  text-shadow: 0 2px 16px rgba(192,57,43,.4);
   font-family: Georgia, 'Noto Serif JP', serif;
 }
 .logo-jp { color: #c0392b; font-size: .95rem; letter-spacing: 8px;
   display: block; margin-top: 4px; font-family: 'Noto Serif JP', serif; }
-.logo-sub { color: #7a6a50; font-size: .78rem; margin: 8px 0 0; letter-spacing: 2px; }
+.logo-sub { color: #9a8a70; font-size: .78rem; margin: 8px 0 0; letter-spacing: 2px; }
 
-/* ── Tab radio — kiểu noren (rèm vải Nhật) ── */
+/* ── Tab radio — kiểu noren ── */
 div[data-testid="stRadio"] > label,
 div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] {
-  display: flex; flex-direction: row; gap: 2px;
-  background: #120d06; border-radius: 0;
-  border: 1px solid #c8a45a44;
+  display: flex; flex-direction: row; gap: 0;
+  background: #ede6d8; border-radius: 4px;
+  border: 1px solid #c8a45a88;
   padding: 0; overflow: hidden;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
   display: flex; align-items: center; justify-content: center;
-  flex: 1; background: #1a1209;
-  border-right: 1px solid #c8a45a33;
+  flex: 1; background: transparent;
+  border-right: 1px solid #c8a45a55;
   padding: 10px 8px;
-  color: #7a6a50 !important; font-weight: 700; cursor: pointer;
+  color: #6a5a40 !important; font-weight: 700; cursor: pointer;
   transition: all .2s; white-space: nowrap; font-size: .9rem;
   letter-spacing: .5px;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:last-child { border-right: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
-  background: #c0392b !important; color: #f5ede0 !important;
-  box-shadow: inset 0 -3px 0 rgba(0,0,0,.3);
+  background: #c0392b !important; color: #fff8f0 !important;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,.15);
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover {
-  background: #2a1a0a !important; color: #c8a45a !important;
+  background: #f0e8d8 !important; color: #8b0000 !important;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
 
-/* ── Kanji card — kiểu shoji ── */
-.card-box { display:none; } /* kept for compat */
+/* ── Compat ── */
+.card-box { display:none; }
 
-/* ── Result card (rc-*) ── */
-.rc-card {
-  display:flex; gap:0; margin-bottom:12px;
-  background:#1e1408; border:1px solid #c8a45a33;
-  border-radius:4px; overflow:hidden; transition:box-shadow .2s;
-}
-.rc-card:hover { box-shadow:0 4px 20px rgba(192,57,43,.15); border-color:#c8a45a66; }
-.rc-left {
-  min-width:110px; max-width:110px;
-  background:linear-gradient(160deg,#150e04,#1a1008);
-  border-right:1px solid #c8a45a22;
-  display:flex; flex-direction:column; align-items:center;
-  padding:14px 8px 10px; gap:6px;
-}
-.rc-kanji {
-  font-size:3.2rem; font-weight:900; color:#f0e0c0; line-height:1;
-  font-family:'Noto Serif JP',Georgia,serif;
-  text-shadow:0 2px 12px rgba(200,164,90,.3);
-}
-.rc-reading {
-  font-size:.72rem; color:#c8a45a; letter-spacing:1.5px;
-  background:#120d06; border:1px solid #c8a45a33;
-  border-radius:2px; padding:2px 6px;
-}
-.rc-right { flex:1; padding:14px 16px 12px; display:flex; flex-direction:column; gap:6px; min-width:0; }
-.rc-top { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.rc-viet { font-size:1.25rem; font-weight:900; color:#e8a0a0; font-family:'Noto Serif JP',serif; letter-spacing:1px; }
-.rc-badge { font-size:.65rem; font-weight:700; letter-spacing:.5px; border-radius:2px; padding:2px 8px; white-space:nowrap; }
-.rc-meaning { color:#c8b898; font-size:.88rem; line-height:1.5; }
-.rc-meo { color:#8ab488; font-size:.82rem; font-style:italic; border-left:2px solid #4a5c3a; padding-left:8px; line-height:1.4; }
-.rc-vocab { border-top:1px solid #c8a45a22; padding-top:6px; display:flex; flex-direction:column; gap:4px; }
-.rc-vitem { font-size:.84rem; }
-.rc-vw { color:#f0e0c0; font-weight:700; }
-.rc-vr { color:#c8a45a; }
-.rc-vm { color:#d4a0b0; }
-@media(max-width:600px) {
-  .rc-left { min-width:80px; max-width:80px; padding:10px 6px 8px; }
-  .rc-kanji { font-size:2.4rem; }
-  .rc-right { padding:10px 10px 8px; }
-  .rc-viet  { font-size:1.05rem; }
-}
+/* ── Status badges ── */
+.rc-badge { font-size:.65rem; font-weight:700; letter-spacing:.5px; border-radius:3px; padding:2px 8px; white-space:nowrap; }
+.tag-db   { background: #e8f5ee; color: #2d6e4a; border: 1px solid #a0d4b8; }
+.tag-ai   { background: #f0ecfa; color: #6040a0; border: 1px solid #c0a8e8; }
+.tag-jisho{ background: #fdf5e0; color: #8a6010; border: 1px solid #d4a840; }
+.tag-miss { background: #fdecea; color: #a02020; border: 1px solid #e0a0a0; }
 
-/* ── Kanji glyph ── */
-.kanji-char {
-  font-size: 3.4rem; font-weight: 900; color: #f0e0c0;
-  text-align: center; line-height: 1.05; margin-bottom: 2px;
-  font-family: 'Noto Serif JP', serif;
-  text-shadow: 0 2px 10px rgba(200,164,90,.2);
-}
-.kanji-read { font-size: .75rem; color: #c8a45a; text-align: center; letter-spacing: 1px; }
-
-/* ── Info text ── */
-.kanji-viet { font-size: 1.1rem; font-weight: 800; color: #e8a0a0; }
-.kanji-mean { color: #c8b898; font-size: .9rem; margin-top: 2px; }
-.kanji-meo  { color: #8ab488; font-style: italic; font-size: .82rem; margin-top: 4px; border-left: 2px solid #4a5c3a; padding-left: 6px; }
-.vocab-item { color: #d4a0b0; font-size: .86rem; }
-
-/* ── Status badges — kiểu hanko ── */
-.badge {
-  display: inline-block; border-radius: 2px;
-  padding: 2px 8px; font-size: .68rem; font-weight: 700; letter-spacing: .5px;
-}
-.tag-db   { background: #0d1f15; color: #8ab488; border: 1px solid #4a5c3a; }
-.tag-ai   { background: #1a1030; color: #b8a0d8; border: 1px solid #5a3e7a; }
-.tag-jisho{ background: #201408; color: #c8a45a; border: 1px solid #7a5a20; }
-.tag-miss { background: #200808; color: #e08080; border: 1px solid #7a2020; }
-
-/* ── Section titles — kiểu kakejiku (tranh treo) ── */
+/* ── Section titles ── */
 .sec-title {
-  font-size: 1.2rem; font-weight: 800; color: #f0e0c0;
+  font-size: 1.2rem; font-weight: 800; color: #1a1209;
   border-left: 4px solid #c0392b; padding-left: 12px; margin-bottom: 14px;
   font-family: 'Noto Serif JP', serif; letter-spacing: 1px;
 }
 
 /* ── Vocab word card ── */
 .vocab-card {
-  background: #1e1408; border: 1px solid #c8a45a33;
-  border-bottom: 2px solid #c0392b44;
-  border-radius: 2px; padding: 12px 14px; margin-bottom: 8px;
-  transition: border-color .2s;
+  background: #ffffff; border: 1px solid #e0d4be;
+  border-bottom: 2px solid #c0392b55;
+  border-radius: 4px; padding: 12px 14px; margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: box-shadow .2s;
 }
-.vocab-card:hover { border-color: #c8a45a66; }
-.vocab-word   { font-size: 1.4rem; font-weight: 900; color: #f0e0c0; font-family: 'Noto Serif JP', serif; }
-.vocab-kana   { font-size: .84rem; color: #c8a45a; }
-.vocab-hanviet { font-size: .76rem; color: #7a6a50; font-style: italic; }
-.vocab-meaning { font-size: .92rem; color: #e8a0a0; margin-top: 4px; }
-.vocab-example { font-size: .8rem; color: #5a4a3a; font-style: italic; margin-top: 2px; }
+.vocab-card:hover { box-shadow: 0 3px 12px rgba(192,57,43,.1); }
+.vocab-word   { font-size: 1.4rem; font-weight: 900; color: #1a1209; font-family: 'Noto Serif JP', serif; }
+.vocab-kana   { font-size: .84rem; color: #b8902a; }
+.vocab-hanviet { font-size: .76rem; color: #9a8a6a; font-style: italic; }
+.vocab-meaning { font-size: .92rem; color: #3a2a1a; margin-top: 4px; }
+.vocab-example { font-size: .8rem; color: #8a7a6a; font-style: italic; margin-top: 2px; }
 
-/* ── Streamlit buttons → urushi đỏ ── */
+/* ── Buttons ── */
 button[data-testid="baseButton-primary"] {
   background: linear-gradient(135deg, #c0392b, #8b0000) !important;
-  border: 1px solid #e05050 !important; color: #f5ede0 !important;
-  border-radius: 2px !important; font-weight: 700 !important; letter-spacing: .5px;
+  border: 1px solid #c0392b !important; color: #fff8f0 !important;
+  border-radius: 3px !important; font-weight: 700 !important; letter-spacing: .5px;
 }
 button[data-testid="baseButton-primary"]:hover {
   background: linear-gradient(135deg, #e04040, #a01010) !important;
-  box-shadow: 0 4px 14px rgba(192,57,43,.4) !important;
+  box-shadow: 0 4px 14px rgba(192,57,43,.3) !important;
 }
 button[data-testid="baseButton-secondary"] {
-  background: #1e1408 !important; border: 1px solid #c8a45a55 !important;
-  color: #c8a45a !important; border-radius: 2px !important;
+  background: #fff8f0 !important; border: 1px solid #c8a45a88 !important;
+  color: #8a6010 !important; border-radius: 3px !important;
 }
 button[data-testid="baseButton-secondary"]:hover {
-  border-color: #c8a45a !important; color: #f0e0c0 !important;
+  border-color: #c0392b !important; color: #c0392b !important;
 }
 
 /* ── Download button ── */
 a[data-testid="stDownloadButton-downloadButton"] {
-  background: #1e1408 !important; border: 1px solid #c8a45a55 !important;
-  color: #c8a45a !important; border-radius: 2px !important;
+  background: #fff8f0 !important; border: 1px solid #c8a45a88 !important;
+  color: #8a6010 !important; border-radius: 3px !important;
 }
 
 /* ── Input, selectbox ── */
 [data-testid="stTextInput"] input,
 [data-testid="stSelectbox"] select,
 div[data-baseweb="select"] {
-  background: #120d06 !important; border: 1px solid #c8a45a55 !important;
-  border-radius: 2px !important; color: #f0e0c0 !important;
+  background: #ffffff !important; border: 1px solid #c8a45a88 !important;
+  border-radius: 3px !important; color: #1a1209 !important;
 }
+[data-testid="stTextInput"] input::placeholder { color: #b0a090 !important; }
 
 /* ── Expander ── */
 [data-testid="stExpander"] {
-  background: #1a1008 !important; border: 1px solid #c8a45a33 !important;
-  border-radius: 2px !important;
+  background: #fdf8f0 !important; border: 1px solid #e0d4be !important;
+  border-radius: 4px !important;
 }
-[data-testid="stExpander"] summary {
-  color: #c8b898 !important; font-size: .88rem;
-}
+[data-testid="stExpander"] summary { color: #5a4a30 !important; font-size: .88rem; }
 
 /* ── Divider ── */
-hr { border-color: #c8a45a22 !important; }
+hr { border-color: #d8c8a8 !important; }
 
 /* ── Metric ── */
 [data-testid="stMetric"] {
-  background: #1e1408; border: 1px solid #c8a45a33;
-  border-radius: 2px; padding: 8px 12px !important;
+  background: #ffffff; border: 1px solid #e0d4be;
+  border-radius: 4px; padding: 8px 12px !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
-[data-testid="stMetricValue"] { color: #f0e0c0 !important; }
-[data-testid="stMetricLabel"] { color: #7a6a50 !important; }
+[data-testid="stMetricValue"] { color: #1a1209 !important; }
+[data-testid="stMetricLabel"] { color: #9a8a6a !important; }
 
 /* ── Progress bar ── */
 [data-testid="stProgressBar"] > div { background: #c0392b !important; }
-[data-testid="stProgressBar"] { background: #2a1a0a !important; }
+[data-testid="stProgressBar"] { background: #e8dcc8 !important; }
 
 /* ── Prog label ── */
-.prog-label { font-size: .8rem; color: #7a6a50; text-align: right; margin-top: -6px; }
+.prog-label { font-size: .8rem; color: #9a8a6a; text-align: right; margin-top: -6px; }
+
+/* ── Kanji char / read ── */
+.kanji-char { font-size: 3.4rem; font-weight: 900; color: #1a1209;
+  text-align: center; line-height: 1.05; font-family: 'Noto Serif JP', serif; }
+.kanji-read { font-size: .75rem; color: #b8902a; text-align: center; letter-spacing: 1px; }
+.kanji-viet { font-size: 1.1rem; font-weight: 800; color: #1a1209; }
+.kanji-mean { color: #5a4a3a; font-size: .9rem; margin-top: 2px; }
+.kanji-meo  { color: #3a6a3a; font-style: italic; font-size: .82rem; margin-top: 4px;
+  border-left: 2px solid #8ab488; padding-left: 6px; }
+.vocab-item { color: #5a4a3a; font-size: .86rem; }
 
 /* ── Hide Streamlit chrome ── */
 #MainMenu { visibility: hidden; }
@@ -315,7 +266,6 @@ footer    { visibility: hidden; }
   .logo-seal  { width: 58px; height: 58px; font-size: 1.7rem; margin-bottom: 8px; }
   .logo-title { font-size: 1.5rem; letter-spacing: 4px; }
   .kanji-char { font-size: 2.6rem; }
-  .card-box   { padding: 10px; margin-bottom: 8px; }
   div[data-testid="stRadio"] > div[role="radiogroup"] {
     overflow-x: auto !important; flex-wrap: nowrap !important;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
@@ -410,10 +360,10 @@ def render_card(info, idx, prefix):
     meo_box = ""
     if meo:
         meo_box = (
-            f'<div style="background:#2a1f0a;border:1px solid #c8a45a55;border-radius:6px;'
+            f'<div style="background:#fffbf0;border:1px solid #d4bc8a;border-radius:6px;'
             f'padding:8px 12px;margin-top:8px">'
-            f'<div style="font-size:.68rem;font-weight:700;color:#c8a45a;letter-spacing:1.5px;margin-bottom:4px">✦ GỢI Ý CÁCH NHỚ</div>'
-            f'<div style="color:#e8d5a0;font-size:.88rem;line-height:1.6">{_html.escape(meo)}</div>'
+            f'<div style="font-size:.68rem;font-weight:700;color:#b8902a;letter-spacing:1.5px;margin-bottom:4px">✦ GỢI Ý CÁCH NHỚ</div>'
+            f'<div style="color:#3a2a1a;font-size:.88rem;line-height:1.6">{_html.escape(meo)}</div>'
             f'</div>'
         )
 
@@ -427,10 +377,10 @@ def render_card(info, idx, prefix):
             r = _html.escape(str(v[1]))
             m = _html.escape(str(v[2]))
             rows += (
-                f'<div style="padding:6px 0;border-bottom:1px solid #c8a45a18;display:flex;align-items:baseline;gap:6px">'
-                f'<span style="color:#f0e0c0;font-weight:700;font-size:.95rem">{w}</span>'
-                f'<span style="color:#c8a45a;font-size:.82rem">（{r}）</span>'
-                f'<span style="color:#a09080;font-size:.82rem">— {m}</span>'
+                f'<div style="padding:6px 0;border-bottom:1px solid #e0d0b0;display:flex;align-items:baseline;gap:6px">'
+                f'<span style="color:#1a3060;font-weight:700;font-size:.95rem">{w}</span>'
+                f'<span style="color:#b8902a;font-size:.82rem">（{r}）</span>'
+                f'<span style="color:#6a5a4a;font-size:.82rem">— {m}</span>'
                 f'</div>'
             )
         vocab_box = (
@@ -443,26 +393,26 @@ def render_card(info, idx, prefix):
     elif meanings_en:
         m_en = _html.escape(" · ".join(meanings_en[:4]))
         vocab_box = (
-            f'<div style="margin-top:8px;font-size:.82rem;color:#a09080">{m_en}</div>'
+            f'<div style="margin-top:8px;font-size:.82rem;color:#8a7a6a">{m_en}</div>'
         )
 
     # ── Dùng Streamlit columns để TTS nằm trong cột trái ──
     st.markdown(
-        '<div style="background:#1c1208;border:1px solid #c8a45a44;'
+        '<div style="background:#ffffff;border:1px solid #e0d4be;'
         'border-radius:8px;margin-bottom:10px;'
-        'box-shadow:0 2px 12px rgba(0,0,0,.4)">',
+        'box-shadow:0 2px 8px rgba(0,0,0,.08)">',
         unsafe_allow_html=True)
 
     col_l, col_r = st.columns([1, 3])
 
     with col_l:
         st.markdown(
-            f'<div style="background:#150e04;min-height:100%;padding:16px 10px 8px;'
-            f'text-align:center;border-right:1px solid #c8a45a22">'
-            f'<div style="font-size:3.4rem;font-weight:900;color:#f5ede0;line-height:1;'
+            f'<div style="background:#fdf6e8;min-height:100%;padding:16px 10px 8px;'
+            f'text-align:center;border-right:1px solid #e0d0b0">'
+            f'<div style="font-size:3.4rem;font-weight:900;color:#1a1209;line-height:1;'
             f'font-family:serif">{_html.escape(kanji)}</div>'
-            f'<div style="font-size:.75rem;color:#c8a45a;letter-spacing:2px;margin-top:6px;'
-            f'background:#1e1408;border:1px solid #c8a45a44;border-radius:20px;'
+            f'<div style="font-size:.75rem;color:#b8902a;letter-spacing:2px;margin-top:6px;'
+            f'background:#fff8ee;border:1px solid #d4bc8a;border-radius:20px;'
             f'padding:3px 10px;display:inline-block">{_html.escape(reading) or "—"}</div>'
             f'{gif_html}'
             f'</div>',
@@ -473,12 +423,12 @@ def render_card(info, idx, prefix):
             _components.html(f"""
 <style>html,body{{margin:0;padding:0;overflow:hidden}}*{{box-sizing:border-box}}</style>
 <button onclick="speak()" style="
-  background:#1e1408;border:1px solid #c8a45a55;border-radius:0;
-  color:#c8a45a;font-size:.88rem;cursor:pointer;padding:8px 0;
+  background:#fff8ee;border:1px solid #d4bc8a;border-radius:0;
+  color:#8a6010;font-size:.88rem;cursor:pointer;padding:8px 0;
   width:100%;font-family:sans-serif;display:block;letter-spacing:.5px;
   position:absolute;bottom:0;left:0;right:0;
-" onmouseover="this.style.background='#2a1a08'"
-  onmouseout="this.style.background='#1e1408'">🔊 Nghe</button>
+" onmouseover="this.style.background='#fdf0d8'"
+  onmouseout="this.style.background='#fff8ee'">🔊 Nghe</button>
 <script>
 function speak(){{
   try{{
@@ -496,10 +446,10 @@ function speak(){{
         if y_nghia or meaning_sub:
             y_nghia_block = (
                 f'<div style="margin-bottom:4px">'
-                f'<div style="font-size:.65rem;font-weight:700;color:#7a6a50;letter-spacing:2px;margin-bottom:3px">Ý NGHĨA</div>'
-                f'<div style="font-size:1.4rem;font-weight:900;color:#f5ede0;font-family:serif">'
+                f'<div style="font-size:.65rem;font-weight:700;color:#9a8a6a;letter-spacing:2px;margin-bottom:3px">Ý NGHĨA</div>'
+                f'<div style="font-size:1.4rem;font-weight:900;color:#1a1209;font-family:serif">'
                 f'{y_nghia}{badge_html}</div>'
-                + (f'<div style="font-size:.88rem;color:#b0a090;margin-top:2px">{meaning_sub}</div>' if meaning_sub and meaning_sub != y_nghia else "")
+                + (f'<div style="font-size:.88rem;color:#5a4a3a;margin-top:2px">{meaning_sub}</div>' if meaning_sub and meaning_sub != y_nghia else "")
                 + f'</div>'
             )
         st.markdown(
@@ -517,8 +467,8 @@ function speak(){{
                     st.session_state[res_key] = analyze_kanji_ai(kanji)
             if res_key in st.session_state:
                 st.markdown(
-                    f'<div style="background:#120d06;border:1px solid #c8a45a33;'
-                    f'border-radius:4px;padding:10px 12px;font-size:.85rem;color:#c8b898;margin-top:4px">'
+                    f'<div style="background:#fdf8f0;border:1px solid #e0d4be;'
+                    f'border-radius:4px;padding:10px 12px;font-size:.85rem;color:#3a2a1a;margin-top:4px">'
                     f'{st.session_state[res_key]}</div>',
                     unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
