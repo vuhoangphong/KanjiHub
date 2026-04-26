@@ -71,12 +71,44 @@ st.markdown("""
 
 /* ── App header ── */
 .app-header {
-  text-align: center; padding: 1.2rem 0 0.4rem;
-  background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+  text-align: center; padding: 1.4rem 0 1rem;
+  background: linear-gradient(160deg, #16101a 0%, #1a0a0a 50%, #16101a 100%);
   border-radius: 16px; margin-bottom: 1rem;
+  border: 1px solid #2a1a1a;
+  position: relative; overflow: hidden;
 }
-.app-header h1 { font-size: 2.4rem; font-weight: 900; color: #cdd6f4; margin: 0; letter-spacing: 2px; }
-.app-header p  { color: #6c7086; font-size: .9rem; margin: 4px 0 0; }
+/* nền văn hoạ nhật nhẹ */
+.app-header::before {
+  content: "鯖 鳥 山 川 花 月 雪 風";
+  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  font-size: .65rem; color: rgba(180,30,30,.18); letter-spacing: 8px;
+  white-space: nowrap; pointer-events: none;
+}
+.app-header::after {
+  content: "";
+  position: absolute; bottom: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, #c0392b55, transparent);
+}
+.logo-seal {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #c0392b, #8b0000);
+  border: 3px solid #e74c3c;
+  box-shadow: 0 0 0 4px rgba(192,57,43,.18), 0 4px 20px rgba(139,0,0,.45);
+  font-size: 2.1rem; color: #fff; font-weight: 900;
+  margin-bottom: 10px; line-height: 1;
+  text-shadow: 1px 1px 3px rgba(0,0,0,.6);
+}
+.logo-title {
+  font-size: 2rem; font-weight: 900; color: #f0e6d3;
+  margin: 0; letter-spacing: 4px;
+  text-shadow: 0 2px 12px rgba(192,57,43,.3);
+  font-family: Georgia, serif;
+}
+.logo-jp { color: #c0392b; font-size: 1rem; letter-spacing: 6px;
+  display: block; margin-top: 2px; }
+.logo-sub { color: #7a6a5a; font-size: .8rem; margin: 6px 0 0;
+  letter-spacing: 1.5px; }
 
 /* ── Kanji card ── */
 .card-box {
@@ -500,9 +532,14 @@ st.divider()
 
 # === TAB 1 ===
 if active_tab == TAB_NAMES[0]:
-    st.markdown('<div class="app-header"><h1>✍️ Kanji Hub</h1>'
-                '<p>Tra cứu Kanji Nhật · Nghĩa tiếng Việt · Luyện viết</p></div>',
-                unsafe_allow_html=True)
+    st.markdown('''
+<div class="app-header">
+  <div class="logo-seal">漢</div>
+  <div class="logo-title">KANJI HUB</div>
+  <span class="logo-jp">漢字 · 学習</span>
+  <p class="logo-sub">Tra cứu Kanji Nhật &middot; Nghĩa tiếng Việt &middot; Luyện viết</p>
+</div>
+''', unsafe_allow_html=True)
 
     with st.form("search_form"):
         query = st.text_input("q", label_visibility="collapsed",
