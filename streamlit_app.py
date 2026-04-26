@@ -1102,42 +1102,6 @@ if active_tab == TAB_NAMES[0]:
     </div>
   </div>
 </div>
-
-<div class="feature-grid">
-  <div class="feature-card">
-    <span class="feature-icon">🔍</span>
-    <div class="feature-title">TRA CỨU KANJI</div>
-    <div class="feature-desc">Tìm theo chữ hoặc nghĩa tiếng Việt</div>
-    <span class="feature-badge">DB + AI</span>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">🗺️</span>
-    <div class="feature-title">LỘ TRÌNH JLPT</div>
-    <div class="feature-desc">Kanji từng bài N5 → N1</div>
-    <span class="feature-badge">MIỄN PHÍ</span>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">📖</span>
-    <div class="feature-title">TỪ VỰNG</div>
-    <div class="feature-desc">Học từ vựng theo chủ đề bài</div>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">📄</span>
-    <div class="feature-title">LUYỆN VIẾT PDF</div>
-    <div class="feature-desc">Tạo bảng ô luyện viết tay</div>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">🤖</span>
-    <div class="feature-title">PHÂN TÍCH AI</div>
-    <div class="feature-desc">Giải thích sâu bằng GPT / Gemini</div>
-    <span class="feature-badge">HOT</span>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">🔊</span>
-    <div class="feature-title">PHÁT ÂM TTS</div>
-    <div class="feature-desc">Nghe cách đọc từng chữ</div>
-  </div>
-</div>
 ''', unsafe_allow_html=True)
 
     with st.form("search_form"):
