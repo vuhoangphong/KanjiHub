@@ -202,14 +202,18 @@ def render_card(info, idx, prefix):
     col_l, col_r = st.columns([1, 5])
 
     with col_l:
-        st.markdown(f'<div class="kanji-char">{kanji}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="kanji-read">{reading}</div>', unsafe_allow_html=True)
-        if kanji:
-            url = gif_url(kanji)
-            st.markdown(
-                f'<img src="{url}" width="90" title="Thu tu net viet"'
-                f' onerror="this.style.display=\'none\'" style="margin-top:6px">',
-                unsafe_allow_html=True)
+        gif_src = gif_url(kanji) if kanji else ""
+        gif_html = (
+            f'<img src="{gif_src}" width="80" title="Thứ tự nét viết"'
+            f' onerror="this.style.display:none" style="display:block;margin:4px auto 0">'
+            if gif_src else ""
+        )
+        st.markdown(f"""
+<div style="text-align:center;line-height:1">
+  <div class="kanji-char">{kanji}</div>
+  <div class="kanji-read">{reading}</div>
+  {gif_html}
+</div>""", unsafe_allow_html=True)
 
     with col_r:
         h1, h2 = st.columns([3, 2])
@@ -232,13 +236,17 @@ def render_card(info, idx, prefix):
             st.markdown(f'<div class="vocab-item">{" / ".join(info["meanings_en"][:3])}</div>',
                         unsafe_allow_html=True)
         if viet or meaning:
-            with st.expander("🤖 Phân tích AI chuyên sâu", expanded=False):
-                res_key = f"ai_res_{uid}"
-                if st.button("▶ Phân tích ngay", key=f"analyze_{uid}"):
-                    with st.spinner("Đang hỏi AI…"):
-                        st.session_state[res_key] = analyze_kanji_ai(kanji)
-                if res_key in st.session_state:
-                    st.markdown(st.session_state[res_key])
+            res_key = f"ai_res_{uid}"
+            st.markdown("<div style='margin-top:8px'>", unsafe_allow_html=True)
+            if st.button("🤖 Phân tích AI", key=f"analyze_{uid}",
+                         use_container_width=False):
+                with st.spinner("Đang hỏi AI…"):
+                    st.session_state[res_key] = analyze_kanji_ai(kanji)
+            if res_key in st.session_state:
+                st.markdown(st.session_state[res_key])
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
