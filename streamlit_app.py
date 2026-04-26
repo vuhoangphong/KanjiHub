@@ -449,7 +449,7 @@ def render_card(info, idx, prefix):
     # ── Dùng Streamlit columns để TTS nằm trong cột trái ──
     st.markdown(
         '<div style="background:#1c1208;border:1px solid #c8a45a44;'
-        'border-radius:8px;overflow:hidden;margin-bottom:10px;'
+        'border-radius:8px;margin-bottom:10px;'
         'box-shadow:0 2px 12px rgba(0,0,0,.4)">',
         unsafe_allow_html=True)
 
@@ -471,11 +471,12 @@ def render_card(info, idx, prefix):
         if speak_text:
             safe = speak_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
             _components.html(f"""
-<style>*{{margin:0;padding:0;box-sizing:border-box}}</style>
+<style>html,body{{margin:0;padding:0;overflow:hidden}}*{{box-sizing:border-box}}</style>
 <button onclick="speak()" style="
   background:#1e1408;border:1px solid #c8a45a55;border-radius:0;
   color:#c8a45a;font-size:.88rem;cursor:pointer;padding:8px 0;
   width:100%;font-family:sans-serif;display:block;letter-spacing:.5px;
+  position:absolute;bottom:0;left:0;right:0;
 " onmouseover="this.style.background='#2a1a08'"
   onmouseout="this.style.background='#1e1408'">🔊 Nghe</button>
 <script>
@@ -487,7 +488,7 @@ function speak(){{
   }}catch(e){{}}
 }}
 </script>
-""", height=36, scrolling=False)
+""", height=40, scrolling=False)
 
     with col_r:
         badge_html = f'<span class="rc-badge {status_cls}" style="margin-left:8px">{_html.escape(status_txt)}</span>'
