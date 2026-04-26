@@ -424,13 +424,11 @@ div[data-testid="stRadio"] span[data-testid="stWidgetLabel"] { display: none; }
 
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
 TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng"]
-if "active_tab" not in st.session_state:
-    st.session_state.active_tab = TAB_NAMES[0]
+if "tab_radio" not in st.session_state:
+    st.session_state["tab_radio"] = TAB_NAMES[0]
 
 active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
-                      index=TAB_NAMES.index(st.session_state.active_tab),
                       key="tab_radio", label_visibility="collapsed")
-st.session_state.active_tab = active_tab
 st.divider()
 
 # === TAB 1 ===
@@ -542,7 +540,7 @@ elif active_tab == TAB_NAMES[1]:
                         res = do_lookup("".join(chunk), "DB + AI")
                     st.session_state[res_key] = res
                     st.session_state.results   = res
-                    st.session_state.active_tab = TAB_NAMES[0]  # nhảy về Tra Kanji
+                    st.session_state["tab_radio"] = TAB_NAMES[0]  # nhảy về Tra Kanji
                     st.rerun()
             with b2:
                 st.markdown('<div style="margin-top:6px">', unsafe_allow_html=True)
