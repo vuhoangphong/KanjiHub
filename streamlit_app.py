@@ -135,16 +135,19 @@ div[data-testid="stRadio"] > div[role="radiogroup"] {
   border: none; padding: 6px 0; overflow: visible;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
-  display: flex; align-items: center; justify-content: center;
-  flex: 1;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  flex: 1 !important;
   background: #ffffff !important;
   border: 2px solid #e8ddd0 !important;
   border-radius: 50px !important;
   padding: 10px 16px !important;
-  color: #7a5a40 !important; font-weight: 700 !important; cursor: pointer;
+  color: #6a4a30 !important; font-weight: 700 !important; cursor: pointer !important;
   transition: all .2s cubic-bezier(.4,0,.2,1) !important;
-  white-space: nowrap; font-size: .9rem; letter-spacing: .3px;
+  white-space: nowrap !important; font-size: .9rem !important; letter-spacing: .3px !important;
   box-shadow: 0 2px 6px rgba(0,0,0,.06) !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label * {
+  color: #6a4a30 !important;
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) {
   background: linear-gradient(135deg, #e84040 0%, #b8200e 100%) !important;
@@ -728,14 +731,14 @@ with st.sidebar:
     st.divider()
     st.markdown("""
 **📌 Cách nhập:**
-- Kanji: `山川田`
-- Tiếng Việt: `Học`, `Tình`
-- Danh sách: `会社,学校`
+- Kanji: 📌  *山川田*
+- Tiếng Việt: 📌  *Học, Tình*
+- Danh sách: 📌  *会社,学校*
 
 **🎯 Chế độ tra:**
-- `DB` — nhanh, offline
-- `DB + AI` — kết hợp
-- `AI` — chỉ dùng AI
+- **DB** — nhanh, offline
+- **DB + AI** — kết hợp
+- **AI** — chỉ dùng AI
 """)
     st.caption("Kanji Hub v2 • Streamlit Cloud")
 
