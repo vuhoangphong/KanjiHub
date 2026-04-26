@@ -396,13 +396,13 @@ def render_card(info, idx, prefix):
 
     gif_src = gif_url(kanji) if kanji else ""
     gif_html = (
-        f'<img src="{gif_src}" width="90" height="90" title="Thứ tự nét viết"'
-        f' style="border-radius:4px;background:#fff;padding:2px;display:block;margin:0 auto"'
+        f'<img src="{gif_src}" width="88" height="88" title="Thứ tự nét viết"'
+        f' style="border-radius:4px;background:#fff;padding:2px;display:block;margin:4px auto 0"'
         f' onerror="this.style.display=\'none\'">'
         if gif_src else ""
     )
 
-    # Xây vocab section — dùng inline style để tránh Streamlit sanitize class
+    # vocab / meanings
     vocab_section = ""
     if vocab:
         rows = ""
@@ -413,15 +413,13 @@ def render_card(info, idx, prefix):
             rows += (f'<div style="font-size:.84rem;margin-bottom:2px">'
                      f'<span style="color:#f0e0c0;font-weight:700">{w}</span>'
                      f'<span style="color:#c8a45a">（{r}）</span>'
-                     f'<span style="color:#d4a0b0"> — {m}</span>'
-                     f'</div>')
+                     f'<span style="color:#d4a0b0"> — {m}</span></div>')
         vocab_section = (f'<div style="border-top:1px solid #c8a45a22;'
-                         f'padding-top:6px;display:flex;flex-direction:column;gap:2px">'
-                         f'{rows}</div>')
+                         f'padding-top:6px;margin-top:4px">{rows}</div>')
     elif meanings_en:
         m = _html.escape(" · ".join(meanings_en[:3]))
         vocab_section = (f'<div style="border-top:1px solid #c8a45a22;padding-top:6px;'
-                         f'font-size:.84rem;color:#d4a0b0">{m}</div>')
+                         f'margin-top:4px;font-size:.84rem;color:#d4a0b0">{m}</div>')
 
     mean_html = (f'<div style="color:#c8b898;font-size:.88rem;line-height:1.5">'
                  f'📖 {_html.escape(meaning)}</div>' if meaning else "")
@@ -429,34 +427,36 @@ def render_card(info, idx, prefix):
                  f'border-left:2px solid #4a5c3a;padding-left:8px;line-height:1.4">'
                  f'💡 {_html.escape(meo)}</div>' if meo else "")
 
+    # ── Dùng Streamlit columns để TTS (iframe) nằm trong cột trái ──
     st.markdown(
-        f'<div class="rc-card">'
-        f'<div class="rc-left">'
-        f'<div class="rc-kanji">{_html.escape(kanji)}</div>'
-        f'<div class="rc-reading">{_html.escape(reading) or "—"}</div>'
-        f'{gif_html}'
-        f'</div>'
-        f'<div class="rc-right">'
-        f'<div class="rc-top">'
-        f'<span class="rc-viet">{_html.escape(viet) if viet else _html.escape(kanji)}</span>'
-        f'<span class="rc-badge {status_cls}">{_html.escape(status_txt)}</span>'
-        f'</div>'
-        f'{mean_html}{meo_html}{vocab_section}'
-        f'</div>'
-        f'</div>',
+        '<div style="background:#1e1408;border:1px solid #c8a45a33;'
+        'border-radius:4px;overflow:hidden;margin-bottom:4px">',
         unsafe_allow_html=True)
 
-    # TTS + AI button
-    btn_l, btn_r, _ = st.columns([1, 2, 3])
-    with btn_l:
+    col_l, col_r = st.columns([1, 3])
+
+    with col_l:
+        st.markdown(
+            f'<div style="background:linear-gradient(160deg,#150e04,#1a1008);'
+            f'min-height:100%;padding:14px 8px 6px;text-align:center;'
+            f'border-right:1px solid #c8a45a22">'
+            f'<div style="font-size:3rem;font-weight:900;color:#f0e0c0;line-height:1;'
+            f'font-family:serif;text-shadow:0 2px 10px rgba(200,164,90,.3)">{_html.escape(kanji)}</div>'
+            f'<div style="font-size:.7rem;color:#c8a45a;letter-spacing:1.5px;'
+            f'background:#120d06;border:1px solid #c8a45a33;border-radius:2px;'
+            f'padding:2px 6px;display:inline-block;margin-top:4px">{_html.escape(reading) or "—"}</div>'
+            f'{gif_html}'
+            f'</div>',
+            unsafe_allow_html=True)
+        # TTS button qua iframe — nằm trong cột trái
         speak_text = kanji if kanji else reading
         if speak_text:
             safe = speak_text.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
             _components.html(f"""
-<button onclick="speak()" title="Phát âm" style="
+<button onclick="speak()" style="
   background:#1e1408;border:1px solid #c8a45a55;border-radius:2px;
-  color:#c8a45a;font-size:.95rem;cursor:pointer;padding:6px 0;
-  width:100%;font-family:sans-serif;transition:background .15s;
+  color:#c8a45a;font-size:.9rem;cursor:pointer;padding:6px 0;
+  width:100%;margin-top:6px;font-family:sans-serif;
 " onmouseover="this.style.background='#2a1a08'"
   onmouseout="this.style.background='#1e1408'">🔊 Nghe</button>
 <script>
@@ -468,20 +468,32 @@ function speak(){{
   }}catch(e){{}}
 }}
 </script>
-""", height=38)
-    with btn_r:
+""", height=42)
+
+    with col_r:
+        st.markdown(
+            f'<div style="padding:12px 14px 10px;display:flex;flex-direction:column;gap:6px">'
+            f'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+            f'<span style="font-size:1.2rem;font-weight:900;color:#e8a0a0;font-family:serif;letter-spacing:1px">'
+            f'{_html.escape(viet) if viet else _html.escape(kanji)}</span>'
+            f'<span class="rc-badge {status_cls}">{_html.escape(status_txt)}</span>'
+            f'</div>'
+            f'{mean_html}{meo_html}{vocab_section}'
+            f'</div>',
+            unsafe_allow_html=True)
         if viet or meaning:
             res_key = f"ai_res_{uid}"
-            if st.button("🤖 Phân tích AI", key=f"analyze_{uid}", use_container_width=True):
+            if st.button("🤖 Phân tích AI", key=f"analyze_{uid}", use_container_width=False):
                 with st.spinner("Đang hỏi AI…"):
                     st.session_state[res_key] = analyze_kanji_ai(kanji)
             if res_key in st.session_state:
                 st.markdown(
                     f'<div style="background:#120d06;border:1px solid #c8a45a33;'
-                    f'border-radius:2px;padding:10px 12px;font-size:.85rem;color:#c8b898;'
-                    f'margin-top:4px">{st.session_state[res_key]}</div>',
+                    f'border-radius:2px;padding:10px 12px;font-size:.85rem;color:#c8b898">'
+                    f'{st.session_state[res_key]}</div>',
                     unsafe_allow_html=True)
 
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def do_lookup(query, search_mode):
