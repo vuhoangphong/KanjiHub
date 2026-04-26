@@ -221,17 +221,25 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { 
 
 /* ── Vocab word card ── */
 .vocab-card {
-  background: #ffffff; border: 1px solid #e0d4be;
+  background: #ffffff !important; border: 1px solid #e0d4be;
   border-bottom: 2px solid #c0392b55;
   border-radius: 4px; padding: 12px 14px; margin-bottom: 8px;
   box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: box-shadow .2s;
 }
 .vocab-card:hover { box-shadow: 0 3px 12px rgba(192,57,43,.1); }
-.vocab-word   { font-size: 1.4rem; font-weight: 900; color: #1a1209; font-family: 'Noto Serif JP', serif; }
-.vocab-kana   { font-size: .84rem; color: #b8902a; }
-.vocab-hanviet { font-size: .76rem; color: #9a8a6a; font-style: italic; }
-.vocab-meaning { font-size: .92rem; color: #3a2a1a; margin-top: 4px; }
-.vocab-example { font-size: .8rem; color: #8a7a6a; font-style: italic; margin-top: 2px; }
+.vocab-word   { font-size: 1.4rem !important; font-weight: 900 !important; color: #1a1209 !important; font-family: 'Noto Serif JP', serif !important; }
+.vocab-kana   { font-size: .84rem !important; color: #b8902a !important; }
+.vocab-hanviet { font-size: .76rem !important; color: #9a8a6a !important; font-style: italic !important; }
+.vocab-meaning { font-size: .92rem !important; color: #3a2a1a !important; margin-top: 4px !important; }
+.vocab-example { font-size: .8rem !important; color: #8a7a6a !important; font-style: italic !important; margin-top: 2px !important; }
+/* Selectbox label trong tab 3 */
+[data-testid="stSelectbox"] [data-testid="stWidgetLabel"] p { color: #5a4030 !important; }
+/* Vocab card text override trong stMarkdownContainer */
+[data-testid="stMarkdownContainer"] .vocab-word { color: #1a1209 !important; }
+[data-testid="stMarkdownContainer"] .vocab-kana { color: #b8902a !important; }
+[data-testid="stMarkdownContainer"] .vocab-hanviet { color: #9a8a6a !important; }
+[data-testid="stMarkdownContainer"] .vocab-meaning { color: #3a2a1a !important; }
+[data-testid="stMarkdownContainer"] .vocab-example { color: #8a7a6a !important; }
 
 /* ── Buttons ── */
 /* Primary — đỏ urushi gradient, full pill */
