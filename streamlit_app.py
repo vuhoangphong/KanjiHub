@@ -1719,11 +1719,9 @@ html [data-testid="stAlert"] * { color: #b0b8c8 !important; }
 html .prog-label { color: #606878 !important; }
 </style>""", unsafe_allow_html=True)
 
-# ── Site Header + Dark mode toggle ───────────────────────────────────────────
+# ── Site Header ───────────────────────────────────────────────────────────────
 _logo_img = f'<img src="{_logo_uri}" class="site-header-logo">' if _logo_uri else '漢'
-_hdr_col, _dm_hdr_col = st.columns([11, 1])
-with _hdr_col:
-    st.markdown(f"""
+st.markdown(f"""
 <div class="site-header">
   <div class="site-header-left">
     {_logo_img}
@@ -1738,27 +1736,23 @@ with _hdr_col:
   </div>
 </div>
 """, unsafe_allow_html=True)
-with _dm_hdr_col:
-    st.markdown("""
+# Toggle nằm fixed góc phải, căn theo header
+st.markdown("""
 <style>
-/* Đẩy cột toggle sát lề phải */
-div[data-testid="column"]:last-child {
-  display:flex; align-items:center; justify-content:flex-end;
-  padding-right:0 !important;
-}
-div[data-testid="column"]:last-child > div:first-child {
-  width:100%; display:flex; justify-content:flex-end; align-items:center;
-}
-div[data-testid="column"]:last-child [data-testid="stToggle"] {
-  margin-left:auto;
+[data-testid="stToggle"][aria-label*="🌙"],
+[data-testid="stToggle"][aria-label*="☀️"],
+div[data-testid="stToggle"] {
+  position: fixed !important;
+  top: 18px !important;
+  right: 18px !important;
+  z-index: 9999 !important;
 }
 </style>
-<div style="height:16px"></div>
 """, unsafe_allow_html=True)
-    st.toggle("🌙" if not dark_mode else "☀️",
-               key="dm_main",
-               help="Bật/Tắt chế độ tối",
-               label_visibility="visible")
+st.toggle("🌙" if not dark_mode else "☀️",
+           key="dm_main",
+           help="Bật/Tắt chế độ tối",
+           label_visibility="visible")
 
 # ── Xóa badge Streamlit bằng JS ─────────────────────────────────────────────
 _components.html("""<script>
