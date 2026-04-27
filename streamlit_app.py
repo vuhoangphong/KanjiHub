@@ -1719,22 +1719,12 @@ html .prog-label { color: #606878 !important; }
 
 # ── Site Header ───────────────────────────────────────────────────────────────
 _logo_img = f'<img src="{_logo_uri}" class="site-header-logo">' if _logo_uri else '漢'
-_dm_checked = 'checked' if dark_mode else ''
-_dm_icon = '☀️' if dark_mode else '🌙'
+_dm_icon       = '☀️' if dark_mode else '🌙'
+_dm_track_bg   = '#5a7de8' if dark_mode else '#ccc'
+_dm_thumb_left = '18px' if dark_mode else '2px'
 st.markdown(f"""
 <style>
 .dm-toggle-wrap {{ display:flex;align-items:center;gap:6px;cursor:pointer }}
-.dm-toggle-input {{ display:none }}
-.dm-toggle-track {{
-  width:36px;height:20px;border-radius:10px;background:#ccc;
-  position:relative;transition:.2s;flex-shrink:0;
-}}
-.dm-toggle-input:checked + .dm-toggle-track {{ background:#5a7de8 }}
-.dm-toggle-thumb {{
-  position:absolute;top:2px;left:2px;width:16px;height:16px;
-  border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);
-}}
-.dm-toggle-input:checked ~ .dm-toggle-track .dm-toggle-thumb {{ left:18px }}
 </style>
 <div class="site-header">
   <div class="site-header-left">
@@ -1747,19 +1737,50 @@ st.markdown(f"""
   <div class="site-header-right">
     <span class="site-header-badge">JLPT N5→N1</span>
     <span style="font-size:.78rem;color:#9a8a70">Tra Kanji · Lộ trình · Từ vựng · PDF · AI</span>
-    <label class="dm-toggle-wrap" title="Bật/Tắt chế độ tối">
-      <input type="checkbox" class="dm-toggle-input" {_dm_checked}
-        onchange="(function(c){{var u=new URL(window.parent.location.href);u.searchParams.set('dark',c?'1':'0');window.parent.location.href=u.toString()}})(this.checked)">
-      <div class="dm-toggle-track"><div class="dm-toggle-thumb"></div></div>
+    <div id="dm-toggle-placeholder" style="display:flex;align-items:center;gap:6px;cursor:pointer">
+      <div style="width:36px;height:20px;border-radius:10px;background:{_dm_track_bg};position:relative;flex-shrink:0">
+        <div style="position:absolute;top:2px;left:{_dm_thumb_left};width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>
+      </div>
       <span style="font-size:.9rem">{_dm_icon}</span>
-    </label>
+    </div>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── Xóa badge "Hosted with Streamlit" bằng JS (CSS không đủ vì inject sau load) ──
-_components.html("""<script>
-(function() {
+# ── Xóa badge + inject dark mode toggle vào header ───────────────────────────
+_dm_js_checked = 'true' if dark_mode else 'false'
+_components.html(f"""<script>
+(function() {{
+  var isDark = {_dm_js_checked};
+  // ─ inject toggle vào header ─────────────────────────────────────────
+  function injectToggle() {{
+    var ph = window.parent.document.getElementById('dm-toggle-placeholder');
+    if (!ph || ph.dataset.injected) return !!ph;
+    ph.dataset.injected = '1';
+    ph.style.cssText = 'display:flex;align-items:center;gap:6px;cursor:pointer';
+    ph.innerHTML = '';
+    // track
+    var track = window.parent.document.createElement('div');
+    track.style.cssText = 'width:36px;height:20px;border-radius:10px;background:' +
+      (isDark?'#5a7de8':'#ccc') + ';position:relative;flex-shrink:0;transition:.2s';
+    var thumb = window.parent.document.createElement('div');
+    thumb.style.cssText = 'position:absolute;top:2px;left:' + (isDark?'18':'2') +
+      'px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)';
+    track.appendChild(thumb);
+    // icon
+    var icon = window.parent.document.createElement('span');
+    icon.style.fontSize = '.9rem';
+    icon.textContent = isDark ? '\u2600\ufe0f' : '\ud83c\udf19';
+    ph.appendChild(track);
+    ph.appendChild(icon);
+    ph.addEventListener('click', function() {{
+      var u = new URL(window.parent.location.href);
+      u.searchParams.set('dark', isDark ? '0' : '1');
+      window.parent.location.href = u.toString();
+    }});
+    return true;
+  }}
+  // ─ hide Streamlit badge ─────────────────────────────────────────
   var SELS = [
     '[data-testid="stDecoration"]',
     '[data-testid="stToolbar"]',
@@ -1768,21 +1789,25 @@ _components.html("""<script>
     '.viewerBadge_link__qRIco',
     '#stDecoration'
   ];
-  function hideAll() {
-    SELS.forEach(function(sel) {
-      try {
-        window.parent.document.querySelectorAll(sel).forEach(function(el) {
+  function hideAll() {{
+    SELS.forEach(function(sel) {{
+      try {{
+        window.parent.document.querySelectorAll(sel).forEach(function(el) {{
           el.style.setProperty('display', 'none', 'important');
-        });
-      } catch(e) {}
-    });
-  }
+        }});
+      }} catch(e) {{}}
+    }});
+  }}
   hideAll();
-  var obs = new MutationObserver(hideAll);
-  try {
-    obs.observe(window.parent.document.body, {childList: true, subtree: true});
-  } catch(e) {}
-})();
+  var obs = new MutationObserver(function() {{
+    hideAll();
+    injectToggle();
+  }});
+  try {{
+    obs.observe(window.parent.document.body, {{childList: true, subtree: true}});
+  }} catch(e) {{}}
+  injectToggle();
+}})();
 </script>""", height=0, scrolling=False)
 
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
