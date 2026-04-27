@@ -681,9 +681,25 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { 
   background: #ffffff !important; border: 1px solid #e0d4be;
   border-bottom: 2px solid #c0392b55;
   border-radius: 4px; padding: 12px 14px; margin-bottom: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: box-shadow .2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: box-shadow .2s, border-color .3s;
+  cursor: pointer; user-select: none;
 }
-.vocab-card:hover { box-shadow: 0 3px 12px rgba(192,57,43,.1); }
+.vocab-card:hover { box-shadow: 0 3px 12px rgba(192,57,43,.15); border-color: #c0392b88; }
+.vocab-card.vocab-speaking { border-color: #c0392b !important; box-shadow: 0 0 0 2px rgba(192,57,43,.25) !important; }
+.vocab-tts-icon { font-size:.85rem; opacity:.45; margin-left:4px; transition:opacity .2s; vertical-align:middle; }
+.vocab-card:hover .vocab-tts-icon { opacity:.85; }
+#vocab-toast {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(8px);
+  background:#1a1209; color:#f7f2e8; padding:10px 24px 12px;
+  border-radius:24px; z-index:9999; pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,0,0,.35); opacity:0;
+  transition: opacity .22s, transform .22s;
+  text-align:center; min-width:160px;
+}
+#vocab-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+#vocab-toast .toast-word { font-size:1.6rem; font-family:'Noto Serif JP',serif; font-weight:900; }
+#vocab-toast .toast-kana { font-size:.95rem; color:#b8902a; margin-top:2px; }
+#vocab-toast .toast-meaning { font-size:.82rem; color:#c8b89a; margin-top:3px; }
 .vocab-word   { font-size: 1.4rem !important; font-weight: 900 !important; color: #1a1209 !important; font-family: 'Noto Serif JP', serif !important; }
 .vocab-kana   { font-size: .84rem !important; color: #b8902a !important; }
 .vocab-hanviet { font-size: .76rem !important; color: #9a8a6a !important; font-style: italic !important; }
@@ -1691,16 +1707,83 @@ elif active_tab == TAB_NAMES[2]:
                     break
                 item = words[wi]
                 with cols[ci]:
+                    _w  = item['word']
+                    _rd = item.get('reading', '')
+                    _hv = item.get('hanviet', '')
+                    _mn = item.get('meaning', '')
                     st.markdown(f"""
-<div class="vocab-card">
-  <div class="vocab-word">{item['word']}</div>
-  <div class="vocab-kana">（{item.get('reading', '')}）
-    <span class="vocab-hanviet">{item.get('hanviet', '')}</span>
+<div class="vocab-card"
+     data-word="{_w}"
+     data-reading="{_rd}"
+     data-meaning="{_mn}">
+  <div class="vocab-word">{_w}<span class="vocab-tts-icon">🔊</span></div>
+  <div class="vocab-kana">（{_rd}）
+    <span class="vocab-hanviet">{_hv}</span>
   </div>
-  <div class="vocab-meaning">▸ {item.get('meaning', '')}</div>
+  <div class="vocab-meaning">▸ {_mn}</div>
   {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
+
+        # ── Inject TTS click-to-read script ──
+        _components.html("""
+<script>
+(function(){
+  var jaVoice = null;
+  function loadVoice(){
+    var voices = window.speechSynthesis.getVoices();
+    jaVoice = voices.find(function(v){ return v.lang.startsWith('ja'); }) || null;
+  }
+  window.speechSynthesis.addEventListener('voiceschanged', loadVoice);
+  loadVoice();
+
+  function speak(text){
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP'; u.rate = 0.85;
+    if(jaVoice) u.voice = jaVoice;
+    window.speechSynthesis.speak(u);
+  }
+
+  function showToast(word, kana, meaning){
+    var doc = window.parent.document;
+    var t = doc.getElementById('vocab-toast');
+    if(!t){
+      t = doc.createElement('div'); t.id='vocab-toast';
+      doc.body.appendChild(t);
+    }
+    t.innerHTML = '<div class="toast-word">' + word + '</div>' +
+                  '<div class="toast-kana">(' + kana + ')</div>' +
+                  '<div class="toast-meaning">' + meaning + '</div>';
+    t.classList.add('show');
+    clearTimeout(t._hide);
+    t._hide = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  function attachHandlers(){
+    try{
+      var doc = window.parent.document;
+      doc.querySelectorAll('.vocab-card:not([data-tts])').forEach(function(card){
+        card.setAttribute('data-tts','1');
+        card.addEventListener('click', function(){
+          var word    = card.getAttribute('data-word') || '';
+          var reading = card.getAttribute('data-reading') || '';
+          var meaning = card.getAttribute('data-meaning') || '';
+          speak(word);
+          showToast(word, reading, meaning);
+          card.classList.add('vocab-speaking');
+          setTimeout(function(){ card.classList.remove('vocab-speaking'); }, 900);
+        });
+      });
+    }catch(e){}
+  }
+
+  attachHandlers();
+  var obs = new MutationObserver(attachHandlers);
+  try{ obs.observe(window.parent.document.body,{childList:true,subtree:true}); }catch(e){}
+})();
+</script>
+""", height=0, scrolling=False)
 
 # === TAB 4: Flash Card ===
 elif active_tab == TAB_NAMES[3]:
