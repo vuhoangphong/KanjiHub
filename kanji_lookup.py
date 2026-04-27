@@ -4104,44 +4104,32 @@ def search_by_viet_openrouter(query: str) -> list[dict]:
 
 
 
-_VOCAB_PROMPT = """
+_VOCAB_PROMPT = """Bạn là từ điển Nhật-Việt chuyên nghiệp và chính xác tuyệt đối.
 
-Bạn là từ điển Nhật-Việt chuyên nghiệp.
-
-Tra cứu từ/cụm từ tiếng Nhật "{word}" và trả về JSON CHÍNH XÁC sau (không giải thích thêm):
+Tra cứu từ/cụm từ tiếng Nhật "{word}" và trả về JSON CHÍNH XÁC sau (không giải thích thêm, không markdown):
 
 {{
-
-  "word": "từ tiếng Nhật chính xác",
-
+  "word": "từ tiếng Nhật chính xác (PHẢI là chính xác từ tra, không được thay bằng từ khác)",
   "reading": "cách đọc hiragana/katakana đầy đủ",
-
-  "han_viet": "ÂM HÁN VIỆT nếu có (để trống chuỗi rỗng nếu không có)",
-
-  "meanings_vi": ["nghĩa tiếng Việt 1", "nghĩa tiếng Việt 2"],
-
+  "han_viet": "ÂM HÁN VIỆT nếu có (để chuỗi rỗng nếu không có)",
+  "meanings_vi": ["nghĩa tiếng Việt 1 (cụ thể, tự nhiên)", "nghĩa tiếng Việt 2 nếu có"],
   "examples": [
-
-    {{"sentence": "Câu ví dụ tiếng Nhật 1", "reading": "phiên âm hiragana", "meaning": "dịch nghĩa tiếng Việt"}},
-
-    {{"sentence": "Câu ví dụ tiếng Nhật 2", "reading": "phiên âm hiragana", "meaning": "dịch nghĩa tiếng Việt"}},
-
-    {{"sentence": "Câu ví dụ tiếng Nhật 3", "reading": "phiên âm hiragana", "meaning": "dịch nghĩa tiếng Việt"}}
-
+    {{"sentence": "câu ví dụ thực tế bằng tiếng Nhật chứa \"{word}\"", "reading": "phiên âm hiragana đầy đủ", "meaning": "dịch nghĩa tiếng Việt tự nhiên"}},
+    {{"sentence": "câu ví dụ 2", "reading": "phiên âm 2", "meaning": "dịch nghĩa 2"}},
+    {{"sentence": "câu ví dụ 3", "reading": "phiên âm 3", "meaning": "dịch nghĩa 3"}}
   ],
-
   "related": [
-
-    ["từ liên quan 1", "cách đọc 1", "nghĩa việt 1"],
-
-    ["từ liên quan 2", "cách đọc 2", "nghĩa việt 2"],
-
-    ["từ liên quan 3", "cách đọc 3", "nghĩa việt 3"]
-
+    ["từ liên quan 1 (cùng gốc hoặc trái nghĩa)", "cách đọc 1", "nghĩa Việt 1"],
+    ["từ liên quan 2", "cách đọc 2", "nghĩa Việt 2"],
+    ["từ liên quan 3", "cách đọc 3", "nghĩa Việt 3"]
   ]
-
 }}
 
+QUY TẮC QUAN TRỌNG:
+- Trường "word" PHẢI là "{word}" hoặc dạng chuẩn của nó, KHÔNG ĐƯỢC thay bằng từ khác
+- Nghĩa tiếng Việt phải tự nhiên, không dịch máy móc
+- Câu ví dụ phải thực sự chứa từ "{word}"
+- Trả về JSON thuần túy, không có ```json hay giải thích
 """
 
 
@@ -4594,85 +4582,65 @@ def lookup_vocab_ai(word: str) -> dict:
             raw = response.text.strip()
 
         else:
-
             url = "https://openrouter.ai/api/v1/chat/completions"
-
             headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-
-            payload = {"model": OPENROUTER_MODEL, "messages": [{"role": "user", "content": prompt}]}
-
-            resp = requests.post(url, headers=headers, json=payload, timeout=20)
+            payload = {
+                "model": OPENROUTER_MODEL,
+                "temperature": 0.1,
+                "messages": [
+                    {"role": "system", "content": "Bạn là từ điển Nhật-Việt chuyên nghiệp. Luôn trả về JSON chính xác theo yêu cầu, không thêm bất kỳ văn bản nào ngoài JSON."},
+                    {"role": "user", "content": prompt}
+                ]
+            }
+            resp = requests.post(url, headers=headers, json=payload, timeout=25)
             resp.encoding = 'utf-8'
             raw = resp.json()["choices"][0]["message"]["content"].strip()
 
-
-
+        # Strip markdown code fences
         if raw.startswith("```"):
-
             raw = raw.split("\n", 1)[-1]
-
             raw = raw.rsplit("```", 1)[0]
-
         if "{" in raw:
-
             raw = raw[raw.find("{"):raw.rfind("}")+1]
-
-
 
         data = json.loads(raw)
 
+        # Validate: nếu AI trả về "word" khác hoàn toàn với query → override về query
+        ai_word = data.get("word", word)
+        if ai_word and ai_word != word and len(ai_word) > len(word) * 1.5:
+            data["word"] = word
 
+        # Validate: meanings phải có nội dung
+        meanings_vi = [m for m in data.get("meanings_vi", []) if m and len(m.strip()) > 1]
+        if not meanings_vi:
+            return {}
 
         examples = []
-
         for ex in data.get("examples", [])[:3]:
-
-            if isinstance(ex, dict):
-
+            if isinstance(ex, dict) and ex.get("sentence"):
                 examples.append({
-
                     "sentence": ex.get("sentence", ""),
-
                     "reading":  ex.get("reading", ""),
-
                     "meaning":  ex.get("meaning", ""),
-
                 })
 
-
-
         related = []
-
         for r in data.get("related", [])[:4]:
-
-            if isinstance(r, (list, tuple)) and len(r) >= 2:
-
+            if isinstance(r, (list, tuple)) and len(r) >= 2 and r[0]:
                 related.append(tuple(r[:3]))
 
-
-
         return {
-
             "word":        data.get("word", word),
-
             "reading":     data.get("reading", ""),
-
             "han_viet":    data.get("han_viet", ""),
-
-            "meanings_vi": data.get("meanings_vi", [])[:4],
-
+            "meanings_vi": meanings_vi[:4],
             "examples":    examples,
-
             "related":     related,
-
             "source":      provider,
-
         }
 
     except Exception as e:
-
         print(f"[ai-vocab] Lỗi ({provider}): {e}")
-
         return {}
 
 
