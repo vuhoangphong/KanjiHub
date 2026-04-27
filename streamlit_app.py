@@ -392,14 +392,18 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Noto+Serif+JP:wght@400;700;900&display=swap');
 
 /* ── Font mặc định toàn trang: Be Vietnam Pro ── */
-*, *::before, *::after {
+html, body,
+[data-testid="stAppViewContainer"],
+[data-testid="stMarkdownContainer"],
+[data-testid="stText"],
+[data-testid="stRadio"] label,
+[data-testid="stSelectbox"],
+[data-testid="stTextInput"] input,
+[data-testid="stMetric"],
+[data-testid="stExpander"],
+.stButton button,
+h1, h2, h3, h4, h5, h6, p, span, div, li, td, th, label {
   font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif !important;
-}
-/* Giữ Noto Serif JP cho những phần chữ Nhật */
-.hero-jp, .hero-kanji-char, .hero-kanji-reading, .hero-kanji-quote,
-.hero-kanji-label, .hero-kanji-mean, .hero-kanji-quote-author,
-[class*="kanji"], [style*="Noto Serif JP"] {
-  font-family: 'Noto Serif JP', 'Be Vietnam Pro', serif !important;
 }
 
 /* ── Bảng màu Nhật Bản sáng ──
