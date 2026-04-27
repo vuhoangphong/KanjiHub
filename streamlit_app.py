@@ -2064,6 +2064,12 @@ elif active_tab == TAB_NAMES[1]:
         with _vc2:
             _vsub = st.form_submit_button("検 Tra", use_container_width=True, type="primary")
 
+    # Đọc query param ?vq= từ click related words
+    _vq_from_param = st.query_params.get("vq", "")
+    if _vq_from_param:
+        st.session_state["vocab_last_query"] = _vq_from_param
+        del st.query_params["vq"]
+
     if _vsub and _vq.strip():
         _vq = _vq.strip()
         st.session_state["vocab_last_query"] = _vq
@@ -2133,18 +2139,26 @@ function speak(){{
 
             if _vr.get("related"):
                 st.markdown("**🔗 Từ liên quan:**")
+                import urllib.parse as _up
                 _rcols = st.columns(min(len(_vr["related"]), 4))
-                for _ri, (_rw, _rr, _rm) in enumerate(_vr["related"]):
+                _rel_cards = []
+                for _rw, _rr, _rm in _vr["related"]:
+                    _href = "?vq=" + _up.quote(_rw)
+                    _rel_cards.append(f'''
+<a href="{_href}" style="text-decoration:none;display:block">
+  <div style="background:{_dc_card};border:1px solid {_dc_border};border-radius:6px;
+    padding:10px 10px 8px;text-align:center;cursor:pointer;
+    transition:border-color .15s,box-shadow .15s"
+    onmouseover="this.style.borderColor='#c0392b';this.style.boxShadow='0 2px 8px rgba(192,57,43,.18)'"
+    onmouseout="this.style.borderColor='{_dc_border}';this.style.boxShadow='none'">
+    <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_dc_title}">{_rw}</div>
+    <div style="font-size:.75rem;color:{_dc_gold}">{_rr}</div>
+    <div style="font-size:.78rem;color:{_dc_sub}">{_rm}</div>
+  </div>
+</a>''')
+                for _ri, _card_html in enumerate(_rel_cards):
                     with _rcols[_ri % len(_rcols)]:
-                        st.markdown(f"""
-<div style="background:{_dc_card};border:1px solid {_dc_border};border-radius:6px;padding:8px 10px 2px;text-align:center">
-  <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_dc_title}">{_rw}</div>
-  <div style="font-size:.75rem;color:{_dc_gold}">{_rr}</div>
-  <div style="font-size:.78rem;color:{_dc_sub};margin-bottom:4px">{_rm}</div>
-</div>""", unsafe_allow_html=True)
-                        if st.button("検 Tra", key=f"rel_btn_{_ri}_{_rw}", use_container_width=True):
-                            st.session_state["vocab_last_query"] = _rw
-                            st.rerun()
+                        st.markdown(_card_html, unsafe_allow_html=True)
 
             # Phân tích AI thêm
             st.divider()
