@@ -1468,8 +1468,11 @@ with st.sidebar:
     st.caption("Ứng dụng học Kanji cho người Việt")
     st.divider()
 
-    # ── Dark mode toggle (sidebar mirror) ────────────────────────────────────
-    st.toggle("🌙 Chế độ tối (Dark Mode)", key="dark_mode")
+    # ── Dark mode toggle (sidebar) ────────────────────────────────────────────
+    _dm_sidebar = st.toggle("🌙 Chế độ tối (Dark Mode)", value=dark_mode, key="dm_sidebar")
+    if _dm_sidebar != dark_mode:
+        st.session_state["dark_mode"] = _dm_sidebar
+        st.rerun()
 
     st.divider()
     st.markdown("### ⚙️ Cài đặt AI")
@@ -1826,12 +1829,20 @@ with _tab_col:
     active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
                           key="tab_radio", label_visibility="collapsed")
 with _dm_col:
-    st.toggle(
+    if st.toggle(
         "🌙" if not dark_mode else "☀️",
-        key="dark_mode",
-        help="Bật chế độ tối" if not dark_mode else "Tắt chế độ tối",
+        value=dark_mode,
+        key="dm_main",
+        help="Bật/Tắt chế độ tối",
         label_visibility="visible",
-    )
+    ):
+        if not dark_mode:
+            st.session_state["dark_mode"] = True
+            st.rerun()
+    else:
+        if dark_mode:
+            st.session_state["dark_mode"] = False
+            st.rerun()
 st.divider()
 
 # === TAB 1 ===
