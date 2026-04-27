@@ -1855,6 +1855,18 @@ def _vocab_ai_dialog():
             st.session_state.pop("_vl_sel_word", None)
             st.rerun()
 
+# Đọc ?tab= và ?vq= từ URL (từ related word click)
+_qp_tab = st.query_params.get("tab", "")
+_qp_vq  = st.query_params.get("vq", "")
+if _qp_tab or _qp_vq:
+    if _qp_tab and _qp_tab.isdigit() and int(_qp_tab) < len(TAB_NAMES):
+        st.session_state["tab_radio"] = TAB_NAMES[int(_qp_tab)]
+    if _qp_vq:
+        st.session_state["vocab_last_query"] = _qp_vq
+    # Xoá params để không loop
+    st.query_params.pop("tab", None)
+    st.query_params.pop("vq", None)
+
 if "tab_radio" not in st.session_state:
     st.session_state["tab_radio"] = TAB_NAMES[0]
 # Áp dụng pending tab switch TRƯỚC khi widget render
@@ -2065,11 +2077,6 @@ elif active_tab == TAB_NAMES[1]:
             _vsub = st.form_submit_button("検 Tra", use_container_width=True, type="primary")
 
     # Đọc query param ?vq= từ click related words
-    _vq_from_param = st.query_params.get("vq", "")
-    if _vq_from_param:
-        st.session_state["vocab_last_query"] = _vq_from_param
-        del st.query_params["vq"]
-
     if _vsub and _vq.strip():
         _vq = _vq.strip()
         st.session_state["vocab_last_query"] = _vq
@@ -2079,9 +2086,8 @@ elif active_tab == TAB_NAMES[1]:
         _vq = _vq_active
         _vcache_key = f"vocab_res_{_vq}"
         if _vsub or _vcache_key not in st.session_state:
-            if _vsub:
-                with st.spinner(f"Đang tra **{_vq}**…"):
-                    st.session_state[_vcache_key] = lookup_vocab(_vq)
+            with st.spinner(f"Đang tra **{_vq}**…"):
+                st.session_state[_vcache_key] = lookup_vocab(_vq)
         _vr = st.session_state.get(_vcache_key, {})
 
         if _vr:
@@ -2140,25 +2146,31 @@ function speak(){{
             if _vr.get("related"):
                 st.markdown("**🔗 Từ liên quan:**")
                 import urllib.parse as _up
-                _rcols = st.columns(min(len(_vr["related"]), 4))
-                _rel_cards = []
+                # Build HTML cho tất cả cards trong 1 components.html để tránh iframe phân tán
+                _bg = _dc_card.replace("'", "\\'")
+                _bd = _dc_border.replace("'", "\\'")
+                _ct = _dc_title.replace("'", "\\'")
+                _cg = _dc_gold.replace("'", "\\'")
+                _cs = _dc_sub.replace("'", "\\'")
+                _cards_html = ""
                 for _rw, _rr, _rm in _vr["related"]:
-                    _href = "?vq=" + _up.quote(_rw)
-                    _rel_cards.append(f'''
-<a href="{_href}" style="text-decoration:none;display:block">
-  <div style="background:{_dc_card};border:1px solid {_dc_border};border-radius:6px;
-    padding:10px 10px 8px;text-align:center;cursor:pointer;
+                    import html as _h
+                    _rw_e = _h.escape(_rw); _rr_e = _h.escape(_rr); _rm_e = _h.escape(_rm)
+                    _url = "?tab=1&vq=" + _up.quote(_rw)
+                    _cards_html += f"""
+<div onclick="window.parent.location.href='{_url}'"
+  style="background:{_bg};border:1px solid {_bd};border-radius:6px;
+    padding:10px 10px 8px;text-align:center;cursor:pointer;flex:1;min-width:0;
     transition:border-color .15s,box-shadow .15s"
-    onmouseover="this.style.borderColor='#c0392b';this.style.boxShadow='0 2px 8px rgba(192,57,43,.18)'"
-    onmouseout="this.style.borderColor='{_dc_border}';this.style.boxShadow='none'">
-    <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_dc_title}">{_rw}</div>
-    <div style="font-size:.75rem;color:{_dc_gold}">{_rr}</div>
-    <div style="font-size:.78rem;color:{_dc_sub}">{_rm}</div>
-  </div>
-</a>''')
-                for _ri, _card_html in enumerate(_rel_cards):
-                    with _rcols[_ri % len(_rcols)]:
-                        st.markdown(_card_html, unsafe_allow_html=True)
+  onmouseover="this.style.borderColor='#c0392b';this.style.boxShadow='0 2px 8px rgba(192,57,43,.18)'"
+  onmouseout="this.style.borderColor='{_bd}';this.style.boxShadow='none'">
+  <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_ct}">{_rw_e}</div>
+  <div style="font-size:.75rem;color:{_cg}">{_rr_e}</div>
+  <div style="font-size:.78rem;color:{_cs}">{_rm_e}</div>
+</div>"""
+                _components.html(f"""
+<div style="display:flex;gap:10px;padding:2px 0">{_cards_html}</div>
+""", height=80, scrolling=False)
 
             # Phân tích AI thêm
             st.divider()
