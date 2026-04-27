@@ -2306,8 +2306,44 @@ elif active_tab == TAB_NAMES[4]:
                         "jp_word": _w.get("word", ""),
                     })
             st.session_state["fc_html"] = _build_fc_html(_json.dumps(_deck, ensure_ascii=False))
+            st.session_state["fc_words"] = _words
 
         _components.html(st.session_state["fc_html"], height=590, scrolling=False)
+
+        # ── Danh sách từ vựng trong bài ──────────────────────────────────────
+        _fc_wordlist = st.session_state.get("fc_words", [])
+        if _fc_wordlist:
+            st.markdown(f"""
+<div style="margin-top:8px">
+  <div class="sec-title">📋 Thuật ngữ trong bài này ({len(_fc_wordlist)})</div>
+</div>""", unsafe_allow_html=True)
+            import html as _html_mod
+            for _wi, _witem in enumerate(_fc_wordlist):
+                _fw   = _witem.get("word", "")
+                _fr   = _witem.get("reading", "")
+                _fhv  = _witem.get("hanviet", "")
+                _fm   = _witem.get("meaning", "")
+                _fex  = _witem.get("example", "")
+                _fexi = _witem.get("exampleVi", "")
+                _fr_safe = _html_mod.escape(_fr, quote=True)
+                st.markdown(f"""
+<div style="background:#1a1f2e;border:1px solid #2d3548;border-radius:10px;
+  padding:14px 18px 12px;margin-bottom:10px;display:flex;align-items:flex-start;gap:16px">
+  <div style="color:#6b7280;font-size:.72rem;min-width:28px;padding-top:2px;text-align:right">{_wi+1}.</div>
+  <div style="min-width:110px">
+    <div style="font-size:.68rem;color:#c0392b;font-family:'Noto Serif JP',serif;
+      letter-spacing:1px;margin-bottom:2px">{_html_mod.escape(_fr)}</div>
+    <div style="font-size:1.5rem;font-weight:900;color:#f0e6d3;
+      font-family:'Noto Serif JP',serif;line-height:1.1">{_html_mod.escape(_fw)}</div>
+  </div>
+  <div style="flex:1;border-left:1px solid #2d3548;padding-left:14px">
+    <div style="font-size:.72rem;color:#c0392b;font-weight:700;letter-spacing:1px;
+      margin-bottom:2px">{_html_mod.escape(_fhv)}</div>
+    <div style="font-size:.92rem;color:#c8b89a;margin-bottom:6px">{_html_mod.escape(_fm)}</div>
+    {f'<div style="font-size:.82rem;color:#8a9ab5;font-family:\'Noto Serif JP\',serif;margin-bottom:2px">{_html_mod.escape(_fex)}</div>' if _fex else ''}
+    {f'<div style="font-size:.78rem;color:#6b7280;font-style:italic">↳ {_html_mod.escape(_fexi)}</div>' if _fexi else ''}
+  </div>
+</div>""", unsafe_allow_html=True)
 
 # ── Site Footer (chỉ hiện ở tab Lộ trình và Từ Vựng) ──────────────────────────
 if active_tab != TAB_NAMES[0]:
