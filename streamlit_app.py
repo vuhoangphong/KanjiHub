@@ -2137,11 +2137,14 @@ function speak(){{
                 for _ri, (_rw, _rr, _rm) in enumerate(_vr["related"]):
                     with _rcols[_ri % len(_rcols)]:
                         st.markdown(f"""
-<div style="background:{_dc_card};border:1px solid {_dc_border};border-radius:6px;padding:8px 10px;text-align:center">
+<div style="background:{_dc_card};border:1px solid {_dc_border};border-radius:6px;padding:8px 10px 2px;text-align:center">
   <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_dc_title}">{_rw}</div>
   <div style="font-size:.75rem;color:{_dc_gold}">{_rr}</div>
-  <div style="font-size:.78rem;color:{_dc_sub}">{_rm}</div>
+  <div style="font-size:.78rem;color:{_dc_sub};margin-bottom:4px">{_rm}</div>
 </div>""", unsafe_allow_html=True)
+                        if st.button("検 Tra", key=f"rel_btn_{_ri}_{_rw}", use_container_width=True):
+                            st.session_state["vocab_last_query"] = _rw
+                            st.rerun()
 
             # Phân tích AI thêm
             st.divider()
