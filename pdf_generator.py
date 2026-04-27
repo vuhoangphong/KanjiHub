@@ -41,13 +41,43 @@ CLR_KANJI_FADED = [                            # 6 mức độ mờ dần
 
 # ─── Font ──────────────────────────────────────────────────────────────────────
 # Tìm font hệ thống hỗ trợ CJK
+def _download_noto_sans_jp() -> str | None:
+    """Download NotoSansJP-Regular.ttf từ GitHub vào thư mục cache nếu chưa có."""
+    import tempfile, urllib.request
+    cache_dir = os.path.join(tempfile.gettempdir(), "kanjihub_fonts")
+    os.makedirs(cache_dir, exist_ok=True)
+    dest = os.path.join(cache_dir, "NotoSansJP-Regular.ttf")
+    if os.path.exists(dest):
+        return dest
+    # NotoSansJP Static từ Google Fonts GitHub (không cần API key)
+    url = "https://github.com/google/fonts/raw/main/ofl/notosansjp/NotoSansJP%5Bwght%5D.ttf"
+    try:
+        urllib.request.urlretrieve(url, dest)
+        if os.path.getsize(dest) > 100_000:
+            return dest
+    except Exception:
+        pass
+    # Fallback: thử URL trực tiếp khác
+    url2 = "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/OTF/Japanese/NotoSansJP-Regular.otf"
+    dest2 = os.path.join(cache_dir, "NotoSansJP-Regular.otf")
+    try:
+        urllib.request.urlretrieve(url2, dest2)
+        if os.path.getsize(dest2) > 100_000:
+            return dest2
+    except Exception:
+        pass
+    return None
+
+
 def find_cjk_font() -> str | None:
     import sys
     # Ưu tiên font đặt ngay trong thư mục project
     _here = os.path.dirname(os.path.abspath(__file__))
     local_candidates = [
         os.path.join(_here, "NotoSansJP-VF.ttf"),
+        os.path.join(_here, "NotoSansJP-Regular.ttf"),
         os.path.join(_here, "fonts", "NotoSansJP-VF.ttf"),
+        os.path.join(_here, "fonts", "NotoSansJP-Regular.ttf"),
     ]
     for p in local_candidates:
         if os.path.exists(p):
@@ -56,6 +86,7 @@ def find_cjk_font() -> str | None:
     if sys.platform == "win32":
         candidates = [
             r"C:\Windows\Fonts\NotoSansJP-VF.ttf",
+            r"C:\Windows\Fonts\NotoSansJP-Regular.ttf",
             r"C:\Windows\Fonts\yumin.ttf",
             r"C:\Windows\Fonts\NotoSerifJP-VF.ttf",
             r"C:\Windows\Fonts\BIZ-UDMinchoM.ttc",
@@ -76,10 +107,11 @@ def find_cjk_font() -> str | None:
             "/System/Library/Fonts/Hiragino Sans GB.ttc",
             "/Library/Fonts/Osaka.ttf",
         ]
-    else:  # Linux
+    else:  # Linux / Streamlit Cloud
         home = os.path.expanduser("~")
         candidates = [
             os.path.join(home, ".local", "share", "fonts", "NotoSansJP-VF.ttf"),
+            os.path.join(home, ".local", "share", "fonts", "NotoSansJP-Regular.ttf"),
             "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
             "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
             "/usr/share/fonts/opentype/noto/NotoSansCJK-VF.ttc",
@@ -90,7 +122,8 @@ def find_cjk_font() -> str | None:
     for p in candidates:
         if os.path.exists(p):
             return p
-    return None
+    # Không tìm thấy hệ thống → download về cache
+    return _download_noto_sans_jp()
 
 
 def register_fonts():
