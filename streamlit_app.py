@@ -1722,7 +1722,9 @@ html .prog-label { color: #606878 !important; }
 
 # ── Site Header ───────────────────────────────────────────────────────────────
 _logo_img = f'<img src="{_logo_uri}" class="site-header-logo">' if _logo_uri else '漢'
-st.markdown(f"""
+_hdr_col, _dm_hdr_col = st.columns([11, 1])
+with _hdr_col:
+    st.markdown(f"""
 <div class="site-header">
   <div class="site-header-left">
     {_logo_img}
@@ -1737,6 +1739,14 @@ st.markdown(f"""
   </div>
 </div>
 """, unsafe_allow_html=True)
+with _dm_hdr_col:
+    st.markdown('<div style="height:14px"></div>', unsafe_allow_html=True)
+    st.toggle(
+        "🌙" if not dark_mode else "☀️",
+        key="dm_main",
+        help="Bật/Tắt chế độ tối",
+        label_visibility="visible",
+    )
 
 # ── Xóa badge "Hosted with Streamlit" bằng JS (CSS không đủ vì inject sau load) ──
 _components.html("""<script>
@@ -1821,18 +1831,9 @@ if "tab_radio" not in st.session_state:
 if "pending_tab" in st.session_state:
     st.session_state["tab_radio"] = st.session_state.pop("pending_tab")
 
-# ── Tab bar + dark mode toggle cùng dòng ─────────────────────────────────────
-_tab_col, _dm_col = st.columns([9, 1])
-with _tab_col:
-    active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
-                          key="tab_radio", label_visibility="collapsed")
-with _dm_col:
-    st.toggle(
-        "🌙" if not dark_mode else "☀️",
-        key="dm_main",
-        help="Bật/Tắt chế độ tối",
-        label_visibility="visible",
-    )
+# ── Tab bar (full width) ─────────────────────────────────────────────────────
+active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
+                      key="tab_radio", label_visibility="collapsed")
 # Luôn đồng bộ URL với trạng thái hiện tại để persist qua reload
 st.query_params["dark"] = "1" if st.session_state["dm_main"] else "0"
 st.divider()
