@@ -1745,26 +1745,87 @@ elif active_tab == TAB_NAMES[2]:
         if st.session_state.get("_vl_sel_word"):
             _vocab_ai_dialog()
 
-        lesson_nums = sorted(VOCAB_LESSONS.keys())
-        sel_lesson  = st.selectbox("Chọn bài", lesson_nums,
-                                   format_func=lambda n: f"Bài {n}  ({len(VOCAB_LESSONS[n])} từ)",
-                                   key="vl_sel")
-        words = VOCAB_LESSONS[sel_lesson]
-        st.info(f"**Bài {sel_lesson}** — {len(words)} từ vựng")
-        # Grid 2 cột
-        for row_i in range(0, len(words), 2):
-            cols = st.columns(2)
-            for ci in range(2):
-                wi = row_i + ci
-                if wi >= len(words):
-                    break
-                item = words[wi]
-                with cols[ci]:
-                    _w  = item['word']
-                    _rd = item.get('reading', '')
-                    _hv = item.get('hanviet', '')
-                    _mn = item.get('meaning', '')
-                    st.markdown(f"""
+        # ── Thanh tìm kiếm từ vựng ──
+        _vl_search = st.text_input(
+            "🔍 Tìm từ vựng",
+            placeholder="Nhập kanji, hiragana, Hán Việt hoặc nghĩa tiếng Việt…",
+            key="vl_search",
+            label_visibility="collapsed",
+        )
+
+        if _vl_search.strip():
+            # Gom tất cả từ + kèm số bài
+            _all_words = []
+            for _ln, _lwords in VOCAB_LESSONS.items():
+                for _it in _lwords:
+                    _all_words.append((_ln, _it))
+            _q = _vl_search.strip().lower()
+            _hits = [
+                (_ln, _it) for _ln, _it in _all_words
+                if _q in _it.get("word", "").lower()
+                or _q in _it.get("reading", "").lower()
+                or _q in _it.get("hanviet", "").lower()
+                or _q in _it.get("meaning", "").lower()
+                or _q in _it.get("example", "").lower()
+                or _q in _it.get("exampleVi", "").lower()
+            ]
+            st.caption(f"🔎 Tìm thấy **{len(_hits)}** từ")
+            if _hits:
+                for _sri in range(0, len(_hits), 2):
+                    _scols = st.columns(2)
+                    for _sci in range(2):
+                        _si = _sri + _sci
+                        if _si >= len(_hits):
+                            break
+                        _sl, _sit = _hits[_si]
+                        _w  = _sit["word"]
+                        _rd = _sit.get("reading", "")
+                        _hv = _sit.get("hanviet", "")
+                        _mn = _sit.get("meaning", "")
+                        with _scols[_sci]:
+                            st.markdown(f"""
+<div class="vocab-card"
+     data-word="{_w}"
+     data-reading="{_rd}"
+     data-meaning="{_mn}">
+  <div style="font-size:.7rem;color:#c0392b;font-weight:700;margin-bottom:2px">Bài {_sl}</div>
+  <div class="vocab-word">{_w}<span class="vocab-tts-icon">🔊</span></div>
+  <div class="vocab-kana">（{_rd}）<span class="vocab-hanviet">{_hv}</span></div>
+  <div class="vocab-meaning">▸ {_mn}</div>
+  {"<div class='vocab-example'>📝 " + _sit['example'] + "</div>" if _sit.get('example') else ""}
+  {"<div class='vocab-example'>↳ " + _sit['exampleVi'] + "</div>" if _sit.get('exampleVi') else ""}
+</div>""", unsafe_allow_html=True)
+                            if st.button("⠀", key=f"vl_ai_s_{_sl}_{_si}", use_container_width=True):
+                                st.session_state["_vl_sel_word"]      = _w
+                                st.session_state["_vl_sel_reading"]   = _rd
+                                st.session_state["_vl_sel_hanviet"]   = _hv
+                                st.session_state["_vl_sel_meaning"]   = _mn
+                                st.session_state["_vl_sel_example"]   = _sit.get("example", "")
+                                st.session_state["_vl_sel_exampleVi"] = _sit.get("exampleVi", "")
+                                st.rerun()
+            else:
+                st.info("Không tìm thấy từ nào phù hợp.")
+        else:
+            lesson_nums = sorted(VOCAB_LESSONS.keys())
+            sel_lesson  = st.selectbox("Chọn bài", lesson_nums,
+                                       format_func=lambda n: f"Bài {n}  ({len(VOCAB_LESSONS[n])} từ)",
+                                       key="vl_sel")
+            words = VOCAB_LESSONS[sel_lesson]
+            st.info(f"**Bài {sel_lesson}** — {len(words)} từ vựng")
+            # Grid 2 cột
+            for row_i in range(0, len(words), 2):
+                cols = st.columns(2)
+                for ci in range(2):
+                    wi = row_i + ci
+                    if wi >= len(words):
+                        break
+                    item = words[wi]
+                    with cols[ci]:
+                        _w  = item['word']
+                        _rd = item.get('reading', '')
+                        _hv = item.get('hanviet', '')
+                        _mn = item.get('meaning', '')
+                        st.markdown(f"""
 <div class="vocab-card"
      data-word="{_w}"
      data-reading="{_rd}"
@@ -1777,17 +1838,17 @@ elif active_tab == TAB_NAMES[2]:
   {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
-                    # Nút ẩn — JS click vào chữ kanji sẽ kích hoạt nút này
-                    if st.button("⠀",  # ký tự ẩn, button bị JS che
-                                 key=f"vl_ai_{sel_lesson}_{wi}",
-                                 use_container_width=True):
-                        st.session_state["_vl_sel_word"]      = _w
-                        st.session_state["_vl_sel_reading"]   = _rd
-                        st.session_state["_vl_sel_hanviet"]   = _hv
-                        st.session_state["_vl_sel_meaning"]   = _mn
-                        st.session_state["_vl_sel_example"]   = item.get('example', '')
-                        st.session_state["_vl_sel_exampleVi"] = item.get('exampleVi', '')
-                        st.rerun()
+                        # Nút ẩn — JS click vào chữ kanji sẽ kích hoạt nút này
+                        if st.button("⠀",
+                                     key=f"vl_ai_{sel_lesson}_{wi}",
+                                     use_container_width=True):
+                            st.session_state["_vl_sel_word"]      = _w
+                            st.session_state["_vl_sel_reading"]   = _rd
+                            st.session_state["_vl_sel_hanviet"]   = _hv
+                            st.session_state["_vl_sel_meaning"]   = _mn
+                            st.session_state["_vl_sel_example"]   = item.get('example', '')
+                            st.session_state["_vl_sel_exampleVi"] = item.get('exampleVi', '')
+                            st.rerun()
 
         # ── Inject TTS click-to-read script ──
         _components.html("""
