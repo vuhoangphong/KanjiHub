@@ -4265,7 +4265,21 @@ def lookup_vocab_mazii(word: str) -> dict:
 
         item = results[0]
 
-
+        # Ưu tiên tìm kết quả khớp chính xác với từ nhập vào
+        exact = None
+        for _r in results:
+            _rw = _r.get("word", "")
+            _rk = _r.get("kana", "") or _r.get("phonetic", "")
+            if _rw == word or _rk == word:
+                exact = _r
+                break
+        if exact:
+            item = exact
+        else:
+            # Nếu kết quả đầu dài hơn từ nhập vào quá nhiều → bỏ qua, fallback Jisho/AI
+            _w0 = item.get("word", word) or word
+            if len(_w0) > len(word) * 1.5:
+                return {}
 
         # Lấy nghĩa — "detail" chứa nghĩa đầy đủ, "mean" chứa nghĩa ngắn
 
