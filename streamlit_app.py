@@ -1736,23 +1736,7 @@ st.markdown(f"""
   </div>
 </div>
 """, unsafe_allow_html=True)
-# Toggle nằm fixed góc phải, căn theo header
-st.markdown("""
-<style>
-[data-testid="stToggle"][aria-label*="🌙"],
-[data-testid="stToggle"][aria-label*="☀️"],
-div[data-testid="stToggle"] {
-  position: fixed !important;
-  top: 18px !important;
-  right: 18px !important;
-  z-index: 9999 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-st.toggle("🌙" if not dark_mode else "☀️",
-           key="dm_main",
-           help="Bật/Tắt chế độ tối",
-           label_visibility="visible")
+# Toggle nằm cùng hàng với tab bar (bên phải)
 
 # ── Xóa badge Streamlit bằng JS ─────────────────────────────────────────────
 _components.html("""<script>
@@ -1838,9 +1822,17 @@ if "tab_radio" not in st.session_state:
 if "pending_tab" in st.session_state:
     st.session_state["tab_radio"] = st.session_state.pop("pending_tab")
 
-# ── Tab bar (full width) ─────────────────────────────────────────────────────
-active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
-                      key="tab_radio", label_visibility="collapsed")
+# ── Tab bar + dark mode toggle cùng hàng ─────────────────────────────────────
+_tab_col, _dm_col = st.columns([10, 1])
+with _tab_col:
+    active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
+                          key="tab_radio", label_visibility="collapsed")
+with _dm_col:
+    st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
+    st.toggle("🌙" if not dark_mode else "☀️",
+               key="dm_main",
+               help="Bật/Tắt chế độ tối",
+               label_visibility="visible")
 # Sync query_params để persist dark mode qua reload
 st.query_params["dark"] = "1" if st.session_state["dm_main"] else "0"
 st.divider()
