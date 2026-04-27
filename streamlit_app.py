@@ -1828,18 +1828,15 @@ elif active_tab == TAB_NAMES[2]:
     try{
       var doc = window.parent.document;
 
-      // Ẩn các nút AI ẩn trong cột chứa vocab-card
-      doc.querySelectorAll('[data-testid="column"]').forEach(function(col){
-        if(col.querySelector('.vocab-card')){
-          var stBtn = col.querySelector('[data-testid="stBaseButton-secondary"], [data-testid="stButton"]');
-          if(stBtn){
-            stBtn.style.height = '0';
-            stBtn.style.overflow = 'hidden';
-            stBtn.style.margin = '0';
-            stBtn.style.padding = '0';
-          }
-        }
-      });
+      // Dùng CSS :has() để ẩn nút trigger trong cột chứa vocab-card
+      if(!doc.getElementById('vocab-btn-hide-style')){
+        var s = doc.createElement('style');
+        s.id = 'vocab-btn-hide-style';
+        s.textContent = '[data-testid="stColumn"]:has(.vocab-card) [data-testid="stButton"],' +
+                        '[data-testid="stColumn"]:has(.vocab-card) [data-testid="stBaseButton-secondary"]' +
+                        '{ display:none !important; }';
+        doc.head.appendChild(s);
+      }
 
       doc.querySelectorAll('.vocab-card:not([data-tts])').forEach(function(card){
         card.setAttribute('data-tts','1');
@@ -1859,14 +1856,14 @@ elif active_tab == TAB_NAMES[2]:
           });
         }
 
-        // AI Popup: click vào chữ kanji
+        // AI Popup: click vào chữ kanji → tìm button trong stColumn cha
         var wordEl = card.querySelector('.vocab-word');
         if(wordEl){
           wordEl.addEventListener('click', function(e){
             e.stopPropagation();
-            var col = card.closest('[data-testid="column"]');
+            var col = card.closest('[data-testid="stColumn"]');
             if(col){
-              var btn = col.querySelector('[data-testid="stBaseButton-secondary"], button');
+              var btn = col.querySelector('button');
               if(btn) btn.click();
             }
           });
