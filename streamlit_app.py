@@ -1406,7 +1406,7 @@ _components.html("""<script>
 </script>""", height=0, scrolling=False)
 
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
-TAB_NAMES = ["🔍 Tra Kanji", "� Tra Từ Vựng", "�🗺️ Lộ trình học", "📖 Từ Vựng", "🃏 Flash Card"]
+TAB_NAMES = ["🔍 Tra Kanji", "📝 Tra Từ Vựng", "🗺️ Lộ trình học", "📖 Từ Vựng", "🃏 Flash Card"]
 
 # ── Dialog phân tích AI cho từ vựng ───────────────────────────────────────────
 @st.dialog("🤖 Phân tích từ vựng", width="large")
