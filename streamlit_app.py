@@ -351,7 +351,7 @@ if _logo_uri:
 
 # --- SEO meta tags ---
 st.markdown("""
-<meta name="google-site-verification" content="dS0QjgDnaZhcoRmq6ueRZ27-EW_qddIc7gVaNUOgO4k">
+<meta name="google-site-verification" content="cfNAKI2ycMezBHV4WhkbaHySQnApjUtT_eBQ6HtyjbA">
 <meta name="description" content="Kanji Hub — Tra cứu Kanji tiếng Nhật nhanh chóng, xem nghĩa tiếng Việt, âm Hán Việt, cách đọc, bảng luyện viết PDF. Hỗ trợ AI Gemini phân tích sâu.">
 <meta name="keywords" content="kanji, học tiếng nhật, tra kanji, nghĩa tiếng việt, hán việt, jlpt, n5 n4 n3 n2 n1, luyện viết kanji, kanji hub">
 <meta name="author" content="Kanji Hub">
