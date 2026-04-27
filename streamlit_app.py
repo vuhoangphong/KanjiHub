@@ -999,24 +999,112 @@ footer    { visibility: hidden; }
 
 /* ── Mobile Responsive (≤ 768px) ── */
 @media (max-width: 768px) {
+  /* Layout */
   .main .block-container { padding: 0.4rem 0.5rem 2rem !important; max-width: 100% !important; }
+
+  /* Site header */
+  .site-header { padding: 8px 12px; }
+  .site-header-name { font-size: .95rem; letter-spacing: 1px; }
+  .site-header-sub  { display: none; }
+  .site-header-right { gap: 8px; }
+  .site-header-link { font-size: .7rem; }
+
+  /* App header / logo */
   .app-header { padding: 0.8rem 0 0.6rem; margin-bottom: 0.5rem; }
-  .logo-seal  { width: 58px; height: 58px; font-size: 1.7rem; margin-bottom: 8px; }
-  .logo-title { font-size: 1.5rem; letter-spacing: 4px; }
-  .kanji-char { font-size: 2.6rem; }
+  .logo-seal  { width: 56px; height: 56px; font-size: 1.6rem; margin-bottom: 8px; }
+  .logo-title { font-size: 1.4rem; letter-spacing: 3px; }
+  .logo-sub   { font-size: .68rem; letter-spacing: 1px; }
+
+  /* Hero section */
+  .hero { padding: 1.8rem 0.8rem 1.4rem; }
+  .hero-jp    { font-size: .78rem; letter-spacing: 6px; margin-bottom: 8px; }
+  .hero-title { font-size: 1.8rem; }
+  .hero-sub   { font-size: .78rem; letter-spacing: .3px; margin-bottom: 14px; }
+
+  /* Hero kanji block — stack vertically on small screens */
+  .hero-kanji-block {
+    flex-direction: column !important;
+    max-width: 100% !important;
+    text-align: center !important;
+  }
+  .hero-kanji-left {
+    border-right: none !important;
+    border-bottom: 1px solid #c8a87a;
+    padding: 16px 20px !important;
+    flex-direction: row !important;
+    gap: 16px !important;
+    min-width: unset !important;
+    justify-content: center !important;
+  }
+  .hero-kanji-left::before { display: none; }
+  .hero-kanji-char  { font-size: 3rem; }
+  .hero-kanji-right { padding: 14px 16px !important; }
+  .hero-kanji-quote { font-size: .76rem; line-height: 1.7; }
+
+  /* Feature grid — 2 cols on mobile */
+  .feature-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+  .feature-card { padding: 14px 10px 10px; }
+  .feature-icon { font-size: 1.5rem; }
+  .feature-title { font-size: .8rem; }
+  .feature-desc  { font-size: .68rem; }
+
+  /* Tab radio — scroll horizontal */
   div[data-testid="stRadio"] > div[role="radiogroup"] {
     overflow-x: auto !important; flex-wrap: nowrap !important;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding-bottom: 4px !important;
   }
   div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar { display: none; }
-  div[data-testid="stRadio"] > div[role="radiogroup"] > label { padding: 10px 12px !important; font-size: .82rem; }
+  div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+    padding: 8px 10px !important; font-size: .78rem !important;
+    flex: 0 0 auto !important; white-space: nowrap !important;
+  }
+
+  /* Kanji result card — stack columns */
+  .kanji-char { font-size: 2.4rem; }
+  [data-testid="stColumns"] > div:first-child { min-width: unset !important; }
+
+  /* Buttons */
   button[data-testid="baseButton-primary"],
-  button[data-testid="baseButton-secondary"] { min-height: 44px !important; font-size: .92rem !important; border-radius: 50px !important; }
+  button[data-testid="baseButton-secondary"] {
+    min-height: 44px !important; font-size: .88rem !important;
+    border-radius: 50px !important; width: 100% !important;
+  }
+
+  /* Metrics */
   [data-testid="stMetricValue"] { font-size: 1.1rem !important; }
   [data-testid="stMetricLabel"] { font-size: .7rem !important; }
-  .sec-title  { font-size: 1rem; }
-  input[type="text"], textarea { font-size: 16px !important; }
+
+  /* Section title */
+  .sec-title { font-size: .95rem; }
+
+  /* Inputs — prevent iOS zoom (font-size >= 16px) */
+  input[type="text"], input[type="search"], textarea,
+  [data-testid="stTextInput"] input { font-size: 16px !important; }
+
+  /* Sidebar toggle */
   [data-testid="collapsedControl"] { top: 0.4rem !important; }
+
+  /* Vocab cards */
+  .vocab-word { font-size: 1.2rem !important; }
+  .vocab-card { padding: 10px 12px; }
+
+  /* Footer */
+  .site-footer { padding: 14px 12px 12px; }
+  .site-footer-links { gap: 12px; }
+  .site-footer-logo span { font-size: .9rem; letter-spacing: 2px; }
+}
+
+/* ── Very small screens (≤ 400px) ── */
+@media (max-width: 400px) {
+  .hero-title { font-size: 1.5rem; }
+  .hero-kanji-char { font-size: 2.6rem; }
+  .hero-kanji-right { padding: 12px !important; }
+  .feature-grid { grid-template-columns: 1fr 1fr !important; gap: 8px; }
+  div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+    padding: 7px 9px !important; font-size: .72rem !important;
+  }
+  .site-header-badge { display: none; }
 }
 </style>
 """, unsafe_allow_html=True)
