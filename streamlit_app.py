@@ -1129,7 +1129,9 @@ for _k, _v in {"results": [], "path_results": []}.items():
         st.session_state[_k] = _v
 
 # ── Dark mode state + shared color tokens ────────────────────────────────────
-dark_mode = st.query_params.get("dark", "0") == "1"
+if "dm_main" not in st.session_state:
+    st.session_state["dm_main"] = st.query_params.get("dark", "0") == "1"
+dark_mode = st.session_state["dm_main"]
 _dc_title  = "#ddd5c5" if dark_mode else "#1a1209"
 _dc_sub    = "#6a7888" if dark_mode else "#9a8a70"
 _dc_card   = "#1e2035" if dark_mode else "#ffffff"
@@ -1717,15 +1719,11 @@ html [data-testid="stAlert"] * { color: #b0b8c8 !important; }
 html .prog-label { color: #606878 !important; }
 </style>""", unsafe_allow_html=True)
 
-# ── Site Header ───────────────────────────────────────────────────────────────
+# ── Site Header + Dark mode toggle ───────────────────────────────────────────
 _logo_img = f'<img src="{_logo_uri}" class="site-header-logo">' if _logo_uri else '漢'
-_dm_icon       = '☀️' if dark_mode else '🌙'
-_dm_track_bg   = '#5a7de8' if dark_mode else '#ccc'
-_dm_thumb_left = '18px' if dark_mode else '2px'
-st.markdown(f"""
-<style>
-.dm-toggle-wrap {{ display:flex;align-items:center;gap:6px;cursor:pointer }}
-</style>
+_hdr_col, _dm_hdr_col = st.columns([11, 1])
+with _hdr_col:
+    st.markdown(f"""
 <div class="site-header">
   <div class="site-header-left">
     {_logo_img}
@@ -1737,49 +1735,19 @@ st.markdown(f"""
   <div class="site-header-right">
     <span class="site-header-badge">JLPT N5→N1</span>
     <span style="font-size:.78rem;color:#9a8a70">Tra Kanji · Lộ trình · Từ vựng · PDF · AI</span>
-    <div id="dm-toggle-placeholder" style="display:flex;align-items:center;gap:6px;cursor:pointer">
-      <div style="width:36px;height:20px;border-radius:10px;background:{_dm_track_bg};position:relative;flex-shrink:0">
-        <div style="position:absolute;top:2px;left:{_dm_thumb_left};width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>
-      </div>
-      <span style="font-size:.9rem">{_dm_icon}</span>
-    </div>
   </div>
 </div>
 """, unsafe_allow_html=True)
+with _dm_hdr_col:
+    st.markdown('<div style="height:16px"></div>', unsafe_allow_html=True)
+    st.toggle("🌙" if not dark_mode else "☀️",
+               key="dm_main",
+               help="Bật/Tắt chế độ tối",
+               label_visibility="visible")
 
-# ── Xóa badge + inject dark mode toggle vào header ───────────────────────────
-_dm_js_checked = 'true' if dark_mode else 'false'
-_components.html(f"""<script>
+# ── Xóa badge Streamlit bằng JS ─────────────────────────────────────────────
+_components.html("""<script>
 (function() {{
-  var isDark = {_dm_js_checked};
-  // ─ inject toggle vào header ─────────────────────────────────────────
-  function injectToggle() {{
-    var ph = window.parent.document.getElementById('dm-toggle-placeholder');
-    if (!ph || ph.dataset.injected) return !!ph;
-    ph.dataset.injected = '1';
-    ph.style.cssText = 'display:flex;align-items:center;gap:6px;cursor:pointer';
-    ph.innerHTML = '';
-    // track
-    var track = window.parent.document.createElement('div');
-    track.style.cssText = 'width:36px;height:20px;border-radius:10px;background:' +
-      (isDark?'#5a7de8':'#ccc') + ';position:relative;flex-shrink:0;transition:.2s';
-    var thumb = window.parent.document.createElement('div');
-    thumb.style.cssText = 'position:absolute;top:2px;left:' + (isDark?'18':'2') +
-      'px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)';
-    track.appendChild(thumb);
-    // icon
-    var icon = window.parent.document.createElement('span');
-    icon.style.fontSize = '.9rem';
-    icon.textContent = isDark ? '\u2600\ufe0f' : '\U0001F319';
-    ph.appendChild(track);
-    ph.appendChild(icon);
-    ph.addEventListener('click', function() {{
-      var u = new URL(window.parent.location.href);
-      u.searchParams.set('dark', isDark ? '0' : '1');
-      window.parent.location.href = u.toString();
-    }});
-    return true;
-  }}
   // ─ hide Streamlit badge ─────────────────────────────────────────
   var SELS = [
     '[data-testid="stDecoration"]',
@@ -1799,14 +1767,10 @@ _components.html(f"""<script>
     }});
   }}
   hideAll();
-  var obs = new MutationObserver(function() {{
-    hideAll();
-    injectToggle();
-  }});
+  var obs = new MutationObserver(hideAll);
   try {{
     obs.observe(window.parent.document.body, {{childList: true, subtree: true}});
   }} catch(e) {{}}
-  injectToggle();
 }})();
 </script>""", height=0, scrolling=False)
 
@@ -1868,6 +1832,8 @@ if "pending_tab" in st.session_state:
 # ── Tab bar (full width) ─────────────────────────────────────────────────────
 active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
                       key="tab_radio", label_visibility="collapsed")
+# Sync query_params để persist dark mode qua reload
+st.query_params["dark"] = "1" if st.session_state["dm_main"] else "0"
 st.divider()
 
 # === TAB 1 ===
