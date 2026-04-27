@@ -686,8 +686,10 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { 
 }
 .vocab-card:hover { box-shadow: 0 3px 12px rgba(192,57,43,.15); border-color: #c0392b88; }
 .vocab-card.vocab-speaking { border-color: #c0392b !important; box-shadow: 0 0 0 2px rgba(192,57,43,.25) !important; }
-.vocab-tts-icon { font-size:.85rem; opacity:.45; margin-left:4px; transition:opacity .2s; vertical-align:middle; }
-.vocab-card:hover .vocab-tts-icon { opacity:.85; }
+.vocab-tts-icon { font-size:.85rem; opacity:.45; margin-left:6px; transition:opacity .2s; vertical-align:middle; cursor:pointer; }
+.vocab-tts-icon:hover { opacity:1; }
+.vocab-word { cursor: pointer !important; }
+.vocab-word:hover { color: #c0392b !important; text-decoration: underline dotted #c0392b99; }
 #vocab-toast {
   position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(8px);
   background:#1a1209; color:#f7f2e8; padding:10px 24px 12px;
@@ -1775,10 +1777,10 @@ elif active_tab == TAB_NAMES[2]:
   {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
-                    if st.button("🤖 Phân tích AI",
+                    # Nút ẩn — JS click vào chữ kanji sẽ kích hoạt nút này
+                    if st.button("⠀",  # ký tự ẩn, button bị JS che
                                  key=f"vl_ai_{sel_lesson}_{wi}",
-                                 use_container_width=True,
-                                 help=f"Phân tích sâu từ {_w} bằng AI"):
+                                 use_container_width=True):
                         st.session_state["_vl_sel_word"]      = _w
                         st.session_state["_vl_sel_reading"]   = _rd
                         st.session_state["_vl_sel_hanviet"]   = _hv
@@ -1825,17 +1827,50 @@ elif active_tab == TAB_NAMES[2]:
   function attachHandlers(){
     try{
       var doc = window.parent.document;
+
+      // Ẩn các nút AI ẩn trong cột chứa vocab-card
+      doc.querySelectorAll('[data-testid="column"]').forEach(function(col){
+        if(col.querySelector('.vocab-card')){
+          var stBtn = col.querySelector('[data-testid="stBaseButton-secondary"], [data-testid="stButton"]');
+          if(stBtn){
+            stBtn.style.height = '0';
+            stBtn.style.overflow = 'hidden';
+            stBtn.style.margin = '0';
+            stBtn.style.padding = '0';
+          }
+        }
+      });
+
       doc.querySelectorAll('.vocab-card:not([data-tts])').forEach(function(card){
         card.setAttribute('data-tts','1');
-        card.addEventListener('click', function(){
-          var word    = card.getAttribute('data-word') || '';
-          var reading = card.getAttribute('data-reading') || '';
-          var meaning = card.getAttribute('data-meaning') || '';
-          speak(reading || word);
-          showToast(word, reading, meaning);
-          card.classList.add('vocab-speaking');
-          setTimeout(function(){ card.classList.remove('vocab-speaking'); }, 900);
-        });
+        var word    = card.getAttribute('data-word') || '';
+        var reading = card.getAttribute('data-reading') || '';
+        var meaning = card.getAttribute('data-meaning') || '';
+
+        // TTS: chỉ click vào icon 🔊
+        var icon = card.querySelector('.vocab-tts-icon');
+        if(icon){
+          icon.addEventListener('click', function(e){
+            e.stopPropagation();
+            speak(reading || word);
+            showToast(word, reading, meaning);
+            card.classList.add('vocab-speaking');
+            setTimeout(function(){ card.classList.remove('vocab-speaking'); }, 900);
+          });
+        }
+
+        // AI Popup: click vào chữ kanji
+        var wordEl = card.querySelector('.vocab-word');
+        if(wordEl){
+          wordEl.addEventListener('click', function(e){
+            e.stopPropagation();
+            var col = card.closest('[data-testid="column"]');
+            if(col){
+              var btn = col.querySelector('[data-testid="stBaseButton-secondary"], button');
+              if(btn) btn.click();
+            }
+          });
+        }
       });
     }catch(e){}
   }
