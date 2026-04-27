@@ -1769,7 +1769,7 @@ elif active_tab == TAB_NAMES[2]:
           var word    = card.getAttribute('data-word') || '';
           var reading = card.getAttribute('data-reading') || '';
           var meaning = card.getAttribute('data-meaning') || '';
-          speak(word);
+          speak(reading || word);
           showToast(word, reading, meaning);
           card.classList.add('vocab-speaking');
           setTimeout(function(){ card.classList.remove('vocab-speaking'); }, 900);
