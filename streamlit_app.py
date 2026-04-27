@@ -7,6 +7,7 @@ Deploy   : streamlit.io/cloud
 import os
 import sys
 import re
+import json
 import tempfile
 import base64
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -2081,7 +2082,23 @@ elif active_tab == TAB_NAMES[3]:
                                        format_func=lambda n: f"Bài {n}  ({len(VOCAB_LESSONS[n])} từ)",
                                        key="vl_sel")
             words = VOCAB_LESSONS[sel_lesson]
-            st.info(f"**Bài {sel_lesson}** — {len(words)} từ vựng")
+            _vc_info, _vc_dl = st.columns([3, 1])
+            with _vc_info:
+                st.info(f"**Bài {sel_lesson}** — {len(words)} từ vựng")
+            with _vc_dl:
+                _lesson_json = json.dumps(
+                    {"lesson": sel_lesson, "title": f"Bài {sel_lesson}", "words": words},
+                    ensure_ascii=False, indent=2
+                )
+                st.download_button(
+                    "📥 Xuất JSON",
+                    data=_lesson_json,
+                    file_name=f"vocab_bai{sel_lesson}.json",
+                    mime="application/json",
+                    key=f"dl_vocab_{sel_lesson}",
+                    use_container_width=True,
+                    help="Tải JSON từ vựng bài này để dùng luyện viết",
+                )
             # Grid 2 cột
             for row_i in range(0, len(words), 2):
                 cols = st.columns(2)
