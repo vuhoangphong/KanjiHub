@@ -1770,7 +1770,7 @@ _components.html(f"""<script>
     // icon
     var icon = window.parent.document.createElement('span');
     icon.style.fontSize = '.9rem';
-    icon.textContent = isDark ? '\u2600\ufe0f' : '\ud83c\udf19';
+    icon.textContent = isDark ? '\u2600\ufe0f' : '\U0001F319';
     ph.appendChild(track);
     ph.appendChild(icon);
     ph.addEventListener('click', function() {{
