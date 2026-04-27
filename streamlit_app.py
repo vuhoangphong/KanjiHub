@@ -27,7 +27,7 @@ try:
         lookup_kanji_gemini, lookup_kanji_openrouter,
         get_ai_provider, set_ai_provider,
         get_openrouter_key, set_openrouter_key,
-        analyze_kanji_ai,
+        analyze_kanji_ai, lookup_vocab,
     )
     from pdf_generator import generate_pdf, generate_vocab_table_pdf
     from vocab_lessons import VOCAB_LESSONS
@@ -1406,7 +1406,7 @@ _components.html("""<script>
 </script>""", height=0, scrolling=False)
 
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
-TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng", "🃏 Flash Card"]
+TAB_NAMES = ["🔍 Tra Kanji", "� Tra Từ Vựng", "�🗺️ Lộ trình học", "📖 Từ Vựng", "🃏 Flash Card"]
 
 # ── Dialog phân tích AI cho từ vựng ───────────────────────────────────────────
 @st.dialog("🤖 Phân tích từ vựng", width="large")
@@ -1630,8 +1630,98 @@ if active_tab == TAB_NAMES[0]:
     elif submitted and query:
         st.warning("Không tìm thấy. Thử gõ có dấu hoặc chuyển sang chế độ AI.")
 
-# === TAB 2 ===
+# === TAB 1b: Tra Từ Vựng ===
 elif active_tab == TAB_NAMES[1]:
+    _lv = _logo_uri
+    st.markdown(
+        f'''<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+  {'<img src="' + _lv + '" style="width:56px;height:56px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">' if _lv else ''}
+  <div>
+    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">📚 Tra Từ Vựng</div>
+    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Nguồn: Mazii · Jisho · AI phân tích</div>
+  </div>
+</div>''', unsafe_allow_html=True)
+
+    with st.form("vocab_search_form"):
+        _vc1, _vc2 = st.columns([5, 1])
+        with _vc1:
+            _vq = st.text_input("Nhập từ", placeholder="Nhập từ tiếng Nhật: 食べる、会議、間に合う…",
+                                label_visibility="collapsed", key="vocab_query")
+        with _vc2:
+            _vsub = st.form_submit_button("🔍 Tra", use_container_width=True, type="primary")
+
+    if _vsub and _vq.strip():
+        _vq = _vq.strip()
+        _vcache_key = f"vocab_res_{_vq}"
+        if _vcache_key not in st.session_state:
+            with st.spinner(f"Đang tra **{_vq}**…"):
+                st.session_state[_vcache_key] = lookup_vocab(_vq)
+        _vr = st.session_state[_vcache_key]
+
+        if _vr:
+            _vsrc = _vr.get("source", "")
+            _vsrc_label = {"mazii": "🇻🇳 Mazii", "jisho": "⚡ Jisho", "gemini": "✨ Gemini AI", "openrouter": "🤖 OpenRouter AI"}.get(_vsrc, _vsrc)
+            st.markdown(f"""
+<div style="background:#fff;border:1.5px solid #e0d4be;border-radius:10px;padding:20px 24px 16px;margin-bottom:12px">
+  <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px">
+    <span style="font-family:'Noto Serif JP',serif;font-size:2.6rem;font-weight:900;color:#1a1209">{_vr.get('word','')}</span>
+    <span style="color:#b8902a;font-size:1.1rem">（{_vr.get('reading','')}）</span>
+    <span style="color:#9a8a6a;font-size:.85rem;font-style:italic">{_vr.get('han_viet','')}</span>
+    <span style="background:#e8f4e8;color:#2d6e4a;border:1px solid #b0d4b0;border-radius:12px;
+      padding:2px 10px;font-size:.75rem;font-weight:700">{_vsrc_label}</span>
+  </div>
+  <div style="border-top:1px solid #e0d4be;padding-top:10px">
+    {''.join(f'<div style="color:#3a2a1a;font-size:.95rem;margin-bottom:4px">▸ {m}</div>' for m in _vr.get('meanings_vi',[]))}
+  </div>
+</div>""", unsafe_allow_html=True)
+
+            if _vr.get("examples"):
+                st.markdown("**📝 Câu ví dụ:**")
+                for _ex in _vr["examples"]:
+                    st.markdown(f"""
+<div style="background:#fdf8f0;border-left:3px solid #b8902a;padding:8px 14px;margin-bottom:6px;border-radius:0 6px 6px 0">
+  <div style="font-family:'Noto Serif JP',serif;font-size:1rem;color:#1a1209">{_ex.get('sentence','')}</div>
+  {f'<div style="font-size:.82rem;color:#b8902a">({_ex.get("reading","")})</div>' if _ex.get('reading') else ''}
+  <div style="font-size:.88rem;color:#5a4a3a;font-style:italic">↳ {_ex.get('meaning','')}</div>
+</div>""", unsafe_allow_html=True)
+
+            if _vr.get("related"):
+                st.markdown("**🔗 Từ liên quan:**")
+                _rcols = st.columns(min(len(_vr["related"]), 4))
+                for _ri, (_rw, _rr, _rm) in enumerate(_vr["related"]):
+                    with _rcols[_ri % len(_rcols)]:
+                        st.markdown(f"""
+<div style="background:#fff;border:1px solid #e0d4be;border-radius:6px;padding:8px 10px;text-align:center">
+  <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:#1a1209">{_rw}</div>
+  <div style="font-size:.75rem;color:#b8902a">{_rr}</div>
+  <div style="font-size:.78rem;color:#5a4a3a">{_rm}</div>
+</div>""", unsafe_allow_html=True)
+
+            # Phân tích AI thêm
+            st.divider()
+            _vai_key = f"vocab_ai_{_vq}"
+            if st.button("🤖 Phân tích AI chuyên sâu", key="vocab_ai_btn"):
+                with st.spinner("Đang phân tích…"):
+                    st.session_state[_vai_key] = analyze_kanji_ai(_vq)
+            if _vai_key in st.session_state:
+                st.markdown(
+                    f'<div style="background:#fdf8f0;border:1px solid #e0d4be;border-radius:8px;'
+                    f'padding:16px;font-size:.9rem;color:#3a2a1a;line-height:1.75">'
+                    f'{st.session_state[_vai_key]}</div>', unsafe_allow_html=True)
+        else:
+            st.warning(f"Không tìm thấy từ **{_vq}** trong Mazii/Jisho. Thử dùng AI phân tích:")
+            _vai_key = f"vocab_ai_{_vq}"
+            if st.button("🤖 Phân tích bằng AI", key="vocab_ai_fallback_btn", type="primary"):
+                with st.spinner("Đang phân tích…"):
+                    st.session_state[_vai_key] = analyze_kanji_ai(_vq)
+            if _vai_key in st.session_state:
+                st.markdown(
+                    f'<div style="background:#fdf8f0;border:1px solid #e0d4be;border-radius:8px;'
+                    f'padding:16px;font-size:.9rem;color:#3a2a1a;line-height:1.75">'
+                    f'{st.session_state[_vai_key]}</div>', unsafe_allow_html=True)
+
+# === TAB 2: Lộ trình ===
+elif active_tab == TAB_NAMES[2]:
     st.markdown(
         f'''
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
@@ -1726,7 +1816,7 @@ elif active_tab == TAB_NAMES[1]:
                     render_card(info, idx=idx, prefix=f"p_{lid}")
 
 # === TAB 3 ===
-elif active_tab == TAB_NAMES[2]:
+elif active_tab == TAB_NAMES[3]:
     st.markdown(
         f'''
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
@@ -1941,7 +2031,7 @@ elif active_tab == TAB_NAMES[2]:
 """, height=0, scrolling=False)
 
 # === TAB 4: Flash Card ===
-elif active_tab == TAB_NAMES[3]:
+elif active_tab == TAB_NAMES[4]:
     import json as _json, random as _rand
     _logo_fc = (f'<img src="{_logo_uri}" style="width:56px;height:56px;border-radius:50%;'
                 f'box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">') if _logo_uri else ''
