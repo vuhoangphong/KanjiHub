@@ -1833,12 +1833,8 @@ with _dm_col:
         help="Bật/Tắt chế độ tối",
         label_visibility="visible",
     )
-# Lưu trạng thái vào URL để persist qua reload
-if st.session_state["dm_main"] != dark_mode:
-    st.query_params["dark"] = "1" if st.session_state["dm_main"] else "0"
-    st.rerun()
-elif dark_mode:
-    st.query_params["dark"] = "1"
+# Luôn đồng bộ URL với trạng thái hiện tại để persist qua reload
+st.query_params["dark"] = "1" if st.session_state["dm_main"] else "0"
 st.divider()
 
 # === TAB 1 ===
