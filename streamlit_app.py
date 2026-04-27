@@ -1129,7 +1129,9 @@ for _k, _v in {"results": [], "path_results": []}.items():
         st.session_state[_k] = _v
 
 # ── Dark mode state + shared color tokens ────────────────────────────────────
-dark_mode = st.session_state.get("dark_mode", False)
+if "dark_mode" not in st.session_state:
+    st.session_state["dark_mode"] = False
+dark_mode = st.session_state["dark_mode"]
 _dc_title  = "#ddd5c5" if dark_mode else "#1a1209"
 _dc_sub    = "#6a7888" if dark_mode else "#9a8a70"
 _dc_card   = "#1e2035" if dark_mode else "#ffffff"
@@ -1466,11 +1468,8 @@ with st.sidebar:
     st.caption("Ứng dụng học Kanji cho người Việt")
     st.divider()
 
-    # ── Dark mode toggle ──────────────────────────────────────────────────────
-    _dm_new = st.toggle("🌙 Chế độ tối (Dark Mode)", value=dark_mode, key="dm_toggle")
-    if _dm_new != dark_mode:
-        st.session_state["dark_mode"] = _dm_new
-        st.rerun()
+    # ── Dark mode toggle (sidebar mirror) ────────────────────────────────────
+    st.toggle("🌙 Chế độ tối (Dark Mode)", key="dark_mode")
 
     st.divider()
     st.markdown("### ⚙️ Cài đặt AI")
@@ -1827,11 +1826,12 @@ with _tab_col:
     active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
                           key="tab_radio", label_visibility="collapsed")
 with _dm_col:
-    _dm_lbl = "🌙" if not dark_mode else "☀️"
-    _dm_help = "Bật chế độ tối" if not dark_mode else "Tắt chế độ tối"
-    if st.button(_dm_lbl, help=_dm_help, key="dm_btn_main", use_container_width=True):
-        st.session_state["dark_mode"] = not dark_mode
-        st.rerun()
+    st.toggle(
+        "🌙" if not dark_mode else "☀️",
+        key="dark_mode",
+        help="Bật chế độ tối" if not dark_mode else "Tắt chế độ tối",
+        label_visibility="visible",
+    )
 st.divider()
 
 # === TAB 1 ===
