@@ -1128,6 +1128,19 @@ for _k, _v in {"results": [], "path_results": []}.items():
     if _k not in st.session_state:
         st.session_state[_k] = _v
 
+# ── Dark mode state + shared color tokens ────────────────────────────────────
+dark_mode = st.session_state.get("dark_mode", False)
+_dc_title  = "#ddd5c5" if dark_mode else "#1a1209"
+_dc_sub    = "#6a7888" if dark_mode else "#9a8a70"
+_dc_card   = "#1e2035" if dark_mode else "#ffffff"
+_dc_border = "#2d3058" if dark_mode else "#e0d4be"
+_dc_text   = "#b0a898" if dark_mode else "#3a2a1a"
+_dc_muted  = "#606878" if dark_mode else "#8a7a6a"
+_dc_gold   = "#c8a45a" if dark_mode else "#b8902a"
+_dc_code   = "#1a1c28" if dark_mode else "#fdf8f0"
+_dc_row_sep = "#2d3058" if dark_mode else "#e0d0b0"
+_dc_link   = "#6090d8" if dark_mode else "#1a3060"
+
 
 def status_of(info):
     k = info.get("kanji", "")
@@ -1171,7 +1184,7 @@ def make_pdf_bytes(infos, extra_rows=0):
 
 
 # idx + prefix -> key stable va unique giua cac lan rerun
-def render_card(info, idx, prefix):
+def render_card(info, idx, prefix, dark_mode=False):
     import html as _html
     uid     = f"{prefix}_{idx}"
     kanji   = info.get("kanji", "")
@@ -1181,6 +1194,21 @@ def render_card(info, idx, prefix):
     meo     = info.get("meo", "")
     vocab   = info.get("vocab", [])
     meanings_en = info.get("meanings_en", [])
+    status_txt, status_cls = status_of(info)
+
+    # Dark mode color tokens for inline styles
+    _c_card   = "#1e2035" if dark_mode else "#ffffff"
+    _c_border = "#2d3058" if dark_mode else "#e0d4be"
+    _c_title  = "#ddd5c5" if dark_mode else "#1a1209"
+    _c_sub    = "#b0a898" if dark_mode else "#5a4a3a"
+    _c_muted  = "#606878" if dark_mode else "#9a8a6a"
+    _c_link   = "#6090d8" if dark_mode else "#1a3060"
+    _c_row    = "#2d3058" if dark_mode else "#e0d0b0"
+    _c_meo_bg = "#1a1c2e" if dark_mode else "#fffbf0"
+    _c_meo_bd = "#3a3d5a" if dark_mode else "#d4bc8a"
+    _c_ai_bg  = "#1a1c2e" if dark_mode else "#fdf8f0"
+    _c_ai_bd  = "#2d3058" if dark_mode else "#e0d4be"
+    _c_text   = "#b0a898" if dark_mode else "#3a2a1a"
     status_txt, status_cls = status_of(info)
 
     gif_src = gif_url(kanji) if kanji else ""
@@ -1199,10 +1227,10 @@ def render_card(info, idx, prefix):
     meo_box = ""
     if meo:
         meo_box = (
-            f'<div style="background:#fffbf0;border:1px solid #d4bc8a;border-radius:6px;'
+            f'<div style="background:{_c_meo_bg};border:1px solid {_c_meo_bd};border-radius:6px;'
             f'padding:8px 12px;margin-top:8px">'
             f'<div style="font-size:.68rem;font-weight:700;color:#b8902a;letter-spacing:1.5px;margin-bottom:4px">✦ GỢI Ý CÁCH NHỚ</div>'
-            f'<div style="color:#3a2a1a;font-size:.88rem;line-height:1.6">{_html.escape(meo)}</div>'
+            f'<div style="color:{_c_text};font-size:.88rem;line-height:1.6">{_html.escape(meo)}</div>'
             f'</div>'
         )
 
@@ -1216,10 +1244,10 @@ def render_card(info, idx, prefix):
             r = _html.escape(str(v[1]))
             m = _html.escape(str(v[2]))
             rows += (
-                f'<div style="padding:6px 0;border-bottom:1px solid #e0d0b0;display:flex;align-items:baseline;gap:6px">'
-                f'<span style="color:#1a3060;font-weight:700;font-size:.95rem">{w}</span>'
-                f'<span style="color:#b8902a;font-size:.82rem">（{r}）</span>'
-                f'<span style="color:#6a5a4a;font-size:.82rem">— {m}</span>'
+                f'<div style="padding:6px 0;border-bottom:1px solid {_c_row};display:flex;align-items:baseline;gap:6px">'
+                f'<span style="color:{_c_link};font-weight:700;font-size:.95rem">{w}</span>'
+                f'<span style="color:#c8a45a;font-size:.82rem">（{r}）</span>'
+                f'<span style="color:{_c_sub};font-size:.82rem">— {m}</span>'
                 f'</div>'
             )
         vocab_box = (
@@ -1232,12 +1260,12 @@ def render_card(info, idx, prefix):
     elif meanings_en:
         m_en = _html.escape(" · ".join(meanings_en[:4]))
         vocab_box = (
-            f'<div style="margin-top:8px;font-size:.82rem;color:#8a7a6a">{m_en}</div>'
+            f'<div style="margin-top:8px;font-size:.82rem;color:{_c_muted}">{m_en}</div>'
         )
 
     # ── Dùng Streamlit columns để TTS nằm trong cột trái ──
     st.markdown(
-        '<div style="background:#ffffff;border:1px solid #e0d4be;'
+        f'<div style="background:{_c_card};border:1px solid {_c_border};'
         'border-radius:8px;margin-bottom:10px;'
         'box-shadow:0 2px 8px rgba(0,0,0,.08)">',
         unsafe_allow_html=True)
@@ -1288,10 +1316,10 @@ function speak(){{
         if y_nghia or meaning_sub:
             y_nghia_block = (
                 f'<div style="margin-bottom:4px">'
-                f'<div style="font-size:.65rem;font-weight:700;color:#9a8a6a;letter-spacing:2px;margin-bottom:3px">Ý NGHĨA</div>'
-                f'<div style="font-size:1.4rem;font-weight:900;color:#1a1209;font-family:serif">'
+                f'<div style="font-size:.65rem;font-weight:700;color:{_c_muted};letter-spacing:2px;margin-bottom:3px">Ý NGHĨA</div>'
+                f'<div style="font-size:1.4rem;font-weight:900;color:{_c_title};font-family:serif">'
                 f'{y_nghia}{badge_html}</div>'
-                + (f'<div style="font-size:.88rem;color:#5a4a3a;margin-top:2px">{meaning_sub}</div>' if meaning_sub and meaning_sub != y_nghia else "")
+                + (f'<div style="font-size:.88rem;color:{_c_sub};margin-top:2px">{meaning_sub}</div>' if meaning_sub and meaning_sub != y_nghia else "")
                 + f'</div>'
             )
         st.markdown(
@@ -1320,8 +1348,8 @@ function speak(){{
 
             if res_key in st.session_state:
                 st.markdown(
-                    f'<div style="background:#fdf8f0;border:1px solid #e0d4be;'
-                    f'border-radius:4px;padding:10px 12px;font-size:.85rem;color:#3a2a1a;margin-top:4px">'
+                    f'<div style="background:{_c_ai_bg};border:1px solid {_c_ai_bd};'
+                    f'border-radius:4px;padding:10px 12px;font-size:.85rem;color:{_c_text};margin-top:4px">'
                     f'{st.session_state[res_key]}</div>',
                     unsafe_allow_html=True)
 
@@ -1437,6 +1465,14 @@ with st.sidebar:
     st.markdown("## ✍️ Kanji Hub")
     st.caption("Ứng dụng học Kanji cho người Việt")
     st.divider()
+
+    # ── Dark mode toggle ──────────────────────────────────────────────────────
+    _dm_new = st.toggle("🌙 Chế độ tối (Dark Mode)", value=dark_mode, key="dm_toggle")
+    if _dm_new != dark_mode:
+        st.session_state["dark_mode"] = _dm_new
+        st.rerun()
+
+    st.divider()
     st.markdown("### ⚙️ Cài đặt AI")
 
     # Kiểm tra xem secrets có sẵn không
@@ -1518,6 +1554,171 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child {
 }
 </style>
 """, unsafe_allow_html=True)
+
+# ── Dark Mode CSS override ─────────────────────────────────────────────────────
+if dark_mode:
+    st.markdown("""<style>
+/* === DARK MODE === */
+[data-testid="stAppViewContainer"] {
+  background: #0f1117 !important;
+  background-image: none !important;
+}
+[data-testid="stSidebar"] {
+  background: #141620 !important;
+  border-right: 2px solid #c8a45a22 !important;
+}
+[data-testid="stSidebar"] * { color: #b0b8c8 !important; }
+[data-testid="stSidebar"] input {
+  background: #1e2133 !important; color: #c8d0e0 !important;
+  border-color: #3a3d5a !important;
+}
+[data-testid="stSidebar"] div[data-baseweb="select"] > div:first-child {
+  background: #1e2133 !important; border-color: #3a3d5a !important; color: #c8d0e0 !important;
+}
+/* Site header */
+html .site-header {
+  background: linear-gradient(135deg, #1a1c2e 0%, #1e2035 100%) !important;
+  border-bottom-color: #c0392b33 !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.4) !important;
+}
+html .site-header-name { color: #ddd5c5 !important; }
+html .site-header-sub  { color: #606878 !important; }
+html .site-header-right span { color: #606878 !important; }
+/* Footer */
+html .site-footer {
+  background: linear-gradient(160deg, #1a1c2e 0%, #1e2035 100%) !important;
+  border-top-color: #c0392b33 !important;
+}
+html .site-footer-logo span { color: #ddd5c5 !important; }
+html .site-footer-links a   { color: #7a8898 !important; }
+html .site-footer-copy      { color: #454e60 !important; }
+html .site-footer-jp        { color: rgba(192,57,43,.35) !important; }
+/* App header */
+html .app-header {
+  background: linear-gradient(160deg, #1a1c2e 0%, #1e2035 50%, #1a1c2e 100%) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.3) !important;
+}
+html .logo-title { color: #ddd5c5 !important; }
+html .logo-sub   { color: #606878 !important; }
+/* Hero */
+html .hero {
+  background: linear-gradient(160deg, #1c1e30 0%, #1a1c28 50%, #1c1e30 100%) !important;
+  box-shadow: 0 2px 24px rgba(0,0,0,.45) !important;
+}
+html .hero-title              { color: #ddd5c5 !important; }
+html .hero-sub                { color: #7a6a50 !important; }
+html .hero-kanji-block        { background: #1a1c28 !important; border-color: #c8a87a22 !important; }
+html .hero-kanji-right        { background: #1a1c28 !important; }
+html .hero-kanji-mean         { color: #c8c0b0 !important; }
+html .hero-kanji-quote        { color: #8a7a6a !important; border-top-color: #3a3020 !important; }
+html .hero-kanji-quote-author { color: #5a4a3a !important; }
+/* Feature cards */
+html .feature-card {
+  background: #1e2035 !important;
+  border-color: #2d3058 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25) !important;
+}
+html .feature-card:hover { box-shadow: 0 6px 20px rgba(192,57,43,.2) !important; }
+html .feature-title { color: #c8c0b0 !important; }
+html .feature-desc  { color: #606878 !important; }
+/* Section title */
+html .sec-title { color: #c8c0b0 !important; }
+/* Vocab cards */
+html .vocab-card {
+  background: #1e2035 !important;
+  border-color: #2d3058 !important;
+  border-bottom-color: #c0392b44 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2) !important;
+}
+html .vocab-word    { color: #ddd5c5 !important; }
+html .vocab-kana    { color: #c8a45a !important; }
+html .vocab-hanviet { color: #707888 !important; }
+html .vocab-meaning { color: #b0a898 !important; }
+html .vocab-example { color: #708080 !important; }
+/* Status badges */
+html .tag-db   { background: #1a3a28 !important; color: #5ac888 !important; border-color: #2a5038 !important; }
+html .tag-ai   { background: #28184a !important; color: #9878d8 !important; border-color: #48286a !important; }
+html .tag-jisho{ background: #2a2010 !important; color: #c09838 !important; border-color: #483818 !important; }
+html .tag-miss { background: #281010 !important; color: #c85858 !important; border-color: #481818 !important; }
+/* Kanji chars and labels */
+html .kanji-char { color: #ddd5c5 !important; }
+html .kanji-read { color: #c8a45a !important; }
+html .kanji-viet { color: #ddd5c5 !important; }
+html .kanji-mean { color: #887868 !important; }
+html .kanji-meo  { color: #608060 !important; border-left-color: #486848 !important; }
+html .vocab-item { color: #887868 !important; }
+/* Text inputs */
+html [data-testid="stTextInput"] input {
+  background: #1e2035 !important;
+  border-color: #3a3d5a !important;
+  color: #c8d0e0 !important;
+}
+html [data-testid="stTextInput"] input::placeholder { color: #505868 !important; }
+html [data-testid="stTextInput"] input:focus {
+  border-color: #e84040 !important;
+  box-shadow: 0 0 0 3px rgba(232,64,64,.18) !important;
+}
+/* Selectbox */
+html div[data-baseweb="select"] > div:first-child {
+  background: #1e2035 !important;
+  border-color: #3a3d5a !important;
+  color: #c8d0e0 !important;
+}
+html div[data-baseweb="select"] *,
+html div[data-baseweb="select"] span { color: #c8d0e0 !important; background: transparent !important; }
+html div[data-baseweb="popover"],
+html div[data-baseweb="popover"] div[data-baseweb="menu"],
+html div[data-baseweb="popover"] li {
+  background: #22253a !important;
+  border-color: #3a3d5a !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.45) !important;
+  color: #c8d0e0 !important;
+}
+html div[data-baseweb="option"],
+html div[data-baseweb="option"] * { background: #22253a !important; color: #c8d0e0 !important; }
+html div[data-baseweb="option"]:hover,
+html div[data-baseweb="option"][aria-selected="true"] {
+  background: rgba(192,57,43,.18) !important; color: #e84040 !important;
+}
+/* Widget labels */
+html [data-testid="stWidgetLabel"] p,
+html [data-testid="stWidgetLabel"] label { color: #707888 !important; }
+/* Expander */
+html [data-testid="stExpander"] { background: #1e2035 !important; border-color: #2d3058 !important; }
+html [data-testid="stExpander"] summary { color: #8090a0 !important; }
+/* Metric */
+html [data-testid="stMetric"] { background: #1e2035 !important; border-color: #2d3058 !important; }
+html [data-testid="stMetricValue"] { color: #c8d0e0 !important; }
+html [data-testid="stMetricLabel"] { color: #606878 !important; }
+/* Spinner */
+html [data-testid="stSpinner"] { background: rgba(30,32,53,.95) !important; border-color: #c0392b22 !important; }
+html [data-testid="stSpinner"] p { color: #e84040 !important; }
+/* Divider */
+html hr { border-color: #2d3058 !important; }
+/* Secondary buttons */
+html button[data-testid="baseButton-secondary"],
+html [data-testid="stBaseButton-secondary"] {
+  background: #1e2035 !important;
+  border-color: #3a3d5a !important;
+  color: #8090a0 !important;
+}
+html button[data-testid="baseButton-secondary"]:hover {
+  background: #252845 !important; border-color: #e84040 !important; color: #e84040 !important;
+}
+/* Download buttons */
+html a[data-testid="stDownloadButton-downloadButton"],
+html button[data-testid="stDownloadButton-downloadButton"] {
+  background: #1e2035 !important; border-color: #2a4838 !important; color: #58c888 !important;
+}
+html a[data-testid="stDownloadButton-downloadButton"]:hover { background: #1a3028 !important; }
+/* Progress bar */
+html [data-testid="stProgressBar"] { background: #2d3058 !important; }
+/* Alert */
+html [data-testid="stAlert"] { background: #1a1c2e !important; border-color: #2d3058 !important; }
+html [data-testid="stAlert"] * { color: #b0b8c8 !important; }
+/* Prog label */
+html .prog-label { color: #606878 !important; }
+</style>""", unsafe_allow_html=True)
 
 # ── Site Header ───────────────────────────────────────────────────────────────
 _logo_img = f'<img src="{_logo_uri}" class="site-header-logo">' if _logo_uri else '漢'
@@ -1786,7 +1987,7 @@ if active_tab == TAB_NAMES[0]:
 
         st.divider()
         for idx, info in enumerate(results):
-            render_card(info, idx=idx, prefix="s")
+            render_card(info, idx=idx, prefix="s", dark_mode=dark_mode)
     elif submitted and query:
         st.warning("Không tìm thấy. Thử gõ có dấu hoặc chuyển sang chế độ AI.")
 
@@ -1797,8 +1998,8 @@ elif active_tab == TAB_NAMES[1]:
         f'''<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
   {'<img src="' + _lv + '" style="width:56px;height:56px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">' if _lv else ''}
   <div>
-    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">📚 Tra Từ Vựng</div>
-    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Nguồn: Mazii · Jisho · AI phân tích</div>
+    <div style="font-size:1.4rem;font-weight:900;color:{_dc_title};letter-spacing:2px;line-height:1.2">📚 Tra Từ Vựng</div>
+    <div style="color:{_dc_sub};font-size:.8rem;letter-spacing:1px;margin-top:2px">Nguồn: Mazii · Jisho · AI phân tích</div>
   </div>
 </div>''', unsafe_allow_html=True)
 
@@ -1830,17 +2031,17 @@ elif active_tab == TAB_NAMES[1]:
             _vreading = _vr.get('reading', '') or _vr.get('word', '')
             import html as _html
             _vreading_safe = _html.escape(_vreading, quote=True)
-            _meanings_html = ''.join(f'<div style="color:#3a2a1a;font-size:.95rem;margin-bottom:4px">▸ {_html.escape(m)}</div>' for m in _vr.get('meanings_vi', []))
+            _meanings_html = ''.join(f'<div style="color:{_dc_text};font-size:.95rem;margin-bottom:4px">▸ {_html.escape(m)}</div>' for m in _vr.get('meanings_vi', []))
             st.markdown(f"""
-<div style="background:#fff;border:1.5px solid #e0d4be;border-radius:10px;padding:20px 24px 16px;margin-bottom:12px">
+<div style="background:{_dc_card};border:1.5px solid {_dc_border};border-radius:10px;padding:20px 24px 16px;margin-bottom:12px">
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px">
-    <span style="font-family:'Noto Serif JP',serif;font-size:2.6rem;font-weight:900;color:#1a1209">{_html.escape(_vr.get('word',''))}</span>
-    <span style="color:#b8902a;font-size:1.1rem">（{_html.escape(_vr.get('reading',''))}）</span>
-    <span style="color:#9a8a6a;font-size:.85rem;font-style:italic">{_html.escape(_vr.get('han_viet',''))}</span>
+    <span style="font-family:'Noto Serif JP',serif;font-size:2.6rem;font-weight:900;color:{_dc_title}">{_html.escape(_vr.get('word',''))}</span>
+    <span style="color:{_dc_gold};font-size:1.1rem">（{_html.escape(_vr.get('reading',''))}）</span>
+    <span style="color:{_dc_muted};font-size:.85rem;font-style:italic">{_html.escape(_vr.get('han_viet',''))}</span>
     <span style="background:#e8f4e8;color:#2d6e4a;border:1px solid #b0d4b0;border-radius:12px;
       padding:2px 10px;font-size:.75rem;font-weight:700">{_vsrc_label}</span>
   </div>
-  <div style="border-top:1px solid #e0d4be;padding-top:10px">
+  <div style="border-top:1px solid {_dc_border};padding-top:10px">
     {_meanings_html}
   </div>
 </div>""", unsafe_allow_html=True)
@@ -1871,10 +2072,10 @@ function speak(){{
                 st.markdown("**📝 Câu ví dụ:**")
                 for _ex in _vr["examples"]:
                     st.markdown(f"""
-<div style="background:#fdf8f0;border-left:3px solid #b8902a;padding:8px 14px;margin-bottom:6px;border-radius:0 6px 6px 0">
-  <div style="font-family:'Noto Serif JP',serif;font-size:1rem;color:#1a1209">{_ex.get('sentence','')}</div>
-  {f'<div style="font-size:.82rem;color:#b8902a">({_ex.get("reading","")})</div>' if _ex.get('reading') else ''}
-  <div style="font-size:.88rem;color:#5a4a3a;font-style:italic">↳ {_ex.get('meaning','')}</div>
+<div style="background:{_dc_code};border-left:3px solid {_dc_gold};padding:8px 14px;margin-bottom:6px;border-radius:0 6px 6px 0">
+  <div style="font-family:'Noto Serif JP',serif;font-size:1rem;color:{_dc_title}">{_ex.get('sentence','')}</div>
+  {f'<div style="font-size:.82rem;color:{_dc_gold}">({_ex.get("reading","")})</div>' if _ex.get('reading') else ''}
+  <div style="font-size:.88rem;color:{_dc_sub};font-style:italic">↳ {_ex.get('meaning','')}</div>
 </div>""", unsafe_allow_html=True)
 
             if _vr.get("related"):
@@ -1883,10 +2084,10 @@ function speak(){{
                 for _ri, (_rw, _rr, _rm) in enumerate(_vr["related"]):
                     with _rcols[_ri % len(_rcols)]:
                         st.markdown(f"""
-<div style="background:#fff;border:1px solid #e0d4be;border-radius:6px;padding:8px 10px;text-align:center">
-  <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:#1a1209">{_rw}</div>
-  <div style="font-size:.75rem;color:#b8902a">{_rr}</div>
-  <div style="font-size:.78rem;color:#5a4a3a">{_rm}</div>
+<div style="background:{_dc_card};border:1px solid {_dc_border};border-radius:6px;padding:8px 10px;text-align:center">
+  <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_dc_title}">{_rw}</div>
+  <div style="font-size:.75rem;color:{_dc_gold}">{_rr}</div>
+  <div style="font-size:.78rem;color:{_dc_sub}">{_rm}</div>
 </div>""", unsafe_allow_html=True)
 
             # Phân tích AI thêm
@@ -1897,8 +2098,8 @@ function speak(){{
                     st.session_state[_vai_key] = analyze_kanji_ai(_vq)
             if _vai_key in st.session_state:
                 st.markdown(
-                    f'<div style="background:#fdf8f0;border:1px solid #e0d4be;border-radius:8px;'
-                    f'padding:16px;font-size:.9rem;color:#3a2a1a;line-height:1.75">'
+                    f'<div style="background:{_dc_code};border:1px solid {_dc_border};border-radius:8px;'
+                    f'padding:16px;font-size:.9rem;color:{_dc_text};line-height:1.75">'
                     f'{st.session_state[_vai_key]}</div>', unsafe_allow_html=True)
         else:
             st.warning(f"Không tìm thấy từ **{_vq}** trong Mazii/Jisho. Thử dùng AI phân tích:")
@@ -1908,8 +2109,8 @@ function speak(){{
                     st.session_state[_vai_key] = analyze_kanji_ai(_vq)
             if _vai_key in st.session_state:
                 st.markdown(
-                    f'<div style="background:#fdf8f0;border:1px solid #e0d4be;border-radius:8px;'
-                    f'padding:16px;font-size:.9rem;color:#3a2a1a;line-height:1.75">'
+                    f'<div style="background:{_dc_code};border:1px solid {_dc_border};border-radius:8px;'
+                    f'padding:16px;font-size:.9rem;color:{_dc_text};line-height:1.75">'
                     f'{st.session_state[_vai_key]}</div>', unsafe_allow_html=True)
 
 # === TAB 2: Lộ trình ===
@@ -1919,8 +2120,8 @@ elif active_tab == TAB_NAMES[2]:
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
   {'<img src="' + _logo_uri + '" style="width:56px;height:56px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">' if _logo_uri else ''}
   <div>
-    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">🗺️ Lộ trình học Kanji</div>
-    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Chọn cấp độ → tra từng bài</div>
+    <div style="font-size:1.4rem;font-weight:900;color:{_dc_title};letter-spacing:2px;line-height:1.2">🗺️ Lộ trình học Kanji</div>
+    <div style="color:{_dc_sub};font-size:.8rem;letter-spacing:1px;margin-top:2px">Chọn cấp độ → tra từng bài</div>
   </div>
 </div>''',
         unsafe_allow_html=True
@@ -1963,7 +2164,7 @@ elif active_tab == TAB_NAMES[2]:
         icon    = "✅" if is_done else "📖"
         with st.expander(f"{icon} Bài {i+1} ({len(chunk)} chữ) — {' '.join(chunk)}",
                          expanded=has_res):
-            st.markdown(f'<div style="font-size:1.6rem;letter-spacing:3px;color:#1a3060;margin-bottom:10px">{"  ".join(chunk)}</div>',
+            st.markdown(f'<div style="font-size:1.6rem;letter-spacing:3px;color:{_dc_link};margin-bottom:10px">{"  ".join(chunk)}</div>',
                         unsafe_allow_html=True)
             b1, b2 = st.columns([1, 1])
             with b1:
@@ -2005,7 +2206,7 @@ elif active_tab == TAB_NAMES[2]:
                     except Exception:
                         pass
                 for idx, info in enumerate(bai_results):
-                    render_card(info, idx=idx, prefix=f"p_{lid}")
+                    render_card(info, idx=idx, prefix=f"p_{lid}", dark_mode=dark_mode)
 
 # === TAB 3 ===
 elif active_tab == TAB_NAMES[3]:
@@ -2014,8 +2215,8 @@ elif active_tab == TAB_NAMES[3]:
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
   {'<img src="' + _logo_uri + '" style="width:56px;height:56px;border-radius:50%;box-shadow:0 3px 12px rgba(192,57,43,.28);flex-shrink:0">' if _logo_uri else ''}
   <div>
-    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">📖 Từ Vựng theo Bài</div>
-    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Học từ vựng theo chủ đề</div>
+    <div style="font-size:1.4rem;font-weight:900;color:{_dc_title};letter-spacing:2px;line-height:1.2">📖 Từ Vựng theo Bài</div>
+    <div style="color:{_dc_sub};font-size:.8rem;letter-spacing:1px;margin-top:2px">Học từ vựng theo chủ đề</div>
   </div>
 </div>''',
         unsafe_allow_html=True
@@ -2265,8 +2466,8 @@ elif active_tab == TAB_NAMES[4]:
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
   {_logo_fc}
   <div>
-    <div style="font-size:1.4rem;font-weight:900;color:#1a1209;letter-spacing:2px;line-height:1.2">🃏 Flash Card</div>
-    <div style="color:#9a8a70;font-size:.8rem;letter-spacing:1px;margin-top:2px">Luyện thuộc từ vựng bằng thẻ lật 3D</div>
+    <div style="font-size:1.4rem;font-weight:900;color:{_dc_title};letter-spacing:2px;line-height:1.2">🃏 Flash Card</div>
+    <div style="color:{_dc_sub};font-size:.8rem;letter-spacing:1px;margin-top:2px">Luyện thuộc từ vựng bằng thẻ lật 3D</div>
   </div>
 </div>""", unsafe_allow_html=True)
 
