@@ -2145,32 +2145,22 @@ function speak(){{
 
             if _vr.get("related"):
                 st.markdown("**🔗 Từ liên quan:**")
-                import urllib.parse as _up
-                # Build HTML cho tất cả cards trong 1 components.html để tránh iframe phân tán
-                _bg = _dc_card.replace("'", "\\'")
-                _bd = _dc_border.replace("'", "\\'")
-                _ct = _dc_title.replace("'", "\\'")
-                _cg = _dc_gold.replace("'", "\\'")
-                _cs = _dc_sub.replace("'", "\\'")
-                _cards_html = ""
-                for _rw, _rr, _rm in _vr["related"]:
-                    import html as _h
-                    _rw_e = _h.escape(_rw); _rr_e = _h.escape(_rr); _rm_e = _h.escape(_rm)
-                    _url = "?tab=1&vq=" + _up.quote(_rw)
-                    _cards_html += f"""
-<div onclick="window.parent.location.href='{_url}'"
-  style="background:{_bg};border:1px solid {_bd};border-radius:6px;
-    padding:10px 10px 8px;text-align:center;cursor:pointer;flex:1;min-width:0;
-    transition:border-color .15s,box-shadow .15s"
-  onmouseover="this.style.borderColor='#c0392b';this.style.boxShadow='0 2px 8px rgba(192,57,43,.18)'"
-  onmouseout="this.style.borderColor='{_bd}';this.style.boxShadow='none'">
-  <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_ct}">{_rw_e}</div>
-  <div style="font-size:.75rem;color:{_cg}">{_rr_e}</div>
-  <div style="font-size:.78rem;color:{_cs}">{_rm_e}</div>
-</div>"""
-                _components.html(f"""
-<div style="display:flex;gap:10px;padding:2px 0">{_cards_html}</div>
-""", height=80, scrolling=False)
+                import html as _h
+                _rcols = st.columns(min(len(_vr["related"]), 4))
+                for _ri, (_rw, _rr, _rm) in enumerate(_vr["related"]):
+                    with _rcols[_ri % len(_rcols)]:
+                        st.markdown(f"""
+<div style="background:{_dc_card};border:1px solid {_dc_border};border-radius:6px 6px 0 0;
+  padding:10px 10px 6px;text-align:center;pointer-events:none">
+  <div style="font-family:'Noto Serif JP',serif;font-size:1.2rem;font-weight:900;color:{_dc_title}">{_h.escape(_rw)}</div>
+  <div style="font-size:.75rem;color:{_dc_gold}">{_h.escape(_rr)}</div>
+  <div style="font-size:.78rem;color:{_dc_sub}">{_h.escape(_rm)}</div>
+</div>""", unsafe_allow_html=True)
+                        if st.button("Tra →", key=f"rel_{_ri}_{_rw}",
+                                     use_container_width=True):
+                            st.session_state["vocab_last_query"] = _rw
+                            st.session_state.pop(f"vocab_res_{_rw}", None)
+                            st.rerun()
 
             # Phân tích AI thêm
             st.divider()
