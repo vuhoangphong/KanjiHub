@@ -1667,14 +1667,20 @@ elif active_tab == TAB_NAMES[1]:
         if _vr:
             _vsrc = _vr.get("source", "")
             _vsrc_label = {"mazii": "🇻🇳 Mazii", "jisho": "⚡ Jisho", "gemini": "✨ Gemini AI", "openrouter": "🤖 OpenRouter AI"}.get(_vsrc, _vsrc)
+            _vreading = _vr.get('reading', '') or _vr.get('word', '')
             st.markdown(f"""
 <div style="background:#fff;border:1.5px solid #e0d4be;border-radius:10px;padding:20px 24px 16px;margin-bottom:12px">
-  <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px">
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px">
     <span style="font-family:'Noto Serif JP',serif;font-size:2.6rem;font-weight:900;color:#1a1209">{_vr.get('word','')}</span>
     <span style="color:#b8902a;font-size:1.1rem">（{_vr.get('reading','')}）</span>
     <span style="color:#9a8a6a;font-size:.85rem;font-style:italic">{_vr.get('han_viet','')}</span>
     <span style="background:#e8f4e8;color:#2d6e4a;border:1px solid #b0d4b0;border-radius:12px;
       padding:2px 10px;font-size:.75rem;font-weight:700">{_vsrc_label}</span>
+    <button onclick="(function(){{var u=new SpeechSynthesisUtterance('{_vreading}');u.lang='ja-JP';u.rate=0.85;window.speechSynthesis.speak(u)}})()"
+      style="background:#b8902a;color:#fff;border:none;border-radius:20px;padding:6px 16px;
+             font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:6px">
+      🔊 Phát âm
+    </button>
   </div>
   <div style="border-top:1px solid #e0d4be;padding-top:10px">
     {''.join(f'<div style="color:#3a2a1a;font-size:.95rem;margin-bottom:4px">▸ {m}</div>' for m in _vr.get('meanings_vi',[]))}
