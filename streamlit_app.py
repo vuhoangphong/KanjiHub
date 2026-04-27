@@ -1963,7 +1963,9 @@ if active_tab == TAB_NAMES[0]:
 </div>
 ''', unsafe_allow_html=True)
 
-    with st.form("search_form"):
+    _sf_l, _sf_c, _sf_r = st.columns([1, 2, 1])
+    with _sf_c:
+      with st.form("search_form"):
         query = st.text_input("q", label_visibility="collapsed",
                               placeholder="Nhập kanji: 山川田… hoặc tiếng Việt: Học…")
         c2, c3 = st.columns([3, 1])
