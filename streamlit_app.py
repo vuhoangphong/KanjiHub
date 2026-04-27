@@ -342,7 +342,7 @@ if os.path.exists(_logo_path):
 # --- Page config ---
 st.set_page_config(
     page_title="Kanji Hub — Tra Cứu Kanji Nhật, Nghĩa Tiếng Việt, Luyện Viết",
-    page_icon="✍️",
+    page_icon="漢",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
