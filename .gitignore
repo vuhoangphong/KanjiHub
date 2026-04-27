@@ -38,3 +38,18 @@ gen_mnn.py
 make_icon.py
 mazii_test.json
 test_n4.py
+
+# Desktop app only (không cần cho Streamlit web)
+gui.py
+main.py
+add_vocab_lesson.py
+KanjiApp.vbs
+KanjiApp_mac.command
+VietKanji.spec
+VietKanji_mac.spec
+requirements.txt
+
+# Test/temp files
+test_*.pdf
+*.pdf
+config.json
