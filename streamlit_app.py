@@ -1668,24 +1668,44 @@ elif active_tab == TAB_NAMES[1]:
             _vsrc = _vr.get("source", "")
             _vsrc_label = {"mazii": "🇻🇳 Mazii", "jisho": "⚡ Jisho", "gemini": "✨ Gemini AI", "openrouter": "🤖 OpenRouter AI"}.get(_vsrc, _vsrc)
             _vreading = _vr.get('reading', '') or _vr.get('word', '')
+            import html as _html
+            _vreading_safe = _html.escape(_vreading, quote=True)
+            _meanings_html = ''.join(f'<div style="color:#3a2a1a;font-size:.95rem;margin-bottom:4px">▸ {_html.escape(m)}</div>' for m in _vr.get('meanings_vi', []))
             st.markdown(f"""
 <div style="background:#fff;border:1.5px solid #e0d4be;border-radius:10px;padding:20px 24px 16px;margin-bottom:12px">
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px">
-    <span style="font-family:'Noto Serif JP',serif;font-size:2.6rem;font-weight:900;color:#1a1209">{_vr.get('word','')}</span>
-    <span style="color:#b8902a;font-size:1.1rem">（{_vr.get('reading','')}）</span>
-    <span style="color:#9a8a6a;font-size:.85rem;font-style:italic">{_vr.get('han_viet','')}</span>
+    <span style="font-family:'Noto Serif JP',serif;font-size:2.6rem;font-weight:900;color:#1a1209">{_html.escape(_vr.get('word',''))}</span>
+    <span style="color:#b8902a;font-size:1.1rem">（{_html.escape(_vr.get('reading',''))}）</span>
+    <span style="color:#9a8a6a;font-size:.85rem;font-style:italic">{_html.escape(_vr.get('han_viet',''))}</span>
     <span style="background:#e8f4e8;color:#2d6e4a;border:1px solid #b0d4b0;border-radius:12px;
       padding:2px 10px;font-size:.75rem;font-weight:700">{_vsrc_label}</span>
-    <button onclick="(function(){{var u=new SpeechSynthesisUtterance('{_vreading}');u.lang='ja-JP';u.rate=0.85;window.speechSynthesis.speak(u)}})()"
-      style="background:#b8902a;color:#fff;border:none;border-radius:20px;padding:6px 16px;
-             font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:6px">
-      🔊 Phát âm
-    </button>
   </div>
   <div style="border-top:1px solid #e0d4be;padding-top:10px">
-    {''.join(f'<div style="color:#3a2a1a;font-size:.95rem;margin-bottom:4px">▸ {m}</div>' for m in _vr.get('meanings_vi',[]))}
+    {_meanings_html}
   </div>
 </div>""", unsafe_allow_html=True)
+            # TTS button dùng components.html để JS chạy được (st.markdown block onclick)
+            _components.html(f"""
+<button onclick="speak()" style="background:#b8902a;color:#fff;border:none;border-radius:20px;
+  padding:7px 18px;font-size:.88rem;cursor:pointer;font-family:sans-serif;margin-top:2px">
+  🔊 Phát âm
+</button>
+<script>
+function speak(){{
+  try{{
+    var s=window.parent.speechSynthesis||window.speechSynthesis;
+    var U=window.parent.SpeechSynthesisUtterance||window.SpeechSynthesisUtterance;
+    s.cancel();
+    var u=new U('{_vreading_safe}');
+    u.lang='ja-JP'; u.rate=0.85;
+    var vv=s.getVoices();
+    var jv=vv.find(function(v){{return v.lang==='ja-JP';}});
+    if(jv) u.voice=jv;
+    s.speak(u);
+  }}catch(e){{}}
+}}
+</script>
+""", height=46, scrolling=False)
 
             if _vr.get("examples"):
                 st.markdown("**📝 Câu ví dụ:**")
