@@ -389,7 +389,18 @@ st.markdown("""
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Noto+Serif+JP:wght@400;700;900&display=swap');
+
+/* ── Font mặc định toàn trang: Be Vietnam Pro ── */
+*, *::before, *::after {
+  font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif !important;
+}
+/* Giữ Noto Serif JP cho những phần chữ Nhật */
+.hero-jp, .hero-kanji-char, .hero-kanji-reading, .hero-kanji-quote,
+.hero-kanji-label, .hero-kanji-mean, .hero-kanji-quote-author,
+[class*="kanji"], [style*="Noto Serif JP"] {
+  font-family: 'Noto Serif JP', 'Be Vietnam Pro', serif !important;
+}
 
 /* ── Bảng màu Nhật Bản sáng ──
    Washi (giấy kem): #f7f2e8
