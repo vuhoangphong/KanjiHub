@@ -1739,7 +1739,22 @@ with _hdr_col:
 </div>
 """, unsafe_allow_html=True)
 with _dm_hdr_col:
-    st.markdown('<div style="height:16px"></div>', unsafe_allow_html=True)
+    st.markdown("""
+<style>
+/* Đẩy cột toggle sát lề phải */
+div[data-testid="column"]:last-child {
+  display:flex; align-items:center; justify-content:flex-end;
+  padding-right:0 !important;
+}
+div[data-testid="column"]:last-child > div:first-child {
+  width:100%; display:flex; justify-content:flex-end; align-items:center;
+}
+div[data-testid="column"]:last-child [data-testid="stToggle"] {
+  margin-left:auto;
+}
+</style>
+<div style="height:16px"></div>
+""", unsafe_allow_html=True)
     st.toggle("🌙" if not dark_mode else "☀️",
                key="dm_main",
                help="Bật/Tắt chế độ tối",
