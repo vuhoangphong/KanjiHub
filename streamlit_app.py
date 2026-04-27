@@ -1821,8 +1821,17 @@ if "tab_radio" not in st.session_state:
 if "pending_tab" in st.session_state:
     st.session_state["tab_radio"] = st.session_state.pop("pending_tab")
 
-active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
-                      key="tab_radio", label_visibility="collapsed")
+# ── Tab bar + dark mode toggle cùng dòng ─────────────────────────────────────
+_tab_col, _dm_col = st.columns([9, 1])
+with _tab_col:
+    active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
+                          key="tab_radio", label_visibility="collapsed")
+with _dm_col:
+    _dm_lbl = "🌙" if not dark_mode else "☀️"
+    _dm_help = "Bật chế độ tối" if not dark_mode else "Tắt chế độ tối"
+    if st.button(_dm_lbl, help=_dm_help, key="dm_btn_main", use_container_width=True):
+        st.session_state["dark_mode"] = not dark_mode
+        st.rerun()
 st.divider()
 
 # === TAB 1 ===
