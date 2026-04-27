@@ -4650,19 +4650,19 @@ def lookup_vocab_ai(word: str) -> dict:
 def lookup_vocab(word: str) -> dict:
     """
     Tra cứu từ vựng đầy đủ cho một từ/cụm từ tiếng Nhật.
-    Ưu ti�n: Mazii API (type=word) → Mazii API (type=kanji) → Jisho → AI
-    Trả về dict với c�c key:
+    Ưu tiên: Mazii API (type=word) → Mazii API (type=kanji) → Jisho → AI
+    Trả về dict với các key:
       word, reading, han_viet, meanings_vi, examples, related, source
     """
     if not word.strip():
         return {}
 
-    # 1. Mazii type=word � Ưu ti�n tuyệt đối, chấp nhận kể cả khi meanings_vi rỗng
+    # 1. Mazii type=word — Ưu tiên tuyệt đối, chấp nhận kể cả khi meanings_vi rỗng
     result = lookup_vocab_mazii(word)
     if result:
         return result
 
-    # 1b. Mazii type=kanji � thử th�m nếu l� từ ngắn
+    # 1b. Mazii type=kanji — thử th?m nếu là từ ngắn
     if len(word) <= 2:
         try:
             _resp = requests.post(
@@ -4704,14 +4704,14 @@ def lookup_vocab(word: str) -> dict:
         except Exception:
             pass
 
-    # 2. Jisho � fallback khi Mazii kh�ng t�m thấy từ
+    # 2. Jisho — fallback khi Mazii không tìm thấy từ
     result = lookup_vocab_jisho(word)
     if result and result.get("meanings_vi"):
-        # Nếu Jisho trả về từ qu� ngắn so với input (chắc l� bị cắt x�n do l� c�u d�i), bỏ qua để AI dịch cả c�u
+        # Nếu Jisho trả về từ quá ngắn so với input (chắc là bị cắt xén do là câu dài), bỏ qua để AI dịch cả câu
         if len(word) >= 5 and len(result["word"]) < len(word) * 0.5:
             pass
         else:
             return result
 
-    # 3. AI � fallback cuối c�ng, cần API key
+    # 3. AI — fallback cuối cầng, cần API key
     return lookup_vocab_ai(word)
