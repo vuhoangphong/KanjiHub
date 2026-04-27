@@ -703,7 +703,7 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3):has(inp
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(1):hover:not(:has(input:checked)) { background: #fff5f4 !important; transform: translateY(-1px) !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(2):hover:not(:has(input:checked)) { background: #f0f5ff !important; transform: translateY(-1px) !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(3):hover:not(:has(input:checked)) { background: #f0faf4 !important; transform: translateY(-1px) !important; }
-/* Tab 4 — Flash Card: vàng đồng */
+/* Tab 4 — Từ Vựng: vàng đồng */
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4),
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4) * {
   border-color: #c8a45a !important; color: #8a6c20 !important;
@@ -714,6 +714,17 @@ div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4):has(inp
 }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4):has(input:checked) * { color: #fff !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(4):hover:not(:has(input:checked)) { background: #fdf8ec !important; transform: translateY(-1px) !important; }
+/* Tab 5 — Flash Card: tím xanh */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(5),
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(5) * {
+  border-color: #5b6abf !important; color: #3a47a0 !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(5):has(input:checked) {
+  background: #3d4db5 !important; border-color: #3d4db5 !important;
+  box-shadow: 0 4px 14px rgba(61,77,181,.35) !important; transform: translateY(-1px) !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(5):has(input:checked) * { color: #fff !important; }
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:nth-child(5):hover:not(:has(input:checked)) { background: #f0f1ff !important; transform: translateY(-1px) !important; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label input[type="radio"] { display: none; }
 div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none; }
 
