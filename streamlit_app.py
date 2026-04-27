@@ -1652,11 +1652,17 @@ elif active_tab == TAB_NAMES[1]:
 
     if _vsub and _vq.strip():
         _vq = _vq.strip()
+        st.session_state["vocab_last_query"] = _vq
+
+    _vq_active = st.session_state.get("vocab_last_query", "")
+    if _vq_active:
+        _vq = _vq_active
         _vcache_key = f"vocab_res_{_vq}"
-        if _vcache_key not in st.session_state:
-            with st.spinner(f"Đang tra **{_vq}**…"):
-                st.session_state[_vcache_key] = lookup_vocab(_vq)
-        _vr = st.session_state[_vcache_key]
+        if _vsub or _vcache_key not in st.session_state:
+            if _vsub:
+                with st.spinner(f"Đang tra **{_vq}**…"):
+                    st.session_state[_vcache_key] = lookup_vocab(_vq)
+        _vr = st.session_state.get(_vcache_key, {})
 
         if _vr:
             _vsrc = _vr.get("source", "")
