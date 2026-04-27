@@ -4455,6 +4455,24 @@ def lookup_vocab_jisho(word: str) -> dict:
 
         item = results[0]
 
+        # Ưu tiên tìm kết quả khớp chính xác với từ nhập vào
+        exact = None
+        for _r in results:
+            _jp = _r.get("japanese", [{}])
+            _rw = _jp[0].get("word", "") if _jp else ""
+            _rr = _jp[0].get("reading", "") if _jp else ""
+            if _rw == word or _rr == word:
+                exact = _r
+                break
+        if exact:
+            item = exact
+        else:
+            # Nếu kết quả đầu dài hơn từ nhập vào quá nhiều → bỏ qua Jisho
+            _jp0 = item.get("japanese", [{}])
+            _w0 = _jp0[0].get("word", word) if _jp0 else word
+            if len(_w0) > len(word) * 1.5:
+                return {}
+
         japanese = item.get("japanese", [{}])
 
         word_form = japanese[0].get("word", word) if japanese else word
