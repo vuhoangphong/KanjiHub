@@ -1129,10 +1129,7 @@ for _k, _v in {"results": [], "path_results": []}.items():
         st.session_state[_k] = _v
 
 # ── Dark mode state + shared color tokens ────────────────────────────────────
-if "dm_main" not in st.session_state:
-    # khởi tạo từ query param nếu có (persist qua reload)
-    st.session_state["dm_main"] = st.query_params.get("dark", "0") == "1"
-dark_mode = st.session_state["dm_main"]
+dark_mode = st.query_params.get("dark", "0") == "1"
 _dc_title  = "#ddd5c5" if dark_mode else "#1a1209"
 _dc_sub    = "#6a7888" if dark_mode else "#9a8a70"
 _dc_card   = "#1e2035" if dark_mode else "#ffffff"
@@ -1722,9 +1719,23 @@ html .prog-label { color: #606878 !important; }
 
 # ── Site Header ───────────────────────────────────────────────────────────────
 _logo_img = f'<img src="{_logo_uri}" class="site-header-logo">' if _logo_uri else '漢'
-_hdr_col, _dm_hdr_col = st.columns([11, 1])
-with _hdr_col:
-    st.markdown(f"""
+_dm_checked = 'checked' if dark_mode else ''
+_dm_icon = '☀️' if dark_mode else '🌙'
+st.markdown(f"""
+<style>
+.dm-toggle-wrap {{ display:flex;align-items:center;gap:6px;cursor:pointer }}
+.dm-toggle-input {{ display:none }}
+.dm-toggle-track {{
+  width:36px;height:20px;border-radius:10px;background:#ccc;
+  position:relative;transition:.2s;flex-shrink:0;
+}}
+.dm-toggle-input:checked + .dm-toggle-track {{ background:#5a7de8 }}
+.dm-toggle-thumb {{
+  position:absolute;top:2px;left:2px;width:16px;height:16px;
+  border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);
+}}
+.dm-toggle-input:checked ~ .dm-toggle-track .dm-toggle-thumb {{ left:18px }}
+</style>
 <div class="site-header">
   <div class="site-header-left">
     {_logo_img}
@@ -1736,17 +1747,15 @@ with _hdr_col:
   <div class="site-header-right">
     <span class="site-header-badge">JLPT N5→N1</span>
     <span style="font-size:.78rem;color:#9a8a70">Tra Kanji · Lộ trình · Từ vựng · PDF · AI</span>
+    <label class="dm-toggle-wrap" title="Bật/Tắt chế độ tối">
+      <input type="checkbox" class="dm-toggle-input" {_dm_checked}
+        onchange="(function(c){{var u=new URL(window.parent.location.href);u.searchParams.set('dark',c?'1':'0');window.parent.location.href=u.toString()}})(this.checked)">
+      <div class="dm-toggle-track"><div class="dm-toggle-thumb"></div></div>
+      <span style="font-size:.9rem">{_dm_icon}</span>
+    </label>
   </div>
 </div>
 """, unsafe_allow_html=True)
-with _dm_hdr_col:
-    st.markdown('<div style="height:14px"></div>', unsafe_allow_html=True)
-    st.toggle(
-        "🌙" if not dark_mode else "☀️",
-        key="dm_main",
-        help="Bật/Tắt chế độ tối",
-        label_visibility="visible",
-    )
 
 # ── Xóa badge "Hosted with Streamlit" bằng JS (CSS không đủ vì inject sau load) ──
 _components.html("""<script>
@@ -1834,8 +1843,6 @@ if "pending_tab" in st.session_state:
 # ── Tab bar (full width) ─────────────────────────────────────────────────────
 active_tab = st.radio("tab", TAB_NAMES, horizontal=True,
                       key="tab_radio", label_visibility="collapsed")
-# Luôn đồng bộ URL với trạng thái hiện tại để persist qua reload
-st.query_params["dark"] = "1" if st.session_state["dm_main"] else "0"
 st.divider()
 
 # === TAB 1 ===
