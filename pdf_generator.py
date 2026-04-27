@@ -689,3 +689,136 @@ def generate_vocab_table_pdf(vocab_list: list[dict], output_path: str = "output.
 
     c.save()
     print(f"[✓] Đã xuất bảng từ vựng: {output_path}")
+
+
+def generate_lesson_vocab_pdf(words: list[dict], lesson_num: int, output_path: str = "output.pdf"):
+    """
+    Tạo PDF luyện viết cho tab Từ Vựng theo bài.
+    Mỗi dòng: # | Từ vựng (điền sẵn) | Hiragana (trống) | Nghĩa (trống) | Kanji (ô luyện viết trống)
+    words: list[dict] với keys: word, reading, hanviet, meaning, example, exampleVi
+    """
+    from datetime import datetime
+    fonts = register_fonts()
+    font_vi  = fonts.get("vi", "Helvetica")
+    font_cjk = fonts.get("cjk", "Helvetica")
+
+    c = canvas.Canvas(output_path, pagesize=A4)
+    c.setTitle(f"Luyện viết từ vựng – Bài {lesson_num}")
+
+    now_str = datetime.now().strftime("%H:%M  %d/%m/%y")
+
+    MX      = 10 * mm
+    USABLE  = PAGE_W - 2 * MX
+    C_STT   = 10 * mm
+    C_WORD  = 38 * mm
+    C_HIRA  = 44 * mm
+    C_NGHIA = USABLE - C_STT - C_WORD - C_HIRA - 36 * mm
+    C_KANJI = 36 * mm
+
+    col_widths = [C_STT, C_WORD, C_HIRA, C_NGHIA, C_KANJI]
+    col_xs = []
+    _x = MX
+    for _w in col_widths:
+        col_xs.append(_x)
+        _x += _w
+
+    ROW_H   = 7 * mm
+    THEAD_H = 7.5 * mm
+    MY_TOP  = 8 * mm
+    MY_BOT  = 10 * mm
+    PHEAD_H = 9 * mm
+
+    def _table_start_y():
+        return PAGE_H - MY_TOP - PHEAD_H - 2 * mm
+
+    def _draw_page_chrome(page_num=1):
+        # Timestamp + tiêu đề bài
+        c.setFont(font_vi, 7.5)
+        c.setFillColor(colors.HexColor("#888888"))
+        c.drawString(MX, PAGE_H - MY_TOP, now_str)
+        title = f"Bài {lesson_num}  –  Luyện viết từ vựng"
+        c.setFont(font_vi, 8)
+        c.setFillColor(colors.HexColor("#444444"))
+        tw = c.stringWidth(title, font_vi, 8)
+        c.drawString((PAGE_W - tw) / 2, PAGE_H - MY_TOP, title)
+        # Footer
+        footer = "Kanji Hub by Phong Vu"
+        c.setFont(font_vi, 7.5)
+        c.setFillColor(colors.HexColor("#AAAAAA"))
+        fw = c.stringWidth(footer, font_vi, 7.5)
+        c.drawString((PAGE_W - fw) / 2, MY_BOT - 4, footer)
+
+    def _draw_col_header(y_top):
+        y_bot = y_top - THEAD_H
+        c.setFillColor(colors.HexColor("#DFF0D8"))
+        c.rect(MX, y_bot, USABLE, THEAD_H, fill=1, stroke=0)
+        c.setStrokeColor(colors.HexColor("#999999"))
+        c.setLineWidth(0.6)
+        c.rect(MX, y_bot, USABLE, THEAD_H, fill=0, stroke=1)
+        c.setLineWidth(0.4)
+        for _cx in col_xs[1:]:
+            c.line(_cx, y_bot, _cx, y_top)
+        labels = ["#", "Từ vựng", "Hiragana", "Nghĩa", "Kanji"]
+        c.setFillColor(colors.HexColor("#2D4A2D"))
+        for label, _cx, _cw in zip(labels, col_xs, col_widths):
+            c.setFont(font_vi, 8.5)
+            lw = c.stringWidth(label, font_vi, 8.5)
+            c.drawString(_cx + (_cw - lw) / 2, y_bot + 2.2 * mm, label)
+        return y_bot
+
+    def _draw_row(y_top, idx, item, shade):
+        word = item.get("word", "")
+        y_bot = y_top - ROW_H
+        # Nền zebra
+        c.setFillColor(colors.HexColor("#F6F6F6") if shade else colors.white)
+        c.rect(MX, y_bot, USABLE, ROW_H, fill=1, stroke=0)
+        # Viền ngang
+        c.setStrokeColor(colors.HexColor("#DDDDDD"))
+        c.setLineWidth(0.3)
+        c.rect(MX, y_bot, USABLE, ROW_H, fill=0, stroke=1)
+        # Viền dọc
+        for _cx in col_xs[1:]:
+            c.line(_cx, y_bot, _cx, y_top)
+
+        ty = y_bot + ROW_H * 0.28
+
+        # STT
+        c.setFont(font_vi, 7.5)
+        c.setFillColor(colors.HexColor("#999999"))
+        s = str(idx)
+        sw = c.stringWidth(s, font_vi, 7.5)
+        c.drawString(col_xs[0] + (C_STT - sw) / 2, ty, s)
+
+        # Từ vựng (điền sẵn, căn giữa)
+        if word:
+            fs = 10.5
+            c.setFont(font_cjk, fs)
+            c.setFillColor(colors.black)
+            ww = c.stringWidth(word, font_cjk, fs)
+            max_w = C_WORD - 2 * mm
+            if ww > max_w:
+                fs = fs * max_w / ww
+                c.setFont(font_cjk, fs)
+                ww = c.stringWidth(word, font_cjk, fs)
+            c.drawString(col_xs[1] + (C_WORD - ww) / 2, ty, word)
+
+        return y_bot
+
+    # ── Vẽ ──────────────────────────────────────────────────────────────────────
+    page_num = 1
+    _draw_page_chrome(page_num)
+    y = _table_start_y()
+    y = _draw_col_header(y)
+
+    for i, item in enumerate(words, 1):
+        if y - ROW_H < MY_BOT + 5 * mm:
+            c.showPage()
+            page_num += 1
+            _draw_page_chrome(page_num)
+            y = _table_start_y()
+            y = _draw_col_header(y)
+        y = _draw_row(y, i, item, shade=(i % 2 == 0))
+
+    c.save()
+    print(f"[✓] Đã xuất PDF luyện viết bài {lesson_num}: {output_path}")
+

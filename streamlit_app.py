@@ -30,7 +30,7 @@ try:
         get_openrouter_key, set_openrouter_key,
         analyze_kanji_ai, lookup_vocab,
     )
-    from pdf_generator import generate_pdf, generate_vocab_table_pdf
+    from pdf_generator import generate_pdf, generate_vocab_table_pdf, generate_lesson_vocab_pdf
     from vocab_lessons import VOCAB_LESSONS
 except Exception as _import_err:
     import traceback
@@ -2082,7 +2082,7 @@ elif active_tab == TAB_NAMES[3]:
                                        format_func=lambda n: f"Bài {n}  ({len(VOCAB_LESSONS[n])} từ)",
                                        key="vl_sel")
             words = VOCAB_LESSONS[sel_lesson]
-            _vc_info, _vc_dl = st.columns([3, 1])
+            _vc_info, _vc_dl, _vc_pdf = st.columns([3, 1, 1])
             with _vc_info:
                 st.info(f"**Bài {sel_lesson}** — {len(words)} từ vựng")
             with _vc_dl:
@@ -2099,6 +2099,24 @@ elif active_tab == TAB_NAMES[3]:
                     use_container_width=True,
                     help="Tải JSON từ vựng bài này để dùng luyện viết",
                 )
+            with _vc_pdf:
+                try:
+                    import tempfile as _tmp
+                    _pdf_path = os.path.join(_tmp.gettempdir(), f"vocab_bai{sel_lesson}.pdf")
+                    generate_lesson_vocab_pdf(words, sel_lesson, _pdf_path)
+                    with open(_pdf_path, "rb") as _pf:
+                        _pdf_bytes = _pf.read()
+                    st.download_button(
+                        "📄 Xuất PDF",
+                        data=_pdf_bytes,
+                        file_name=f"LuyenViet_Bai{sel_lesson}.pdf",
+                        mime="application/pdf",
+                        key=f"dl_pdf_vocab_{sel_lesson}",
+                        use_container_width=True,
+                        help="Tải PDF luyện viết bài này",
+                    )
+                except Exception as _pdf_err:
+                    st.error(f"PDF: {_pdf_err}")
             # Grid 2 cột
             for row_i in range(0, len(words), 2):
                 cols = st.columns(2)
