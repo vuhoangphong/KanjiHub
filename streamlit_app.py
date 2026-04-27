@@ -469,6 +469,39 @@ a[href="https://streamlit.io/cloud"], a[href*="share.streamlit.io"] { display: n
   border-radius: 20px; padding: 2px 10px; font-weight: 700; letter-spacing: .5px;
 }
 
+/* ── Search submit button (Nhật Bản style) ── */
+[data-testid="stFormSubmitButton"] > button {
+  background: linear-gradient(160deg, #c94040 0%, #7a0000 100%) !important;
+  color: #fff8f0 !important;
+  border: 1.5px solid #e8a090 !important;
+  border-radius: 2px !important;
+  font-family: 'Noto Serif JP', Georgia, serif !important;
+  font-size: 1.08rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 4px !important;
+  padding: 10px 0 !important;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.22), 0 4px 18px rgba(192,57,43,.28) !important;
+  transition: all .18s ease !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,.4) !important;
+  position: relative !important;
+}
+[data-testid="stFormSubmitButton"] > button::before {
+  content: '';
+  position: absolute; inset: 3px;
+  border: 1px solid rgba(255,240,220,.18);
+  border-radius: 1px;
+  pointer-events: none;
+}
+[data-testid="stFormSubmitButton"] > button:hover {
+  background: linear-gradient(160deg, #e84040 0%, #a00000 100%) !important;
+  box-shadow: 4px 4px 0 rgba(0,0,0,.30), 0 6px 24px rgba(192,57,43,.40) !important;
+  transform: translateY(-1px) !important;
+}
+[data-testid="stFormSubmitButton"] > button:active {
+  transform: translateY(1px) !important;
+  box-shadow: 1px 1px 0 rgba(0,0,0,.22) !important;
+}
+
 /* ── Site Footer ── */
 .site-footer {
   margin-top: 16px; padding: 16px 24px 14px;
@@ -1973,7 +2006,7 @@ if active_tab == TAB_NAMES[0]:
             search_mode = st.selectbox("m", ["DB", "DB + AI", "AI"],
                                        index=1, label_visibility="collapsed")
         with c3:
-            submitted = st.form_submit_button("🔍 Tra", use_container_width=True, type="primary")
+            submitted = st.form_submit_button("検 Tra", use_container_width=True, type="primary")
 
     if submitted and query:
         with st.spinner("⏳ Đang tra cứu…"):
@@ -2029,7 +2062,7 @@ elif active_tab == TAB_NAMES[1]:
             _vq = st.text_input("Nhập từ", placeholder="Nhập từ tiếng Nhật: 食べる、会議、間に合う…",
                                 label_visibility="collapsed", key="vocab_query")
         with _vc2:
-            _vsub = st.form_submit_button("🔍 Tra", use_container_width=True, type="primary")
+            _vsub = st.form_submit_button("検 Tra", use_container_width=True, type="primary")
 
     if _vsub and _vq.strip():
         _vq = _vq.strip()
