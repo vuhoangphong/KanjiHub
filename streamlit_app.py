@@ -1131,13 +1131,16 @@ def render_card(info, idx, prefix):
 
     with col_l:
         st.markdown(
-            f'<div style="background:#fdf6e8;min-height:100%;padding:16px 10px 8px;'
-            f'text-align:center;border-right:1px solid #e0d0b0">'
-            f'<div style="font-size:3.4rem;font-weight:900;color:#1a1209;line-height:1;'
-            f'font-family:serif">{_html.escape(kanji)}</div>'
-            f'<div style="font-size:.75rem;color:#b8902a;letter-spacing:2px;margin-top:6px;'
-            f'background:#fff8ee;border:1px solid #d4bc8a;border-radius:20px;'
-            f'padding:3px 10px;display:inline-block">{_html.escape(reading) or "—"}</div>'
+            f'<div style="background:linear-gradient(170deg,#180808 0%,#2a0e08 100%);'
+            f'min-height:100%;padding:20px 10px 10px;'
+            f'text-align:center;border-right:1px solid #5a2010;position:relative">'
+            f'<div style="position:absolute;inset:5px;border:1px solid rgba(192,57,43,.2);pointer-events:none"></div>'
+            f'<div style="font-size:3.6rem;font-weight:900;color:#fff8f0;line-height:1;'
+            f'font-family:\'Noto Serif JP\',serif;'
+            f'text-shadow:0 2px 16px rgba(192,57,43,.5),0 0 40px rgba(255,220,160,.12)">'
+            f'{_html.escape(kanji)}</div>'
+            f'<div style="font-size:.72rem;color:#e09050;letter-spacing:2px;margin-top:8px;'
+            f'font-family:\'Noto Serif JP\',serif">{_html.escape(reading) or "—"}</div>'
             f'{gif_html}'
             f'</div>',
             unsafe_allow_html=True)
@@ -1147,12 +1150,12 @@ def render_card(info, idx, prefix):
             _components.html(f"""
 <style>html,body{{margin:0;padding:0;overflow:hidden}}*{{box-sizing:border-box}}</style>
 <button onclick="speak()" style="
-  background:#fff8ee;border:1px solid #d4bc8a;border-radius:0;
-  color:#8a6010;font-size:.88rem;cursor:pointer;padding:8px 0;
+  background:rgba(192,57,43,.25);border:1px solid rgba(192,57,43,.4);border-radius:0;
+  color:#e09050;font-size:.85rem;cursor:pointer;padding:8px 0;
   width:100%;font-family:sans-serif;display:block;letter-spacing:.5px;
   position:absolute;bottom:0;left:0;right:0;
-" onmouseover="this.style.background='#fdf0d8'"
-  onmouseout="this.style.background='#fff8ee'">🔊 Nghe</button>
+" onmouseover="this.style.background='rgba(192,57,43,.45)'"
+  onmouseout="this.style.background='rgba(192,57,43,.25)'">🔊 Nghe</button>
 <script>
 function speak(){{
   try{{
