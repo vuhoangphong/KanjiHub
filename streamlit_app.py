@@ -503,30 +503,39 @@ a[href="https://streamlit.io/cloud"], a[href*="share.streamlit.io"] { display: n
 /* ── Hero Section ── */
 .hero {
   text-align: center;
-  padding: 2.8rem 1rem 2rem;
-  background: linear-gradient(160deg, #fff8f0 0%, #fdf4e8 60%, #fff8f0 100%);
-  border-radius: 12px; margin-bottom: 1.6rem;
+  padding: 2.8rem 1rem 2.2rem;
+  background: linear-gradient(160deg, #fffdf7 0%, #fdf6e8 50%, #fffaf2 100%);
+  border-radius: 4px; margin-bottom: 1.6rem;
   border-top: 4px solid #c0392b;
-  box-shadow: 0 2px 16px rgba(192,57,43,.07);
+  box-shadow: 0 2px 24px rgba(192,57,43,.08), inset 0 0 80px rgba(184,144,42,.04);
   position: relative; overflow: hidden;
 }
 .hero::before {
-  content: "山 川 花 月 雪 風 龍 鳥 竹 梅 松 波";
-  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-  font-size: .55rem; color: rgba(184,144,42,.13); letter-spacing: 12px;
-  white-space: nowrap; pointer-events: none; font-family: 'Noto Serif JP', serif;
+  content: "禅　道　山　月　風　花　竹　雪　龍　波　松　梅";
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 5rem; color: rgba(184,144,42,.04); letter-spacing: 16px;
+  pointer-events: none; font-family: 'Noto Serif JP', serif;
+  font-weight: 900; white-space: nowrap; overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, #c0392b 0%, rgba(192,57,43,0) 100%);
 }
 .hero-jp {
-  font-size: .95rem; color: #c0392b; letter-spacing: 8px;
-  font-family: 'Noto Serif JP', serif; display: block; margin-bottom: 10px;
+  font-size: .88rem; color: #c0392b; letter-spacing: 10px;
+  font-family: 'Noto Serif JP', serif; display: block; margin-bottom: 14px;
+  opacity: .85;
 }
 .hero-title {
-  font-size: 2.4rem; font-weight: 900; color: #1a1209;
-  letter-spacing: 0; line-height: 1.3; margin: 0 0 8px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 2.5rem; font-weight: 900; color: #1a0e06;
+  letter-spacing: 1px; line-height: 1.25; margin: 0 0 10px;
+  font-family: Georgia, 'Noto Serif JP', serif;
 }
 .hero-sub {
-  font-size: 1rem; color: #6a5040; margin: 6px 0 20px; letter-spacing: .5px;
+  font-size: .88rem; color: #7a6050; margin: 6px 0 22px; letter-spacing: 1px;
+  font-family: 'Noto Serif JP', serif;
 }
 .hero-cta {
   display: inline-block;
@@ -538,24 +547,57 @@ a[href="https://streamlit.io/cloud"], a[href*="share.streamlit.io"] { display: n
 }
 .hero-kanji-block {
   display: inline-flex; align-items: stretch; gap: 0;
-  background: #fff; border: 1.5px solid #e0d4be; border-radius: 14px;
-  margin-top: 22px; overflow: hidden;
-  box-shadow: 0 3px 14px rgba(0,0,0,.08); max-width: 560px; width: 100%;
+  background: #fffdf7;
+  border: 1px solid #c8a87a;
+  border-radius: 2px;
+  margin-top: 20px; overflow: hidden;
+  box-shadow: 4px 4px 0 rgba(192,57,43,.08), 0 6px 24px rgba(0,0,0,.10);
+  max-width: 600px; width: 100%; text-align: left;
 }
 .hero-kanji-left {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  background: #fdf6ec; border-right: 1.5px solid #e0d4be;
-  padding: 18px 24px; min-width: 90px;
+  background: linear-gradient(170deg, #180808 0%, #2a0e08 100%);
+  border-right: 1px solid #c8a87a;
+  padding: 22px 26px; min-width: 96px; position: relative;
 }
-.hero-kanji-char { font-size: 3rem; font-family: 'Noto Serif JP', serif; color: #1a1209; line-height: 1; }
-.hero-kanji-reading { font-size: .7rem; color: #c0392b; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
-.hero-kanji-right { display: flex; flex-direction: column; justify-content: center; padding: 16px 20px; text-align: left; }
-.hero-kanji-label { font-size: .6rem; color: #c0392b; font-weight: 700; letter-spacing: 2px; display: block; margin-bottom: 4px; }
-.hero-kanji-mean  { font-size: .95rem; color: #1a1209; font-weight: 700; margin-bottom: 10px; }
+.hero-kanji-left::before {
+  content: ''; position: absolute;
+  inset: 6px; border: 1px solid rgba(192,57,43,.25); pointer-events: none;
+}
+.hero-kanji-char {
+  font-size: 3.8rem; font-family: 'Noto Serif JP', serif;
+  color: #fff8f0; line-height: 1;
+  text-shadow: 0 2px 16px rgba(192,57,43,.5), 0 0 40px rgba(255,220,160,.15);
+}
+.hero-kanji-reading {
+  font-size: .68rem; color: #e0a060; font-weight: 700;
+  letter-spacing: 2px; margin-top: 8px; font-family: 'Noto Serif JP', serif;
+}
+.hero-kanji-right {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 18px 22px; text-align: left; flex: 1;
+}
+.hero-kanji-label {
+  font-size: .58rem; color: #c0392b; font-weight: 700;
+  letter-spacing: 3px; display: block; margin-bottom: 6px;
+  font-family: 'Noto Serif JP', serif; text-transform: uppercase;
+}
+.hero-kanji-mean {
+  font-size: 1rem; color: #1a0e06; font-weight: 700;
+  margin-bottom: 12px; font-family: 'Noto Serif JP', Georgia, serif;
+}
 .hero-kanji-quote {
-  font-size: .8rem; color: #6b5240; font-style: italic;
-  line-height: 1.6; padding-top: 10px;
-  border-top: 1px dashed #e0d4be;
+  font-size: .8rem; color: #3a2416;
+  font-family: 'Noto Serif JP', Georgia, serif;
+  line-height: 1.9; padding: 10px 0 0 14px;
+  border-top: 1px solid #d4b896;
+  border-left: 3px solid #c0392b;
+  font-style: normal;
+}
+.hero-kanji-quote-author {
+  display: block; font-size: .7rem; color: #9a7a5a;
+  margin-top: 7px; text-align: right; padding-right: 2px;
+  font-family: 'Noto Serif JP', serif; letter-spacing: .5px;
 }
 
 /* ── Feature Cards ── */
@@ -1576,9 +1618,9 @@ if active_tab == TAB_NAMES[0]:
       <span class="hero-kanji-reading">{_hv}</span>
     </div>
     <div class="hero-kanji-right">
-      <span class="hero-kanji-label">✦ KANJI HÔM NAY</span>
+      <span class="hero-kanji-label">✦ 今日の漢字 · KANJI HÔM NAY</span>
       <span class="hero-kanji-mean">{_mean}</span>
-      <div class="hero-kanji-quote">"{_quote}"<br><em>— {_qauthor}</em></div>
+      <div class="hero-kanji-quote">「{_quote}」<span class="hero-kanji-quote-author">― {_qauthor}</span></div>
     </div>
   </div>
 </div>
