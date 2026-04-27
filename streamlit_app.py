@@ -1130,7 +1130,8 @@ for _k, _v in {"results": [], "path_results": []}.items():
 
 # ── Dark mode state + shared color tokens ────────────────────────────────────
 if "dm_main" not in st.session_state:
-    st.session_state["dm_main"] = False
+    # khởi tạo từ query param nếu có (persist qua reload)
+    st.session_state["dm_main"] = st.query_params.get("dark", "0") == "1"
 dark_mode = st.session_state["dm_main"]
 _dc_title  = "#ddd5c5" if dark_mode else "#1a1209"
 _dc_sub    = "#6a7888" if dark_mode else "#9a8a70"
@@ -1832,6 +1833,12 @@ with _dm_col:
         help="Bật/Tắt chế độ tối",
         label_visibility="visible",
     )
+# Lưu trạng thái vào URL để persist qua reload
+if st.session_state["dm_main"] != dark_mode:
+    st.query_params["dark"] = "1" if st.session_state["dm_main"] else "0"
+    st.rerun()
+elif dark_mode:
+    st.query_params["dark"] = "1"
 st.divider()
 
 # === TAB 1 ===
