@@ -335,14 +335,20 @@ def _build_fc_html(deck_json: str) -> str:
 # --- Logo ---
 _logo_path = os.path.join(_HERE, "static", "logo.png")
 _logo_uri = None
+_logo_pil = None
 if os.path.exists(_logo_path):
     with open(_logo_path, "rb") as _f:
         _logo_uri = "data:image/png;base64," + base64.b64encode(_f.read()).decode()
+    try:
+        from PIL import Image as _PILImage
+        _logo_pil = _PILImage.open(_logo_path)
+    except Exception:
+        _logo_pil = None
 
 # --- Page config ---
 st.set_page_config(
     page_title="Kanji Hub — Tra Cứu Kanji Nhật, Nghĩa Tiếng Việt, Luyện Viết",
-    page_icon="漢",
+    page_icon=_logo_pil if _logo_pil else "漢",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
