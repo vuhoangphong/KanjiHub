@@ -531,7 +531,7 @@ a[href="https://streamlit.io/cloud"], a[href*="share.streamlit.io"] { display: n
 .hero-title {
   font-size: 2.5rem; font-weight: 900; color: #1a0e06;
   letter-spacing: 1px; line-height: 1.25; margin: 0 0 10px;
-  font-family: Georgia, 'Noto Serif JP', serif;
+  font-family: 'Segoe UI', 'Be Vietnam Pro', system-ui, sans-serif;
 }
 .hero-sub {
   font-size: .88rem; color: #7a6050; margin: 6px 0 22px; letter-spacing: 1px;
