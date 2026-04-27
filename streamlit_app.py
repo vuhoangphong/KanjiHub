@@ -1405,6 +1405,53 @@ _components.html("""<script>
 
 # ── Custom tabs bằng radio (có thể control bằng session_state) ───────────────
 TAB_NAMES = ["🔍 Tra Kanji", "🗺️ Lộ trình học", "📖 Từ Vựng", "🃏 Flash Card"]
+
+# ── Dialog phân tích AI cho từ vựng ───────────────────────────────────────────
+@st.dialog("🤖 Phân tích từ vựng", width="large")
+def _vocab_ai_dialog():
+    _w  = st.session_state.get("_vl_sel_word", "")
+    _rd = st.session_state.get("_vl_sel_reading", "")
+    _hv = st.session_state.get("_vl_sel_hanviet", "")
+    _mn = st.session_state.get("_vl_sel_meaning", "")
+    _ex = st.session_state.get("_vl_sel_example", "")
+    _vi = st.session_state.get("_vl_sel_exampleVi", "")
+    st.markdown(f"""
+<div style="display:flex;align-items:flex-start;gap:18px;margin-bottom:12px">
+  <div style="font-family:'Noto Serif JP',serif;font-size:3rem;font-weight:900;
+    color:#1a1209;line-height:1;min-width:64px;text-align:center">{_w}</div>
+  <div>
+    <div style="color:#b8902a;font-size:1rem;margin-bottom:2px">（{_rd}）
+      <span style="color:#9a8a6a;font-size:.85rem;font-style:italic">{_hv}</span></div>
+    <div style="color:#3a2a1a;font-size:1.05rem;font-weight:700">▸ {_mn}</div>
+    {f'<div style="color:#6a5a4a;font-size:.9rem;margin-top:6px">📝 {_ex}</div>' if _ex else ""}
+    {f'<div style="color:#8a7a6a;font-size:.85rem;font-style:italic">↳ {_vi}</div>' if _vi else ""}
+  </div>
+</div>
+""", unsafe_allow_html=True)
+    st.divider()
+    _ai_key = f"_vl_ai_{_w}"
+    if _ai_key not in st.session_state:
+        with st.spinner("🔄 Đang phân tích AI…"):
+            try:
+                st.session_state[_ai_key] = analyze_kanji_ai(_w)
+            except Exception as _e:
+                st.session_state[_ai_key] = f"⚠️ Lỗi phân tích: {_e}"
+    st.markdown(
+        f'<div style="background:#fdf8f0;border:1px solid #e0d4be;border-radius:8px;'
+        f'padding:16px 18px;font-size:.9rem;color:#3a2a1a;line-height:1.75">'
+        f'{st.session_state[_ai_key]}</div>',
+        unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("🔄 Phân tích lại", key="_vl_reanalyze", use_container_width=True):
+            if _ai_key in st.session_state:
+                del st.session_state[_ai_key]
+            st.rerun()
+    with c2:
+        if st.button("✕ Đóng", key="_vl_close_dlg", use_container_width=True):
+            st.session_state.pop("_vl_sel_word", None)
+            st.rerun()
+
 if "tab_radio" not in st.session_state:
     st.session_state["tab_radio"] = TAB_NAMES[0]
 # Áp dụng pending tab switch TRƯỚC khi widget render
@@ -1692,6 +1739,10 @@ elif active_tab == TAB_NAMES[2]:
     if not VOCAB_LESSONS:
         st.info("Chưa có bài từ vựng nào.")
     else:
+        # Mở dialog nếu đã chọn từ để phân tích AI
+        if st.session_state.get("_vl_sel_word"):
+            _vocab_ai_dialog()
+
         lesson_nums = sorted(VOCAB_LESSONS.keys())
         sel_lesson  = st.selectbox("Chọn bài", lesson_nums,
                                    format_func=lambda n: f"Bài {n}  ({len(VOCAB_LESSONS[n])} từ)",
@@ -1724,6 +1775,17 @@ elif active_tab == TAB_NAMES[2]:
   {"<div class='vocab-example'>📝 " + item['example'] + "</div>" if item.get('example') else ""}
   {"<div class='vocab-example'>↳ " + item['exampleVi'] + "</div>" if item.get('exampleVi') else ""}
 </div>""", unsafe_allow_html=True)
+                    if st.button("🤖 Phân tích AI",
+                                 key=f"vl_ai_{sel_lesson}_{wi}",
+                                 use_container_width=True,
+                                 help=f"Phân tích sâu từ {_w} bằng AI"):
+                        st.session_state["_vl_sel_word"]      = _w
+                        st.session_state["_vl_sel_reading"]   = _rd
+                        st.session_state["_vl_sel_hanviet"]   = _hv
+                        st.session_state["_vl_sel_meaning"]   = _mn
+                        st.session_state["_vl_sel_example"]   = item.get('example', '')
+                        st.session_state["_vl_sel_exampleVi"] = item.get('exampleVi', '')
+                        st.rerun()
 
         # ── Inject TTS click-to-read script ──
         _components.html("""
